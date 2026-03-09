@@ -1,0 +1,32 @@
+{
+  "reactions": [
+    {
+      "id": "rxn_001",
+      "name_ar": "تعادل حمض وقاعدة",
+      "name_en": "Acid-Base Neutralization",
+      "reactants": [
+        { "formula": "HCl", "state": "aq", "stoich": 1 },
+        { "formula": "NaOH", "state": "aq", "stoich": 1 }
+      ],
+      "products": [
+        { "formula": "NaCl", "state": "aq", "stoich": 1 },
+        { "formula": "H2O", "state": "l", "stoich": 1 }
+      ],
+      "visual_effects": {
+        "color_change": "#66CCFF",
+        "precipitate": false,
+        "gas": false,
+        "temperature_delta": 5,
+        "sound_id": "sizzle"
+      },
+      "safety": {
+        "ghs_icons": ["GHS05"],
+        "warnings_ar": ["تجنب ملامسة الجلد."]
+      },
+      "validation": {
+        "require_acid_into_water_rule": false,
+        "min_moles_threshold": 0.001
+      }
+    }
+  ]
+}
