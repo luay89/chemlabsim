@@ -107,3 +107,10 @@ Thumbs.db
 # Local backup / scratch files
 *.save
 *.save.*
+
+# Local-only
+AGENTS.md
+
+# TMP example assets (optional)
+Assets/TextMesh Pro/Examples & Extras/Fonts/TMP_Arabic.asset
+Assets/TextMesh Pro/Examples & Extras/Fonts/TMP_Arabic.asset.meta
