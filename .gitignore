@@ -103,3 +103,7 @@ InitTestScene*.unity*
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local backup / scratch files
+*.save
+*.save.*

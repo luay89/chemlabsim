@@ -20,30 +20,43 @@ public class AppManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        InitializeDatabase();
     }
 
     private void Start()
     {
+        if (!InitializeDatabase())
+            return;
+
+        // Only auto-advance when bootstrapping from Boot scene.
+        // This allows opening Lab Scene directly without being redirected.
+        if (string.Equals(SceneManager.GetActiveScene().name, "Boot", System.StringComparison.Ordinal))
+        {
+            SceneManager.LoadScene("Menu");
+        }
+    }
+
+    private bool InitializeDatabase()
+    {
+        if (ReactionDatabase != null)
+            return true;
+
         if (loader == null)
         {
             Debug.LogError("[AppManager] loader reference missing. Drag SecureReactionLoader onto AppManager.");
-            return;
+            return false;
         }
 
         try
         {
             ReactionDatabase = loader.Load();
-            if (!ValidateLoadedDatabase(ReactionDatabase))
-            {
-                return;
-            }
-
-            // Boot -> Menu
-            SceneManager.LoadScene("Menu");
+            return ValidateLoadedDatabase(ReactionDatabase);
         }
         catch (System.Exception ex)
         {
             Debug.LogError("[AppManager] Initialization failed: " + ex);
+            return false;
         }
     }
 

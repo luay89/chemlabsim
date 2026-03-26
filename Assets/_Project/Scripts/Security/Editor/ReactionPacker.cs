@@ -6,6 +6,7 @@
  */
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using UnityEditor;
 using UnityEngine;
 
@@ -25,7 +26,11 @@ public static class ReactionPacker
 
         try
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(OutPath)!);
+            string outDir = Path.GetDirectoryName(OutPath);
+            if (!string.IsNullOrEmpty(outDir))
+            {
+                Directory.CreateDirectory(outDir);
+            }
 
             byte[] plaintext = File.ReadAllBytes(SrcPath);
             byte[] masterKey = KeyMaterial.DeriveKey32();
@@ -34,7 +39,11 @@ public static class ReactionPacker
             byte[] blob = CryptoUtil.EncryptAesCbcHmac(masterKey, plaintext, aad);
 
             File.WriteAllBytes(OutPath, blob);
+            WriteManifestNextToBytes(OutPath, blob);
+
             AssetDatabase.ImportAsset(OutPath);
+            AssetDatabase.ImportAsset("Assets/_Project/DataSecure/reactions.manifest.json");
+            AssetDatabase.Refresh();
 
             Debug.Log($"[ReactionPacker] Encrypted reactions saved: {OutPath} (len={blob.Length})");
         }
@@ -42,6 +51,48 @@ public static class ReactionPacker
         {
             Debug.LogError($"[ReactionPacker] Encryption failed: {ex.Message}");
         }
+    }
+
+    [Serializable]
+    private class ReactionManifest
+    {
+        public int schemaVersion;
+        public string dataVersion;
+        public string bytesFileName;
+        public long bytesLength;
+        public string sha256Hex;
+        public string generatedAtUtc;
+    }
+
+    private static void WriteManifestNextToBytes(string bytesAssetPath, byte[] bytesPayload)
+    {
+        var manifest = new ReactionManifest
+        {
+            schemaVersion = 1,
+            dataVersion = "reactions-db-v1",
+            bytesFileName = Path.GetFileName(bytesAssetPath),
+            bytesLength = bytesPayload != null ? bytesPayload.LongLength : 0,
+            sha256Hex = ComputeSha256Hex(bytesPayload),
+            generatedAtUtc = DateTime.UtcNow.ToString("o")
+        };
+
+        string dir = Path.GetDirectoryName(bytesAssetPath) ?? "Assets/_Project/DataSecure";
+        string manifestPath = Path.Combine(dir, "reactions.manifest.json");
+
+        string json = JsonUtility.ToJson(manifest, true);
+        File.WriteAllText(manifestPath, json);
+
+        Debug.Log($"[ReactionPacker] Manifest saved: {manifestPath}");
+    }
+
+    private static string ComputeSha256Hex(byte[] data)
+    {
+        data ??= Array.Empty<byte>();
+
+        using var sha = SHA256.Create();
+        byte[] hash = sha.ComputeHash(data);
+
+        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
     }
 }
 #endif
