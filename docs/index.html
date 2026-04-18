@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ChemLabSim is a bilingual Unity-based chemistry lab simulator with secure reaction data, causal evaluation, RTL support, and an immersive educational interface.">
+    <meta property="og:title" content="ChemLabSim | Interactive Chemistry Lab Simulator">
+    <meta property="og:description" content="A secure bilingual chemistry simulation built with Unity, featuring scientific evaluation, Arabic RTL support, and a modern educational interface.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ChemLabSim | Interactive Chemistry Lab Simulator">
+    <meta name="twitter:description" content="A secure bilingual chemistry simulation built with Unity, featuring scientific evaluation and an immersive lab interface.">
+    <title>ChemLabSim | محاكي المختبر الكيميائي</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #06131d;
+            --bg-2: #0b1d2d;
+            --panel: rgba(8, 22, 34, 0.72);
+            --panel-strong: rgba(10, 26, 40, 0.9);
+            --line: rgba(125, 214, 255, 0.18);
+            --line-strong: rgba(125, 214, 255, 0.34);
+            --text: #ecf7ff;
+            --muted: #8aa5b8;
+            --accent: #75e3ff;
+            --accent-2: #7cf2ba;
+            --accent-3: #ffd36b;
+            --danger: #ff8a7a;
+            --shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
+            --radius-xl: 32px;
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --content-width: 1240px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            font-family: "IBM Plex Sans Arabic", "Aptos", "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(117, 227, 255, 0.12), transparent 28%),
+                radial-gradient(circle at 80% 16%, rgba(124, 242, 186, 0.10), transparent 24%),
+                radial-gradient(circle at 50% 100%, rgba(255, 211, 107, 0.10), transparent 32%),
+                linear-gradient(180deg, #06101a 0%, #091724 46%, #07131d 100%);
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::before {
+            background:
+                linear-gradient(rgba(117, 227, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(117, 227, 255, 0.05) 1px, transparent 1px);
+            background-size: 72px 72px;
+            mask-image: radial-gradient(circle at center, black 44%, transparent 95%);
+            opacity: 0.36;
+        }
+
+        body::after {
+            background: linear-gradient(180deg, rgba(5, 14, 23, 0.06), rgba(5, 14, 23, 0.38));
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .page-shell {
+            position: relative;
+            z-index: 1;
+        }
+
+        .ambient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(22px);
+            opacity: 0.55;
+            pointer-events: none;
+            z-index: 0;
+            animation: drift 12s ease-in-out infinite alternate;
+        }
+
+        .ambient-orb.one {
+            width: 260px;
+            height: 260px;
+            top: 10%;
+            left: 7%;
+            background: rgba(117, 227, 255, 0.12);
+        }
+
+        .ambient-orb.two {
+            width: 320px;
+            height: 320px;
+            top: 18%;
+            right: 6%;
+            background: rgba(124, 242, 186, 0.10);
+            animation-duration: 15s;
+        }
+
+        .ambient-orb.three {
+            width: 220px;
+            height: 220px;
+            bottom: 10%;
+            left: 44%;
+            background: rgba(255, 211, 107, 0.08);
+            animation-duration: 18s;
+        }
+
+        @keyframes drift {
+            from { transform: translate3d(0, 0, 0) scale(1); }
+            to { transform: translate3d(18px, -22px, 0) scale(1.08); }
+        }
+
+        .container {
+            width: min(calc(100% - 32px), var(--content-width));
+            margin: 0 auto;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: blur(22px);
+            background: rgba(3, 11, 18, 0.58);
+            border-bottom: 1px solid rgba(125, 214, 255, 0.08);
+        }
+
+        .topbar-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 14px 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-mark {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            color: #03131d;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            box-shadow: 0 0 36px rgba(117, 227, 255, 0.32);
+            font-size: 1.2rem;
+        }
+
+        .brand-copy strong,
+        .brand-copy span {
+            display: block;
+        }
+
+        .brand-copy strong {
+            font-size: 0.98rem;
+            letter-spacing: 0.04em;
+        }
+
+        .brand-copy span {
+            color: var(--muted);
+            font-size: 0.84rem;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pill,
+        .lang-switch button {
+            border: 1px solid rgba(125, 214, 255, 0.14);
+            background: rgba(10, 26, 40, 0.62);
+            color: var(--text);
+            border-radius: 999px;
+            font: inherit;
+        }
+
+        .pill {
+            padding: 8px 14px;
+            color: var(--muted);
+            font-size: 0.84rem;
+        }
+
+        .lang-switch {
+            display: inline-flex;
+            gap: 8px;
+            padding: 4px;
+            background: rgba(8, 18, 30, 0.74);
+            border-radius: 999px;
+            border: 1px solid rgba(125, 214, 255, 0.12);
+        }
+
+        .lang-switch button {
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .lang-switch button.active {
+            background: linear-gradient(135deg, rgba(117, 227, 255, 0.22), rgba(124, 242, 186, 0.18));
+            border-color: rgba(124, 242, 186, 0.4);
+            color: white;
+        }
+
+        .lang-switch button:hover {
+            transform: translateY(-1px);
+        }
+
+        .hero {
+            padding: 52px 0 26px;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+            gap: 26px;
+            align-items: stretch;
+        }
+
+        .glass-panel {
+            position: relative;
+            background: linear-gradient(180deg, rgba(10, 24, 37, 0.86), rgba(6, 18, 29, 0.78));
+            border: 1px solid rgba(125, 214, 255, 0.14);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .glass-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(117, 227, 255, 0.10), transparent 44%, rgba(124, 242, 186, 0.08));
+            pointer-events: none;
+        }
+
+        .hero-copy {
+            padding: 42px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(117, 227, 255, 0.10);
+            color: var(--accent);
+            border: 1px solid rgba(117, 227, 255, 0.16);
+            font-size: 0.84rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            margin: 18px 0 14px;
+            font-size: clamp(2.8rem, 5.7vw, 5.8rem);
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            font-family: "Space Grotesk", "IBM Plex Sans Arabic", sans-serif;
+        }
+
+        .hero h1 span {
+            display: block;
+            color: var(--muted);
+            font-size: clamp(1rem, 1.9vw, 1.35rem);
+            letter-spacing: 0;
+            line-height: 1.55;
+            margin-top: 18px;
+            font-family: "IBM Plex Sans Arabic", "Aptos", sans-serif;
+        }
+
+        .hero p {
+            max-width: 60ch;
+            margin: 0 0 28px;
+            color: var(--muted);
+            font-size: 1.04rem;
+        }
+
+        .hero-actions,
+        .hero-metrics,
+        .control-list,
+        .mini-grid,
+        .feature-grid,
+        .story-grid,
+        .status-grid,
+        .footer-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .hero-actions {
+            grid-template-columns: repeat(2, minmax(0, max-content));
+        }
+
+        .cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 52px;
+            padding: 0 22px;
+            border-radius: 999px;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .cta.primary {
+            color: #03131d;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            box-shadow: 0 14px 40px rgba(117, 227, 255, 0.2);
+        }
+
+        .cta.secondary {
+            color: var(--text);
+            background: rgba(117, 227, 255, 0.08);
+            border-color: rgba(117, 227, 255, 0.16);
+        }
+
+        .cta:hover {
+            transform: translateY(-2px);
+        }
+
+        .hero-metrics {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            margin-top: 34px;
+        }
+
+        .metric {
+            padding: 18px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(125, 214, 255, 0.08);
+        }
+
+        .metric strong {
+            display: block;
+            font-size: 1.6rem;
+            color: var(--accent-3);
+        }
+
+        .metric span {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .hero-visual {
+            padding: 28px;
+            display: grid;
+            gap: 16px;
+            align-content: start;
+        }
+
+        .console {
+            padding: 20px;
+            border-radius: 24px;
+            background:
+                linear-gradient(180deg, rgba(4, 15, 24, 0.94), rgba(7, 21, 32, 0.86));
+            border: 1px solid rgba(125, 214, 255, 0.12);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+        }
+
+        .console-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            color: var(--muted);
+            font-size: 0.86rem;
+        }
+
+        .dots {
+            display: inline-flex;
+            gap: 8px;
+        }
+
+        .dots i {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: block;
+        }
+
+        .dots i:nth-child(1) { background: #ff8a7a; }
+        .dots i:nth-child(2) { background: #ffd36b; }
+        .dots i:nth-child(3) { background: #7cf2ba; }
+
+        .scanline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 0;
+            border-top: 1px solid rgba(125, 214, 255, 0.08);
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .scanline:first-of-type {
+            border-top: 0;
+        }
+
+        .scanline strong {
+            color: var(--text);
+        }
+
+        .meter {
+            width: 136px;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .meter span {
+            position: absolute;
+            inset-block: 0;
+            inset-inline-start: 0;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        }
+
+        .control-list {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .control-card,
+        .mini-card,
+        .feature-card,
+        .story-card,
+        .status-card,
+        .architecture-card,
+        .security-card {
+            position: relative;
+            overflow: hidden;
+            background: var(--panel);
+            border: 1px solid rgba(125, 214, 255, 0.10);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(16px);
+        }
+
+        .control-card::after,
+        .mini-card::after,
+        .feature-card::after,
+        .story-card::after,
+        .status-card::after,
+        .architecture-card::after,
+        .security-card::after {
+            content: "";
+            position: absolute;
+            inset: auto -15% -55% 45%;
+            height: 120px;
+            background: radial-gradient(circle, rgba(117, 227, 255, 0.18), transparent 66%);
+            pointer-events: none;
+        }
+
+        .control-card {
+            padding: 18px;
+        }
+
+        .control-card h3,
+        .feature-card h3,
+        .story-card h3,
+        .status-card h3,
+        .security-card h3 {
+            margin: 0 0 8px;
+            font-size: 1.04rem;
+        }
+
+        .control-card p,
+        .feature-card p,
+        .story-card p,
+        .status-card p,
+        .security-card p,
+        .architecture-text p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .section {
+            padding: 18px 0 10px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: clamp(1.5rem, 3vw, 2.4rem);
+            letter-spacing: -0.03em;
+            font-family: "Space Grotesk", "IBM Plex Sans Arabic", sans-serif;
+        }
+
+        .section-header p {
+            max-width: 56ch;
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .mini-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            margin-bottom: 26px;
+        }
+
+        .mini-card {
+            padding: 18px;
+        }
+
+        .mini-card strong {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--accent);
+            font-size: 0.92rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .mini-card span {
+            color: var(--text);
+            font-size: 1.1rem;
+        }
+
+        .feature-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .feature-card,
+        .story-card,
+        .status-card,
+        .security-card {
+            padding: 22px;
+        }
+
+        .feature-card h3 {
+            color: var(--accent-2);
+        }
+
+        .story-grid {
+            grid-template-columns: 1.1fr 0.9fr;
+            margin-top: 26px;
+        }
+
+        .story-card {
+            min-height: 100%;
+        }
+
+        .architecture-card {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(320px, 0.94fr);
+        }
+
+        .architecture-rail {
+            padding: 28px;
+            border-inline-end: 1px solid rgba(125, 214, 255, 0.08);
+            display: grid;
+            gap: 12px;
+        }
+
+        .architecture-node {
+            padding: 18px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(125, 214, 255, 0.10);
+        }
+
+        .architecture-node strong {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+
+        .architecture-node span {
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .architecture-node em {
+            display: inline-block;
+            margin-top: 8px;
+            color: var(--accent);
+            font-style: normal;
+            font-size: 0.82rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .architecture-text {
+            padding: 28px;
+        }
+
+        .architecture-text ul,
+        .security-list,
+        .status-card ul {
+            list-style: none;
+            margin: 18px 0 0;
+            padding: 0;
+            display: grid;
+            gap: 10px;
+        }
+
+        .architecture-text li,
+        .security-list li,
+        .status-card li {
+            color: var(--muted);
+            padding-inline-start: 18px;
+            position: relative;
+        }
+
+        .architecture-text li::before,
+        .security-list li::before,
+        .status-card li::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            position: absolute;
+            inset-inline-start: 0;
+            top: 0.58em;
+            transform: translateY(-50%);
+        }
+
+        .security-grid,
+        .status-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .security-card h3 {
+            color: var(--danger);
+        }
+
+        .status-card.ready h3 { color: var(--accent-2); }
+        .status-card.build h3 { color: var(--accent); }
+        .status-card.future h3 { color: var(--accent-3); }
+
+        footer {
+            padding: 28px 0 40px;
+        }
+
+        .footer-grid {
+            grid-template-columns: 1.1fr 0.9fr;
+            align-items: center;
+            padding: 22px 26px;
+            border-radius: 24px;
+            background: rgba(5, 15, 24, 0.84);
+            border: 1px solid rgba(125, 214, 255, 0.10);
+            box-shadow: var(--shadow);
+        }
+
+        .footer-grid p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: flex-end;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: var(--text);
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(125, 214, 255, 0.12);
+            background: rgba(117, 227, 255, 0.05);
+        }
+
+        [dir="ltr"] body,
+        [dir="ltr"] .section-header,
+        [dir="ltr"] .topbar-inner,
+        [dir="ltr"] .console-top,
+        [dir="ltr"] .scanline {
+            direction: ltr;
+        }
+
+        [dir="ltr"] .architecture-rail {
+            border-inline-end: 0;
+            border-inline-start: 1px solid rgba(125, 214, 255, 0.08);
+        }
+
+        @media (max-width: 1120px) {
+            .hero-grid,
+            .story-grid,
+            .architecture-card,
+            .security-grid,
+            .status-grid,
+            .footer-grid,
+            .feature-grid,
+            .mini-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .architecture-rail {
+                border-inline-end: 0;
+                border-bottom: 1px solid rgba(125, 214, 255, 0.08);
+            }
+
+            [dir="ltr"] .architecture-rail {
+                border-inline-start: 0;
+            }
+
+            .hero-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-links {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .topbar-inner {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .topbar-actions {
+                justify-content: space-between;
+            }
+
+            .hero-copy,
+            .hero-visual,
+            .architecture-rail,
+            .architecture-text,
+            .feature-card,
+            .story-card,
+            .status-card,
+            .security-card {
+                padding: 18px;
+            }
+
+            .hero-metrics,
+            .control-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(24px);
+            animation: fadeUp 0.8s ease forwards;
+        }
+
+        .fade-up.delay-1 { animation-delay: 0.08s; }
+        .fade-up.delay-2 { animation-delay: 0.16s; }
+        .fade-up.delay-3 { animation-delay: 0.24s; }
+        .fade-up.delay-4 { animation-delay: 0.32s; }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .ambient-orb,
+            .fade-up {
+                animation: none !important;
+                transform: none !important;
+                opacity: 1 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-orb one"></div>
+    <div class="ambient-orb two"></div>
+    <div class="ambient-orb three"></div>
+
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="container topbar-inner">
+                <div class="brand">
+                    <div class="brand-mark">⚗</div>
+                    <div class="brand-copy">
+                        <strong data-i18n="brand.title">ChemLabSim</strong>
+                        <span data-i18n="brand.subtitle">Interactive Chemistry Interface</span>
+                    </div>
+                </div>
+                <div class="topbar-actions">
+                    <div class="pill" data-i18n="topbar.pill">Unity 2023 LTS · Secure Runtime · Saved Progress</div>
+                    <div class="lang-switch" aria-label="Language switcher">
+                        <button type="button" data-lang="ar" class="active">العربية</button>
+                        <button type="button" data-lang="en">English</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="container hero-grid">
+                    <article class="glass-panel hero-copy fade-up">
+                        <div class="eyebrow" data-i18n="hero.eyebrow">Chemical Learning Interface</div>
+                        <h1 data-i18n-html="hero.title">
+                            ChemLabSim
+                            <span>محاكي مختبر كيميائي تفاعلي يدمج التعلم، التقييم العلمي، والواجهة الغامرة في تجربة واحدة.</span>
+                        </h1>
+                        <p data-i18n="hero.description">منصة تعليمية مبنية بـ Unity تعرض أثر الوسط الكيميائي، الحرارة، التحريك، الطحن، والمحفزات على ناتج التفاعل مع شروحات سببية، نقاط تقدم، وسجل تجارب حي.</p>
+                        <div class="hero-actions">
+                            <a class="cta primary" href="#features" data-i18n="hero.ctaPrimary">استكشف التجربة</a>
+                            <a class="cta secondary" href="https://unity.com" target="_blank" rel="noopener" data-i18n="hero.ctaSecondary">تقنيات المشروع</a>
+                        </div>
+                        <div class="hero-metrics">
+                            <div class="metric">
+                                <strong data-i18n="hero.metric1Value">4</strong>
+                                <span data-i18n="hero.metric1Label">مراحل ودروس تعليمية</span>
+                            </div>
+                            <div class="metric">
+                                <strong data-i18n="hero.metric2Value">Score + Save</strong>
+                                <span data-i18n="hero.metric2Label">تقدم محلي محفوظ</span>
+                            </div>
+                            <div class="metric">
+                                <strong data-i18n="hero.metric3Value">RTL + EN</strong>
+                                <span data-i18n="hero.metric3Label">واجهة ثنائية اللغة</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <aside class="glass-panel hero-visual fade-up delay-1">
+                        <div class="console">
+                            <div class="console-top">
+                                <div class="dots"><i></i><i></i><i></i></div>
+                                <span data-i18n="console.header">Live Reaction Monitor</span>
+                            </div>
+                            <div class="scanline">
+                                <strong data-i18n="console.line1Label">Reaction Medium</strong>
+                                <div class="meter"><span style="width: 72%"></span></div>
+                                <span data-i18n="console.line1Value">Neutral / Acidic / Basic</span>
+                            </div>
+                            <div class="scanline">
+                                <strong data-i18n="console.line2Label">Thermal Energy</strong>
+                                <div class="meter"><span style="width: 64%"></span></div>
+                                <span data-i18n="console.line2Value">Activation-aware slider</span>
+                            </div>
+                            <div class="scanline">
+                                <strong data-i18n="console.line3Label">Catalyst Assist</strong>
+                                <div class="meter"><span style="width: 48%"></span></div>
+                                <span data-i18n="console.line3Value">Dynamic rate influence</span>
+                            </div>
+                            <div class="scanline">
+                                <strong data-i18n="console.line4Label">Scientific Feedback</strong>
+                                <div class="meter"><span style="width: 90%"></span></div>
+                                <span data-i18n="console.line4Value">Cause + score + safety</span>
+                            </div>
+                        </div>
+                        <div class="control-list">
+                            <div class="control-card">
+                                <h3 data-i18n="control.oneTitle">واجهة أقرب لغرفة تحكم</h3>
+                                <p data-i18n="control.oneText">طبقات ضوئية، ألواح زجاجية، ومؤشرات حيّة تعطي الصفحة حضورًا أقوى من صفحة توثيق تقليدية.</p>
+                            </div>
+                            <div class="control-card">
+                                <h3 data-i18n="control.twoTitle">تبديل لغة فوري</h3>
+                                <p data-i18n="control.twoText">الانتقال بين العربية والإنكليزية يتم لحظيًا مع تحديث الاتجاه والمحتوى وتذكر اللغة المختارة بعد إعادة التحميل.</p>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="section" id="features">
+                <div class="container">
+                    <div class="section-header fade-up">
+                        <div>
+                            <h2 data-i18n="features.heading">منظومة تعليمية كاملة</h2>
+                        </div>
+                        <p data-i18n="features.intro">كل جزء في ChemLabSim مصمم ليحوّل التفاعل الكيميائي من فكرة نظرية إلى تجربة مرئية قابلة للفهم والتحليل، مع تقدم تراكمي يشعر به الطالب بين الجلسات.</p>
+                    </div>
+
+                    <div class="mini-grid">
+                        <div class="mini-card fade-up delay-1">
+                            <strong data-i18n="features.mini1Label">Engine</strong>
+                            <span data-i18n="features.mini1Value">ReactionEvaluator</span>
+                        </div>
+                        <div class="mini-card fade-up delay-2">
+                            <strong data-i18n="features.mini2Label">UI Layer</strong>
+                            <span data-i18n="features.mini2Value">LabController + Menu UX</span>
+                        </div>
+                        <div class="mini-card fade-up delay-3">
+                            <strong data-i18n="features.mini3Label">Data</strong>
+                            <span data-i18n="features.mini3Value">Encrypted Reaction Database</span>
+                        </div>
+                        <div class="mini-card fade-up delay-4">
+                            <strong data-i18n="features.mini4Label">Output</strong>
+                            <span data-i18n="features.mini4Value">Result + History + Score</span>
+                        </div>
+                    </div>
+
+                    <div class="feature-grid">
+                        <article class="feature-card fade-up">
+                            <h3 data-i18n="features.card1Title">اختيار ديناميكي للمواد</h3>
+                            <p data-i18n="features.card1Text">قوائم تفاعلية تعتمد على قاعدة البيانات الفعلية، مع ترتيب ثابت للوسط الكيميائي حتى لا تنكسر خرائط القيم أو خيارات التقييم.</p>
+                        </article>
+                        <article class="feature-card fade-up delay-1">
+                            <h3 data-i18n="features.card2Title">تقييم سببي واضح</h3>
+                            <p data-i18n="features.card2Text">النتيجة لا تعرض نجاحًا أو فشلًا فقط، بل تشرح لماذا أثرت الحرارة أو الوسط أو التلامس أو المحفز في مخرجات التفاعل.</p>
+                        </article>
+                        <article class="feature-card fade-up delay-2">
+                            <h3 data-i18n="features.card3Title">تأثيرات بصرية حية</h3>
+                            <p data-i18n="features.card3Text">توهجات مخبرية، طبقات HUD، وجسيمات تفاعلية تضيف إحساس منصة تجارب أكثر قربًا من أجهزة المحاكاة الحديثة.</p>
+                        </article>
+                        <article class="feature-card fade-up delay-1">
+                            <h3 data-i18n="features.card4Title">تعريب عملي حقيقي</h3>
+                            <p data-i18n="features.card4Text">النصوص والقوائم والرسائل تتبدل بين العربية والإنكليزية مع محاذاة واتجاه مناسبين بدل ترجمة سطحية فقط.</p>
+                        </article>
+                        <article class="feature-card fade-up delay-2">
+                            <h3 data-i18n="features.card5Title">دروس وتحديات وتقدم</h3>
+                            <p data-i18n="features.card5Text">النظام يتتبع النقاط، الأهداف، التحديات، الإنجازات، وسجل التجارب مع حفظ محلي للتقدم ليجعل التعلم تراكميًا ومشجعًا.</p>
+                        </article>
+                        <article class="feature-card fade-up delay-3">
+                            <h3 data-i18n="features.card6Title">أمن على مستوى البيانات</h3>
+                            <p data-i18n="features.card6Text">بيانات التفاعلات محمية بتشفير وتحقق تكاملي بحيث تبقى قاعدة المحتوى التعليمية موثوقة أثناء التشغيل.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="container story-grid">
+                    <article class="story-card fade-up">
+                        <div class="section-header" style="margin-bottom: 14px;">
+                            <div>
+                                <h2 data-i18n="science.heading">المبادئ العلمية داخل التجربة</h2>
+                            </div>
+                        </div>
+                        <p data-i18n="science.intro">واجهة المختبر لا تتعامل مع القيم كمدخلات شكلية، بل تربط كل متحكم بمفهوم كيميائي فعلي يظهر أثره مباشرة على النتيجة.</p>
+                        <div class="feature-grid" style="margin-top: 18px;">
+                            <div class="feature-card">
+                                <h3 data-i18n="science.card1Title">طاقة التنشيط</h3>
+                                <p data-i18n="science.card1Text">بعض التفاعلات لن تبدأ إلا بعد بلوغ حد حراري مناسب، مع إمكانية خفضه إذا استُخدم محفز صحيح.</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3 data-i18n="science.card2Title">جودة التلامس</h3>
+                                <p data-i18n="science.card2Text">التحريك والطحن يؤثران مباشرة في عامل التلامس، وبالتالي في سرعة التفاعل أو اكتماله.</p>
+                            </div>
+                            <div class="feature-card">
+                                <h3 data-i18n="science.card3Title">الوسط الكيميائي</h3>
+                                <p data-i18n="science.card3Text">القائمة المنسدلة للوسط تعرض القيم الأساسية الثلاث دائمًا: متعادل، حمضي، وقاعدي، مع بقاء التقييم مرتبطًا بالقيمة الصحيحة.</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="story-card fade-up delay-1">
+                        <div class="section-header" style="margin-bottom: 14px;">
+                            <div>
+                                <h2 data-i18n="ux.heading">هوية الواجهة الجديدة</h2>
+                            </div>
+                        </div>
+                        <p data-i18n="ux.intro">تم نقل العرض من صفحة تعريف بسيطة إلى واجهة تقدم المشروع كمنصة تعليمية حديثة، مع إحساس لوحة مراقبة ووهج مختبر رقمي.</p>
+                        <div class="control-list" style="margin-top: 18px;">
+                            <div class="control-card">
+                                <h3 data-i18n="ux.card1Title">Glass UI</h3>
+                                <p data-i18n="ux.card1Text">ألواح نصف شفافة وخلفية متعددة الطبقات تضيف عمقًا بصريًا بدون تعقيد تقني كبير.</p>
+                            </div>
+                            <div class="control-card">
+                                <h3 data-i18n="ux.card2Title">Motion with intent</h3>
+                                <p data-i18n="ux.card2Text">حركة بسيطة للوهج والعناصر عند التحميل تعطي الصفحة حياة بدون إزعاج أو مبالغة.</p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="container">
+                    <div class="section-header fade-up">
+                        <div>
+                            <h2 data-i18n="architecture.heading">البنية التشغيلية</h2>
+                        </div>
+                        <p data-i18n="architecture.intro">المشروع يحافظ على خط واضح من التحميل الآمن وحتى عرض النتيجة التعليمية للمستخدم داخل المختبر.</p>
+                    </div>
+                    <div class="architecture-card fade-up delay-1">
+                        <div class="architecture-text">
+                            <h3 data-i18n="architecture.textTitle">تدفق العمل داخل المشروع</h3>
+                            <p data-i18n="architecture.textBody">يبدأ التطبيق بتهيئة المدير العام وتحميل بيانات التفاعلات المشفرة، ثم تنتقل الواجهة إلى طبقة التفاعل التي تجمع المدخلات، تمررها لمحرك التقييم، وتبني تفسيرًا علميًا منسقًا للمستخدم.</p>
+                            <ul>
+                                <li data-i18n="architecture.point1">Boot Scene يهيئ البيئة ويضمن وجود AppManager طوال دورة التشغيل.</li>
+                                <li data-i18n="architecture.point2">SecureReactionLoader يفك التشفير ويتحقق من سلامة قاعدة البيانات قبل الاستخدام.</li>
+                                <li data-i18n="architecture.point3">ReactionEvaluator يحلل الوسط والحرارة والتلامس والمحفز ويعيد نتيجة موحدة.</li>
+                                <li data-i18n="architecture.point4">LabController يبني الواجهة، النتيجة، السجل، ودعم التعريب والتأثيرات الحية.</li>
+                            </ul>
+                        </div>
+                        <div class="architecture-rail">
+                            <div class="architecture-node">
+                                <em data-i18n="architecture.node1Label">Stage 01</em>
+                                <strong data-i18n="architecture.node1Title">Boot + AppManager</strong>
+                                <span data-i18n="architecture.node1Text">تهيئة تشغيل مستقرة وتحميل مبكر للبيانات المطلوبة للمختبر.</span>
+                            </div>
+                            <div class="architecture-node">
+                                <em data-i18n="architecture.node2Label">Stage 02</em>
+                                <strong data-i18n="architecture.node2Title">SecureReactionLoader</strong>
+                                <span data-i18n="architecture.node2Text">فك تشفير البيانات والتحقق من سلامتها قبل تمريرها لأي طبقة أعلى.</span>
+                            </div>
+                            <div class="architecture-node">
+                                <em data-i18n="architecture.node3Label">Stage 03</em>
+                                <strong data-i18n="architecture.node3Title">ReactionEvaluator</strong>
+                                <span data-i18n="architecture.node3Text">محرك قرار ثابت يحدد صلاحية التفاعل واحتمال نجاحه ومستوى الاستجابة.</span>
+                            </div>
+                            <div class="architecture-node">
+                                <em data-i18n="architecture.node4Label">Stage 04</em>
+                                <strong data-i18n="architecture.node4Title">Lab UI Console</strong>
+                                <span data-i18n="architecture.node4Text">عرض النتيجة، المعادلة، الملاحظات، التحذيرات، والتقدم بلغة المستخدم.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="container">
+                    <div class="section-header fade-up">
+                        <div>
+                            <h2 data-i18n="security.heading">الطبقة الأمنية</h2>
+                        </div>
+                        <p data-i18n="security.intro">المشروع لا يتعامل مع بيانات التفاعلات كملف نصي مكشوف، بل كأصل حساس يجب حمايته والتحقق من سلامته قبل الاستخدام.</p>
+                    </div>
+                    <div class="security-grid">
+                        <article class="security-card fade-up">
+                            <h3 data-i18n="security.card1Title">تشفير البيانات</h3>
+                            <ul class="security-list">
+                                <li data-i18n="security.card1Point1">AES-256-CBC لحماية قاعدة التفاعلات أثناء التخزين.</li>
+                                <li data-i18n="security.card1Point2">اشتقاق مفاتيح يعتمد على HKDF-SHA256.</li>
+                                <li data-i18n="security.card1Point3">فصل بين التشفير والتحقق لتقليل المخاطر.</li>
+                            </ul>
+                        </article>
+                        <article class="security-card fade-up delay-1">
+                            <h3 data-i18n="security.card2Title">التحقق من السلامة</h3>
+                            <ul class="security-list">
+                                <li data-i18n="security.card2Point1">HMAC-SHA256 لضمان عدم العبث بالمحتوى.</li>
+                                <li data-i18n="security.card2Point2">AAD لمنع إعادة استخدام البيانات في سياقات أخرى.</li>
+                                <li data-i18n="security.card2Point3">سلوك دفاعي عند غياب البيانات أو فسادها.</li>
+                            </ul>
+                        </article>
+                        <article class="security-card fade-up delay-2">
+                            <h3 data-i18n="security.card3Title">موثوقية أثناء التشغيل</h3>
+                            <ul class="security-list">
+                                <li data-i18n="security.card3Point1">حواجز null وسلوك احتياطي في الواجهة والمحرك.</li>
+                                <li data-i18n="security.card3Point2">ربط القيم المعروضة بالمخرجات العلمية بدل النصوص الثابتة.</li>
+                                <li data-i18n="security.card3Point3">استقرار أعلى عند توسيع قاعدة التفاعلات لاحقًا.</li>
+                            </ul>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="container">
+                    <div class="section-header fade-up">
+                        <div>
+                            <h2 data-i18n="status.heading">حالة المشروع والاتجاه القادم</h2>
+                        </div>
+                        <p data-i18n="status.intro">المشروع يعمل كنواة تعليمية قوية مع حلقة تقدم فعليّة، ومعه مساحة واضحة للتوسع نحو بيئات أكثر غنى وتفاعلاً.</p>
+                    </div>
+                    <div class="status-grid">
+                        <article class="status-card ready fade-up">
+                            <h3 data-i18n="status.readyTitle">جاهز الآن</h3>
+                            <ul>
+                                <li data-i18n="status.ready1">مختبر تعليمي تفاعلي بواجهة محسنة.</li>
+                                <li data-i18n="status.ready2">نتائج علمية مفسّرة مع سجل تجارب ونقاط جلسة.</li>
+                                <li data-i18n="status.ready3">دروس وتحديات وحفظ تقدم محلي مع دعم ثنائي اللغة.</li>
+                            </ul>
+                        </article>
+                        <article class="status-card build fade-up delay-1">
+                            <h3 data-i18n="status.buildTitle">منصات مستهدفة</h3>
+                            <ul>
+                                <li data-i18n="status.build1">Linux</li>
+                                <li data-i18n="status.build2">Windows</li>
+                                <li data-i18n="status.build3">Android</li>
+                            </ul>
+                        </article>
+                        <article class="status-card future fade-up delay-2">
+                            <h3 data-i18n="status.futureTitle">الخطوة التالية</h3>
+                            <ul>
+                                <li data-i18n="status.future1">تجارب أكثر وفئات تفاعلات أوسع.</li>
+                                <li data-i18n="status.future2">تجارب موجهة وتقارير تقدم أكثر ملاءمة للمعلمين.</li>
+                                <li data-i18n="status.future3">مشاهد وتأثيرات أقرب للمختبرات الافتراضية.</li>
+                            </ul>
+                        </article>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container footer-grid fade-up">
+                <div>
+                    <p data-i18n="footer.line1">ChemLabSim 2024–2026 · مشروع تعليمي مبني بـ Unity و URP و RTLTMPro.</p>
+                    <p data-i18n="footer.line2">تم تصميم الصفحة لتعرض المشروع بهوية بصرية أقرب إلى منصات المحاكاة العلمية الحديثة مع إبراز التقدم، الدروس، والنقاط الحالية.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://unity.com" target="_blank" rel="noopener">Unity</a>
+                    <a href="https://docs.unity3d.com/Packages/com.unity.textmeshpro@latest" target="_blank" rel="noopener">TextMeshPro</a>
+                    <a href="https://github.com/pnarimani/RTLTMPro" target="_blank" rel="noopener">RTLTMPro</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const translations = {
+            ar: {
+                "brand.title": "ChemLabSim",
+                "brand.subtitle": "واجهة كيمياء تفاعلية",
+                "topbar.pill": "Unity 2023 LTS · تشغيل آمن · تقدم محفوظ",
+                "hero.eyebrow": "منصة تعلم كيميائي تفاعلي",
+                "hero.title": "ChemLabSim<span>محاكي مختبر كيميائي تفاعلي يدمج التعلم، التقييم العلمي، والواجهة الغامرة في تجربة واحدة.</span>",
+                "hero.description": "منصة تعليمية مبنية بـ Unity تعرض أثر الوسط الكيميائي، الحرارة، التحريك، الطحن، والمحفزات على ناتج التفاعل مع شروحات سببية، نقاط تقدم، وسجل تجارب حي.",
+                "hero.ctaPrimary": "استكشف التجربة",
+                "hero.ctaSecondary": "تقنيات المشروع",
+                "hero.metric1Value": "4",
+                "hero.metric1Label": "مراحل ودروس تعليمية",
+                "hero.metric2Value": "Score + Save",
+                "hero.metric2Label": "تقدم محلي محفوظ",
+                "hero.metric3Value": "RTL + EN",
+                "hero.metric3Label": "واجهة ثنائية اللغة",
+                "console.header": "شاشة مراقبة التفاعل",
+                "console.line1Label": "وسط التفاعل",
+                "console.line1Value": "متعادل / حمضي / قاعدي",
+                "console.line2Label": "الطاقة الحرارية",
+                "console.line2Value": "منزلق واعٍ لطاقة التنشيط",
+                "console.line3Label": "دعم المحفز",
+                "console.line3Value": "تأثير ديناميكي على المعدل",
+                "console.line4Label": "النتيجة العلمية",
+                "console.line4Value": "سبب + نقاط + سلامة",
+                "control.oneTitle": "واجهة أقرب لغرفة تحكم",
+                "control.oneText": "طبقات ضوئية، ألواح زجاجية، ومؤشرات حيّة تعطي الصفحة حضورًا أقوى من صفحة توثيق تقليدية.",
+                "control.twoTitle": "تبديل لغة فوري",
+                "control.twoText": "الانتقال بين العربية والإنكليزية يتم لحظيًا مع تحديث الاتجاه والمحتوى وتذكر اللغة المختارة بعد إعادة التحميل.",
+                "features.heading": "منظومة تعليمية كاملة",
+                "features.intro": "كل جزء في ChemLabSim مصمم ليحوّل التفاعل الكيميائي من فكرة نظرية إلى تجربة مرئية قابلة للفهم والتحليل، مع تقدم تراكمي يشعر به الطالب بين الجلسات.",
+                "features.mini1Label": "المحرك",
+                "features.mini1Value": "ReactionEvaluator",
+                "features.mini2Label": "طبقة الواجهة",
+                "features.mini2Value": "LabController + Menu UX",
+                "features.mini3Label": "البيانات",
+                "features.mini3Value": "قاعدة تفاعلات مشفرة",
+                "features.mini4Label": "المخرجات",
+                "features.mini4Value": "نتيجة + سجل + نقاط",
+                "features.card1Title": "اختيار ديناميكي للمواد",
+                "features.card1Text": "قوائم تفاعلية تعتمد على قاعدة البيانات الفعلية، مع ترتيب ثابت للوسط الكيميائي حتى لا تنكسر خرائط القيم أو خيارات التقييم.",
+                "features.card2Title": "تقييم سببي واضح",
+                "features.card2Text": "النتيجة لا تعرض نجاحًا أو فشلًا فقط، بل تشرح لماذا أثرت الحرارة أو الوسط أو التلامس أو المحفز في مخرجات التفاعل.",
+                "features.card3Title": "تأثيرات بصرية حية",
+                "features.card3Text": "توهجات مخبرية، طبقات HUD، وجسيمات تفاعلية تضيف إحساس منصة تجارب أكثر قربًا من أجهزة المحاكاة الحديثة.",
+                "features.card4Title": "تعريب عملي حقيقي",
+                "features.card4Text": "النصوص والقوائم والرسائل تتبدل بين العربية والإنكليزية مع محاذاة واتجاه مناسبين بدل ترجمة سطحية فقط.",
+                "features.card5Title": "دروس وتحديات وتقدم",
+                "features.card5Text": "النظام يتتبع النقاط، الأهداف، التحديات، الإنجازات، وسجل التجارب مع حفظ محلي للتقدم ليجعل التعلم تراكميًا ومشجعًا.",
+                "features.card6Title": "أمن على مستوى البيانات",
+                "features.card6Text": "بيانات التفاعلات محمية بتشفير وتحقق تكاملي بحيث تبقى قاعدة المحتوى التعليمية موثوقة أثناء التشغيل.",
+                "science.heading": "المبادئ العلمية داخل التجربة",
+                "science.intro": "واجهة المختبر لا تتعامل مع القيم كمدخلات شكلية، بل تربط كل متحكم بمفهوم كيميائي فعلي يظهر أثره مباشرة على النتيجة.",
+                "science.card1Title": "طاقة التنشيط",
+                "science.card1Text": "بعض التفاعلات لن تبدأ إلا بعد بلوغ حد حراري مناسب، مع إمكانية خفضه إذا استُخدم محفز صحيح.",
+                "science.card2Title": "جودة التلامس",
+                "science.card2Text": "التحريك والطحن يؤثران مباشرة في عامل التلامس، وبالتالي في سرعة التفاعل أو اكتماله.",
+                "science.card3Title": "الوسط الكيميائي",
+                "science.card3Text": "القائمة المنسدلة للوسط تعرض القيم الأساسية الثلاث دائمًا: متعادل، حمضي، وقاعدي، مع بقاء التقييم مرتبطًا بالقيمة الصحيحة.",
+                "ux.heading": "هوية الواجهة الجديدة",
+                "ux.intro": "تم نقل العرض من صفحة تعريف بسيطة إلى واجهة تقدم المشروع كمنصة تعليمية حديثة، مع إحساس لوحة مراقبة ووهج مختبر رقمي.",
+                "ux.card1Title": "ألواح زجاجية",
+                "ux.card1Text": "ألواح نصف شفافة وخلفية متعددة الطبقات تضيف عمقًا بصريًا بدون تعقيد تقني كبير.",
+                "ux.card2Title": "حركة مقصودة",
+                "ux.card2Text": "حركة بسيطة للوهج والعناصر عند التحميل تعطي الصفحة حياة بدون إزعاج أو مبالغة.",
+                "architecture.heading": "البنية التشغيلية",
+                "architecture.intro": "المشروع يحافظ على خط واضح من التحميل الآمن وحتى عرض النتيجة التعليمية للمستخدم داخل المختبر.",
+                "architecture.textTitle": "تدفق العمل داخل المشروع",
+                "architecture.textBody": "يبدأ التطبيق بتهيئة المدير العام وتحميل بيانات التفاعلات المشفرة، ثم تنتقل الواجهة إلى طبقة التفاعل التي تجمع المدخلات، تمررها لمحرك التقييم، وتبني تفسيرًا علميًا منسقًا للمستخدم.",
+                "architecture.point1": "Boot Scene يهيئ البيئة ويضمن وجود AppManager طوال دورة التشغيل.",
+                "architecture.point2": "SecureReactionLoader يفك التشفير ويتحقق من سلامة قاعدة البيانات قبل الاستخدام.",
+                "architecture.point3": "ReactionEvaluator يحلل الوسط والحرارة والتلامس والمحفز ويعيد نتيجة موحدة.",
+                "architecture.point4": "LabController يبني الواجهة، النتيجة، السجل، ودعم التعريب والتأثيرات الحية.",
+                "architecture.node1Label": "المرحلة 01",
+                "architecture.node1Title": "Boot + AppManager",
+                "architecture.node1Text": "تهيئة تشغيل مستقرة وتحميل مبكر للبيانات المطلوبة للمختبر.",
+                "architecture.node2Label": "المرحلة 02",
+                "architecture.node2Title": "SecureReactionLoader",
+                "architecture.node2Text": "فك تشفير البيانات والتحقق من سلامتها قبل تمريرها لأي طبقة أعلى.",
+                "architecture.node3Label": "المرحلة 03",
+                "architecture.node3Title": "ReactionEvaluator",
+                "architecture.node3Text": "محرك قرار ثابت يحدد صلاحية التفاعل واحتمال نجاحه ومستوى الاستجابة.",
+                "architecture.node4Label": "المرحلة 04",
+                "architecture.node4Title": "Lab UI Console",
+                "architecture.node4Text": "عرض النتيجة، المعادلة، الملاحظات، التحذيرات، والتقدم بلغة المستخدم.",
+                "security.heading": "الطبقة الأمنية",
+                "security.intro": "المشروع لا يتعامل مع بيانات التفاعلات كملف نصي مكشوف، بل كأصل حساس يجب حمايته والتحقق من سلامته قبل الاستخدام.",
+                "security.card1Title": "تشفير البيانات",
+                "security.card1Point1": "AES-256-CBC لحماية قاعدة التفاعلات أثناء التخزين.",
+                "security.card1Point2": "اشتقاق مفاتيح يعتمد على HKDF-SHA256.",
+                "security.card1Point3": "فصل بين التشفير والتحقق لتقليل المخاطر.",
+                "security.card2Title": "التحقق من السلامة",
+                "security.card2Point1": "HMAC-SHA256 لضمان عدم العبث بالمحتوى.",
+                "security.card2Point2": "AAD لمنع إعادة استخدام البيانات في سياقات أخرى.",
+                "security.card2Point3": "سلوك دفاعي عند غياب البيانات أو فسادها.",
+                "security.card3Title": "موثوقية أثناء التشغيل",
+                "security.card3Point1": "حواجز null وسلوك احتياطي في الواجهة والمحرك.",
+                "security.card3Point2": "ربط القيم المعروضة بالمخرجات العلمية بدل النصوص الثابتة.",
+                "security.card3Point3": "استقرار أعلى عند توسيع قاعدة التفاعلات لاحقًا.",
+                "status.heading": "حالة المشروع والاتجاه القادم",
+                "status.intro": "المشروع يعمل كنواة تعليمية قوية مع حلقة تقدم فعليّة، ومعه مساحة واضحة للتوسع نحو بيئات أكثر غنى وتفاعلاً.",
+                "status.readyTitle": "جاهز الآن",
+                "status.ready1": "مختبر تعليمي تفاعلي بواجهة محسنة.",
+                "status.ready2": "نتائج علمية مفسّرة مع سجل تجارب ونقاط جلسة.",
+                "status.ready3": "دروس وتحديات وحفظ تقدم محلي مع دعم ثنائي اللغة.",
+                "status.buildTitle": "منصات مستهدفة",
+                "status.build1": "Linux",
+                "status.build2": "Windows",
+                "status.build3": "Android",
+                "status.futureTitle": "الخطوة التالية",
+                "status.future1": "تجارب أكثر وفئات تفاعلات أوسع.",
+                "status.future2": "تجارب موجهة وتقارير تقدم أكثر ملاءمة للمعلمين.",
+                "status.future3": "مشاهد وتأثيرات أقرب للمختبرات الافتراضية.",
+                "footer.line1": "ChemLabSim 2024–2026 · مشروع تعليمي مبني بـ Unity و URP و RTLTMPro.",
+                "footer.line2": "تم تصميم الصفحة لتعرض المشروع بهوية بصرية أقرب إلى منصات المحاكاة العلمية الحديثة مع إبراز التقدم، الدروس، والنقاط الحالية."
+            },
+            en: {
+                "brand.title": "ChemLabSim",
+                "brand.subtitle": "Interactive Chemistry Interface",
+                "topbar.pill": "Unity 2023 LTS · Secure Runtime · Saved Progress",
+                "hero.eyebrow": "Interactive Chemical Learning Platform",
+                "hero.title": "ChemLabSim<span>An immersive chemistry lab simulator that combines learning, scientific evaluation, and a stronger visual interface in one experience.</span>",
+                "hero.description": "A Unity-based educational platform that shows how reaction medium, temperature, stirring, grinding, and catalysts influence outcomes through causal explanations, saved progress, and a live experiment history.",
+                "hero.ctaPrimary": "Explore the Experience",
+                "hero.ctaSecondary": "Project Stack",
+                "hero.metric1Value": "4",
+                "hero.metric1Label": "lesson stages",
+                "hero.metric2Value": "Score + Save",
+                "hero.metric2Label": "local progress loop",
+                "hero.metric3Value": "RTL + EN",
+                "hero.metric3Label": "bilingual interface",
+                "console.header": "Live Reaction Monitor",
+                "console.line1Label": "Reaction Medium",
+                "console.line1Value": "Neutral / Acidic / Basic",
+                "console.line2Label": "Thermal Energy",
+                "console.line2Value": "Activation-aware slider",
+                "console.line3Label": "Catalyst Assist",
+                "console.line3Value": "Dynamic rate influence",
+                "console.line4Label": "Scientific Output",
+                "console.line4Value": "Cause + score + safety",
+                "control.oneTitle": "Closer to a control deck",
+                "control.oneText": "Glow layers, glass surfaces, and live indicators give the page more presence than a conventional documentation layout.",
+                "control.twoTitle": "Instant language switching",
+                "control.twoText": "Arabic and English update immediately from the same page, including layout direction and remembered language preference after reload.",
+                "features.heading": "A full learning system",
+                "features.intro": "Every part of ChemLabSim is designed to turn chemical reactions from abstract concepts into visible, analyzable learning moments with cumulative progress across sessions.",
+                "features.mini1Label": "Engine",
+                "features.mini1Value": "ReactionEvaluator",
+                "features.mini2Label": "UI Layer",
+                "features.mini2Value": "LabController + Menu UX",
+                "features.mini3Label": "Data",
+                "features.mini3Value": "Encrypted Reaction Database",
+                "features.mini4Label": "Output",
+                "features.mini4Value": "Result + History + Score",
+                "features.card1Title": "Dynamic reagent selection",
+                "features.card1Text": "Interactive dropdowns stay aligned with real runtime data, while the medium list keeps a stable canonical order for safe evaluation mapping.",
+                "features.card2Title": "Clear causal evaluation",
+                "features.card2Text": "The app does not stop at success or failure. It explains why heat, medium, contact quality, or catalyst usage changed the outcome.",
+                "features.card3Title": "Live visual effects",
+                "features.card3Text": "Lab glow, HUD layers, and reaction particles add a stronger simulation feel that is closer to modern interactive learning tools.",
+                "features.card4Title": "Practical bilingual UX",
+                "features.card4Text": "Texts, dropdowns, and messages switch between Arabic and English with proper alignment and direction rather than superficial translation.",
+                "features.card5Title": "Progress, goals, and challenges",
+                "features.card5Text": "Scores, objectives, challenges, achievements, and recent experiments work together with local save data to make learning cumulative and motivating.",
+                "features.card6Title": "Data-first security",
+                "features.card6Text": "Reaction data is protected with encryption and integrity checks so the educational content stays trustworthy at runtime.",
+                "science.heading": "Scientific principles inside the experience",
+                "science.intro": "The lab interface does not treat controls as cosmetic inputs. Each one maps directly to a chemical concept that affects the final result.",
+                "science.card1Title": "Activation energy",
+                "science.card1Text": "Some reactions cannot begin until they reach a thermal threshold, and a correct catalyst can lower that barrier.",
+                "science.card2Title": "Effective contact",
+                "science.card2Text": "Stirring and grinding directly influence the contact factor, which impacts reaction speed and completeness.",
+                "science.card3Title": "Reaction medium",
+                "science.card3Text": "The medium dropdown always exposes the three core values: Neutral, Acidic, and Basic, while evaluation remains mapped to the correct internal value.",
+                "ux.heading": "The new interface identity",
+                "ux.intro": "The page moves away from a plain project summary and presents the simulator more like a modern educational control surface.",
+                "ux.card1Title": "Glass surfaces",
+                "ux.card1Text": "Semi-transparent panels and layered backgrounds add depth without introducing heavy technical complexity.",
+                "ux.card2Title": "Motion with intent",
+                "ux.card2Text": "Glow drift and staged reveal animations give the page life without feeling noisy or over-designed.",
+                "architecture.heading": "Operational flow",
+                "architecture.intro": "The project keeps a clear line from secure bootstrapping all the way to educational feedback inside the lab scene.",
+                "architecture.textTitle": "How the project flows",
+                "architecture.textBody": "The app starts by preparing the global manager and loading encrypted reaction data. The UI then gathers inputs, passes them to the evaluator, and builds a structured scientific explanation for the learner.",
+                "architecture.point1": "Boot Scene prepares the environment and keeps AppManager alive across runtime.",
+                "architecture.point2": "SecureReactionLoader decrypts and validates the reaction database before use.",
+                "architecture.point3": "ReactionEvaluator analyzes medium, heat, contact, and catalyst use to return a unified result.",
+                "architecture.point4": "LabController builds the UI, result console, history, localization, and live visual polish.",
+                "architecture.node1Label": "Stage 01",
+                "architecture.node1Title": "Boot + AppManager",
+                "architecture.node1Text": "Stable application startup with early access to required lab data.",
+                "architecture.node2Label": "Stage 02",
+                "architecture.node2Title": "SecureReactionLoader",
+                "architecture.node2Text": "Decrypts and validates data before it reaches higher-level systems.",
+                "architecture.node3Label": "Stage 03",
+                "architecture.node3Title": "ReactionEvaluator",
+                "architecture.node3Text": "A deterministic engine that decides whether a reaction is valid and how strongly it proceeds.",
+                "architecture.node4Label": "Stage 04",
+                "architecture.node4Title": "Lab UI Console",
+                "architecture.node4Text": "Displays result, equation, observations, warnings, and progress in the active language.",
+                "security.heading": "Security layer",
+                "security.intro": "The project treats reaction data as a protected runtime asset, not as plain text content exposed without verification.",
+                "security.card1Title": "Data encryption",
+                "security.card1Point1": "AES-256-CBC protects the reaction database at rest.",
+                "security.card1Point2": "Key derivation is based on HKDF-SHA256.",
+                "security.card1Point3": "Encryption and validation are separated to reduce risk.",
+                "security.card2Title": "Integrity validation",
+                "security.card2Point1": "HMAC-SHA256 helps detect tampering.",
+                "security.card2Point2": "AAD prevents unsafe reuse across unrelated applications.",
+                "security.card2Point3": "Defensive behavior is built in for missing or corrupted data.",
+                "security.card3Title": "Runtime reliability",
+                "security.card3Point1": "Null guards and fallback behavior exist across UI and evaluation flow.",
+                "security.card3Point2": "Displayed values stay tied to scientific output rather than static copy.",
+                "security.card3Point3": "The structure remains safer to extend as more reactions are added.",
+                "status.heading": "Project state and next direction",
+                "status.intro": "The project already works as a strong educational core with an active progress loop, with a clear path toward richer and more immersive lab experiences.",
+                "status.readyTitle": "Ready now",
+                "status.ready1": "Interactive educational lab with upgraded interface polish.",
+                "status.ready2": "Scientifically explained results with visible experiment history and session scoring.",
+                "status.ready3": "Lessons, challenges, and saved local progress with bilingual support.",
+                "status.buildTitle": "Target platforms",
+                "status.build1": "Linux",
+                "status.build2": "Windows",
+                "status.build3": "Android",
+                "status.futureTitle": "Next step",
+                "status.future1": "More experiments and broader reaction categories.",
+                "status.future2": "Guided experiments and teacher-friendly progress reporting.",
+                "status.future3": "Scenes and effects that feel closer to virtual lab environments.",
+                "footer.line1": "ChemLabSim 2024–2026 · An educational project built with Unity, URP, and RTLTMPro.",
+                "footer.line2": "This page was redesigned to present the simulator with a visual identity closer to modern scientific interfaces while highlighting progress, lessons, and current scoring."
+            }
+        };
+
+        const storageKey = "chemlabsim-docs-language";
+        const root = document.documentElement;
+        const langButtons = document.querySelectorAll(".lang-switch button");
+
+        function readStoredLanguage() {
+            try {
+                const stored = localStorage.getItem(storageKey);
+                return stored === "ar" || stored === "en" ? stored : null;
+            } catch {
+                return null;
+            }
+        }
+
+        function persistLanguage(lang) {
+            try {
+                localStorage.setItem(storageKey, lang);
+            } catch {
+                // Ignore storage failures so the page still works in restricted contexts.
+            }
+        }
+
+        function applyLanguage(lang) {
+            const dict = translations[lang] || translations.ar;
+            root.lang = lang;
+            root.dir = lang === "ar" ? "rtl" : "ltr";
+            document.title = lang === "ar"
+                ? "ChemLabSim | محاكي المختبر الكيميائي"
+                : "ChemLabSim | Interactive Chemistry Lab Simulator";
+
+            document.querySelectorAll("[data-i18n]").forEach((node) => {
+                const key = node.getAttribute("data-i18n");
+                if (dict[key]) node.textContent = dict[key];
+            });
+
+            document.querySelectorAll("[data-i18n-html]").forEach((node) => {
+                const key = node.getAttribute("data-i18n-html");
+                if (dict[key]) node.innerHTML = dict[key];
+            });
+
+            langButtons.forEach((button) => {
+                button.classList.toggle("active", button.dataset.lang === lang);
+            });
+
+            persistLanguage(lang);
+        }
+
+        langButtons.forEach((button) => {
+            button.addEventListener("click", () => applyLanguage(button.dataset.lang));
+        });
+
+        applyLanguage(readStoredLanguage() || "ar");
+    </script>
+</body>
+</html>

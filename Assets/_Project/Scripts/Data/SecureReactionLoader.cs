@@ -24,6 +24,14 @@ public class SecureReactionLoader : MonoBehaviour
 
     public ReactionDB Load()
     {
+#if UNITY_EDITOR
+        if (TryLoadSourceJsonIfPreferred(out ReactionDB editorDb))
+        {
+            LastLoaded = editorDb;
+            return editorDb;
+        }
+#endif
+
         if (!encryptedBytes)
         {
             Debug.LogError("[SecureReactionLoader] Missing encryptedBytes reference. Assign reactions.bytes from DataSecure.", this);
@@ -98,6 +106,41 @@ public class SecureReactionLoader : MonoBehaviour
             "Run Tools/Security/Encrypt Reactions JSON -> bytes to avoid stale encrypted data.",
             this
         );
+    }
+
+    private bool TryLoadSourceJsonIfPreferred(out ReactionDB db)
+    {
+        db = null;
+
+        if (!File.Exists(SourceJsonPath))
+            return false;
+
+        string encryptedAssetPath = encryptedBytes ? AssetDatabase.GetAssetPath(encryptedBytes) : string.Empty;
+        bool missingEncrypted = string.IsNullOrWhiteSpace(encryptedAssetPath) || !File.Exists(encryptedAssetPath);
+        bool sourceIsNewer = !missingEncrypted && File.GetLastWriteTimeUtc(SourceJsonPath) > File.GetLastWriteTimeUtc(encryptedAssetPath);
+
+        if (!missingEncrypted && !sourceIsNewer)
+            return false;
+
+        try
+        {
+            string json = File.ReadAllText(SourceJsonPath);
+            db = JsonUtility.FromJson<ReactionDB>(json);
+            if (db == null || db.reactions == null || db.reactions.Count == 0)
+            {
+                db = null;
+                return false;
+            }
+
+            Debug.Log("[SecureReactionLoader] Loaded reactions directly from reactions.json inside the editor because the encrypted blob is missing or outdated.", this);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[SecureReactionLoader] Failed to load source JSON fallback: {ex.Message}", this);
+            db = null;
+            return false;
+        }
     }
 #endif
 }

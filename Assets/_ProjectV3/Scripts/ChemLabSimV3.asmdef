@@ -1,0 +1,17 @@
+{
+  "name": "ChemLabSimV3",
+  "rootNamespace": "ChemLabSimV3",
+  "references": [
+    "Unity.TextMeshPro",
+    "ChemLabSim.Core"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -64,10 +64,10 @@ public class AppManager : MonoBehaviour
     {
         if (db == null) return 0;
 
-        // يدعم حالتين:
+        // Supports two cases:
         // 1) List => Count
         // 2) Array => Length
-        // بدون الاعتماد على نوع محدد وقت الكومبايل
+        // Without depending on a specific compile-time type
         var field = db.GetType().GetField("reactions");
         if (field == null) return 0;
 
@@ -107,12 +107,9 @@ public class AppManager : MonoBehaviour
                 return false;
             }
 
-            string a = rx.GetReactantA();
-            string b = rx.GetReactantB();
-            string product = rx.GetPrimaryProduct();
-            if (string.IsNullOrWhiteSpace(a) ||
-                string.IsNullOrWhiteSpace(b) ||
-                string.IsNullOrWhiteSpace(product))
+            int reactantCount = rx.GetReactantFormulas().Count;
+            int productCount = rx.GetProductFormulas().Count;
+            if (reactantCount < 2 || productCount < 1)
             {
                 Debug.LogError(
                     $"[AppManager] Invalid reaction at index {i}: reactants/products are missing. " +

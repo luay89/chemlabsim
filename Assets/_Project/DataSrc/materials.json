@@ -1,0 +1,2874 @@
+[
+  {
+    "id": "mat_ag",
+    "displayNameAr": "",
+    "displayNameEn": "Silver",
+    "formula": "Ag",
+    "color": "#C0C0C0",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "displacement"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Silver",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_agcl",
+    "displayNameAr": "",
+    "displayNameEn": "Silver Chloride",
+    "formula": "AgCl",
+    "color": "#F5F5F5",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "precipitation"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Silver Chloride",
+    "default_state": "solid",
+    "roles": [
+      "product",
+      "precipitate"
+    ],
+    "used_in_reactions": [
+      "rxn_006"
+    ]
+  },
+  {
+    "id": "mat_agno3",
+    "displayNameAr": "",
+    "displayNameEn": "Silver Nitrate",
+    "formula": "AgNO3",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Silver Nitrate",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_006"
+    ]
+  },
+  {
+    "id": "mat_al",
+    "displayNameAr": "",
+    "displayNameEn": "Aluminum",
+    "formula": "Al",
+    "color": "#C0C0C0",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "redox",
+      "displacement"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Aluminum",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_012"
+    ]
+  },
+  {
+    "id": "mat_aloh3",
+    "displayNameAr": "",
+    "displayNameEn": "Aluminum Hydroxide",
+    "formula": "Al(OH)3",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Base",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Aluminum Hydroxide",
+    "default_state": "solid",
+    "roles": [
+      "reactant",
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_al2o3",
+    "displayNameAr": "",
+    "displayNameEn": "Aluminum Oxide",
+    "formula": "Al2O3",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Oxide",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Aluminum Oxide",
+    "default_state": "solid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_ar",
+    "displayNameAr": "",
+    "displayNameEn": "Argon",
+    "formula": "Ar",
+    "color": "",
+    "state": "gas",
+    "category": "Gas",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Argon",
+    "default_state": "gas",
+    "roles": [],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_baoh2",
+    "displayNameAr": "",
+    "displayNameEn": "Barium Hydroxide",
+    "formula": "Ba(OH)2",
+    "color": "",
+    "state": "aqueous",
+    "category": "Base",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Barium Hydroxide",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_bacl2",
+    "displayNameAr": "",
+    "displayNameEn": "Barium Chloride",
+    "formula": "BaCl2",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "precipitation"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Barium Chloride",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_bao",
+    "displayNameAr": "",
+    "displayNameEn": "Barium Oxide",
+    "formula": "BaO",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Oxide",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Barium Oxide",
+    "default_state": "solid",
+    "roles": [
+      "reactant",
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_baso4",
+    "displayNameAr": "",
+    "displayNameEn": "Barium Sulfate",
+    "formula": "BaSO4",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "precipitation"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Barium Sulfate",
+    "default_state": "solid",
+    "roles": [
+      "product",
+      "precipitate"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_br2",
+    "displayNameAr": "",
+    "displayNameEn": "Bromine",
+    "formula": "Br2",
+    "color": "#8B0000",
+    "state": "liquid",
+    "category": "Element",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Bromine",
+    "default_state": "liquid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_c",
+    "displayNameAr": "",
+    "displayNameEn": "Carbon",
+    "formula": "C",
+    "color": "#1C1C1C",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "combustion",
+      "redox"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Carbon",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_c12h22o11",
+    "displayNameAr": "",
+    "displayNameEn": "Sucrose (Table Sugar)",
+    "formula": "C12H22O11",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Organic",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "organic"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sucrose (Table Sugar)",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_c2h2",
+    "displayNameAr": "",
+    "displayNameEn": "Acetylene",
+    "formula": "C2H2",
+    "color": "",
+    "state": "gas",
+    "category": "Organic",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "combustion",
+      "organic"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Acetylene",
+    "default_state": "gas",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_c2h5oh",
+    "displayNameAr": "",
+    "displayNameEn": "Ethanol",
+    "formula": "C2H5OH",
+    "color": "",
+    "state": "liquid",
+    "category": "Organic",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "combustion",
+      "organic"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Ethanol",
+    "default_state": "liquid",
+    "roles": [
+      "reactant",
+      "solvent"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_c6h12o6",
+    "displayNameAr": "",
+    "displayNameEn": "Glucose",
+    "formula": "C6H12O6",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Organic",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "organic"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Glucose",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_c6h6",
+    "displayNameAr": "",
+    "displayNameEn": "Benzene",
+    "formula": "C6H6",
+    "color": "",
+    "state": "liquid",
+    "category": "Organic",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "organic",
+      "combustion"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Benzene",
+    "default_state": "liquid",
+    "roles": [
+      "reactant",
+      "solvent"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_ca",
+    "displayNameAr": "",
+    "displayNameEn": "Calcium",
+    "formula": "Ca",
+    "color": "#E0E0E0",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "displacement",
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Calcium",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_caoh2",
+    "displayNameAr": "",
+    "displayNameEn": "Calcium Hydroxide",
+    "formula": "Ca(OH)2",
+    "color": "",
+    "state": "aqueous",
+    "category": "Base",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Calcium Hydroxide",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_cacl2",
+    "displayNameAr": "",
+    "displayNameEn": "Calcium Chloride",
+    "formula": "CaCl2",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Calcium Chloride",
+    "default_state": "aqueous",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_009"
+    ]
+  },
+  {
+    "id": "mat_caco3",
+    "displayNameAr": "",
+    "displayNameEn": "Calcium Carbonate",
+    "formula": "CaCO3",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Calcium Carbonate",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_009"
+    ]
+  },
+  {
+    "id": "mat_cao",
+    "displayNameAr": "",
+    "displayNameEn": "Calcium Oxide (Quicklime)",
+    "formula": "CaO",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Oxide",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Calcium Oxide (Quicklime)",
+    "default_state": "solid",
+    "roles": [
+      "reactant",
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_caso4",
+    "displayNameAr": "",
+    "displayNameEn": "Calcium Sulfate",
+    "formula": "CaSO4",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "precipitation"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Calcium Sulfate",
+    "default_state": "solid",
+    "roles": [
+      "product",
+      "precipitate"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_ch3coch3",
+    "displayNameAr": "",
+    "displayNameEn": "Acetone",
+    "formula": "CH3COCH3",
+    "color": "",
+    "state": "liquid",
+    "category": "Organic",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "organic"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Acetone",
+    "default_state": "liquid",
+    "roles": [
+      "reactant",
+      "solvent"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_ch3cooh",
+    "displayNameAr": "",
+    "displayNameEn": "Acetic Acid (Vinegar)",
+    "formula": "CH3COOH",
+    "color": "",
+    "state": "aqueous",
+    "category": "Organic",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "organic"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Acetic Acid (Vinegar)",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_002"
+    ]
+  },
+  {
+    "id": "mat_ch3coona",
+    "displayNameAr": "",
+    "displayNameEn": "Sodium Acetate",
+    "formula": "CH3COONa",
+    "color": "",
+    "state": "aqueous",
+    "category": "Organic",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "organic"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sodium Acetate",
+    "default_state": "aqueous",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_002"
+    ]
+  },
+  {
+    "id": "mat_ch3oh",
+    "displayNameAr": "",
+    "displayNameEn": "Methanol",
+    "formula": "CH3OH",
+    "color": "",
+    "state": "liquid",
+    "category": "Organic",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "combustion",
+      "organic"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Methanol",
+    "default_state": "liquid",
+    "roles": [
+      "reactant",
+      "solvent"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_ch4",
+    "displayNameAr": "",
+    "displayNameEn": "Methane",
+    "formula": "CH4",
+    "color": "",
+    "state": "gas",
+    "category": "Gas",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "combustion",
+      "organic"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Methane",
+    "default_state": "gas",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_cl2",
+    "displayNameAr": "",
+    "displayNameEn": "Chlorine",
+    "formula": "Cl2",
+    "color": "#90EE90",
+    "state": "gas",
+    "category": "Gas",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Chlorine",
+    "default_state": "gas",
+    "roles": [
+      "reactant",
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_co2",
+    "displayNameAr": "",
+    "displayNameEn": "Carbon Dioxide",
+    "formula": "CO2",
+    "color": "",
+    "state": "gas",
+    "category": "Gas",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "gas-evolution"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Carbon Dioxide",
+    "default_state": "gas",
+    "roles": [
+      "product",
+      "gas"
+    ],
+    "used_in_reactions": [
+      "rxn_002",
+      "rxn_009"
+    ]
+  },
+  {
+    "id": "mat_cr",
+    "displayNameAr": "",
+    "displayNameEn": "Chromium",
+    "formula": "Cr",
+    "color": "#C0C0C0",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Chromium",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_cr2o3",
+    "displayNameAr": "",
+    "displayNameEn": "Chromium(III) Oxide",
+    "formula": "Cr2O3",
+    "color": "#006400",
+    "state": "solid",
+    "category": "Oxide",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Chromium(III) Oxide",
+    "default_state": "solid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_cu",
+    "displayNameAr": "",
+    "displayNameEn": "Copper",
+    "formula": "Cu",
+    "color": "#B87333",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "displacement",
+      "redox"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Copper",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_cucl2",
+    "displayNameAr": "",
+    "displayNameEn": "Copper(II) Chloride",
+    "formula": "CuCl2",
+    "color": "#00CED1",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "displacement"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Copper(II) Chloride",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_cuo",
+    "displayNameAr": "",
+    "displayNameEn": "Copper(II) Oxide",
+    "formula": "CuO",
+    "color": "#1C1C1C",
+    "state": "solid",
+    "category": "Oxide",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "displacement",
+      "redox"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Copper(II) Oxide",
+    "default_state": "solid",
+    "roles": [
+      "reactant",
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_cuso4",
+    "displayNameAr": "",
+    "displayNameEn": "Copper(II) Sulfate",
+    "formula": "CuSO4",
+    "color": "#0000FF",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "precipitation",
+      "displacement"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Copper(II) Sulfate",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_fe",
+    "displayNameAr": "",
+    "displayNameEn": "Iron",
+    "formula": "Fe",
+    "color": "#808080",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "redox",
+      "displacement"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Iron",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_003"
+    ]
+  },
+  {
+    "id": "mat_fe2o3",
+    "displayNameAr": "",
+    "displayNameEn": "Iron(III) Oxide (Rust)",
+    "formula": "Fe2O3",
+    "color": "#B7410E",
+    "state": "solid",
+    "category": "Oxide",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "combustion"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Iron(III) Oxide (Rust)",
+    "default_state": "solid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_003"
+    ]
+  },
+  {
+    "id": "mat_fecl3",
+    "displayNameAr": "",
+    "displayNameEn": "Iron(III) Chloride",
+    "formula": "FeCl3",
+    "color": "#8B4513",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "redox",
+      "catalysis"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Iron(III) Chloride",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant",
+      "catalyst"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_fescn2p",
+    "displayNameAr": "",
+    "displayNameEn": "Iron(III) Thiocyanate Complex",
+    "formula": "FeSCN2+",
+    "color": "#B11226",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Iron(III) Thiocyanate Complex",
+    "default_state": "aqueous",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_011"
+    ]
+  },
+  {
+    "id": "mat_feso4",
+    "displayNameAr": "",
+    "displayNameEn": "Iron(II) Sulfate",
+    "formula": "FeSO4",
+    "color": "#90EE90",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Iron(II) Sulfate",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_011"
+    ]
+  },
+  {
+    "id": "mat_h2",
+    "displayNameAr": "",
+    "displayNameEn": "Hydrogen",
+    "formula": "H2",
+    "color": "",
+    "state": "gas",
+    "category": "Gas",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "gas-evolution"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Hydrogen",
+    "default_state": "gas",
+    "roles": [
+      "product",
+      "gas"
+    ],
+    "used_in_reactions": [
+      "rxn_005",
+      "rxn_008",
+      "rxn_012"
+    ]
+  },
+  {
+    "id": "mat_h2co3",
+    "displayNameAr": "",
+    "displayNameEn": "Carbonic Acid",
+    "formula": "H2CO3",
+    "color": "",
+    "state": "aqueous",
+    "category": "Acid",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "neutralization",
+      "gas-evolution"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Carbonic Acid",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_h2o",
+    "displayNameAr": "",
+    "displayNameEn": "Water",
+    "formula": "H2O",
+    "color": "",
+    "state": "liquid",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Water",
+    "default_state": "liquid",
+    "roles": [
+      "reactant",
+      "product",
+      "solvent"
+    ],
+    "used_in_reactions": [
+      "rxn_001",
+      "rxn_002",
+      "rxn_007",
+      "rxn_008",
+      "rxn_009",
+      "rxn_010",
+      "rxn_011",
+      "rxn_012"
+    ]
+  },
+  {
+    "id": "mat_h2o2",
+    "displayNameAr": "",
+    "displayNameEn": "Hydrogen Peroxide",
+    "formula": "H2O2",
+    "color": "",
+    "state": "aqueous",
+    "category": "Acid",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "redox",
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Hydrogen Peroxide",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_007",
+      "rxn_010",
+      "rxn_011"
+    ]
+  },
+  {
+    "id": "mat_h2s",
+    "displayNameAr": "",
+    "displayNameEn": "Hydrogen Sulfide",
+    "formula": "H2S",
+    "color": "",
+    "state": "gas",
+    "category": "Gas",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "gas-evolution",
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Hydrogen Sulfide",
+    "default_state": "gas",
+    "roles": [
+      "product",
+      "gas"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_h2so4",
+    "displayNameAr": "",
+    "displayNameEn": "Sulfuric Acid",
+    "formula": "H2SO4",
+    "color": "",
+    "state": "aqueous",
+    "category": "Acid",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sulfuric Acid",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_010",
+      "rxn_011"
+    ]
+  },
+  {
+    "id": "mat_h3po4",
+    "displayNameAr": "",
+    "displayNameEn": "Phosphoric Acid",
+    "formula": "H3PO4",
+    "color": "",
+    "state": "aqueous",
+    "category": "Acid",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Phosphoric Acid",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_hbr",
+    "displayNameAr": "",
+    "displayNameEn": "Hydrobromic Acid",
+    "formula": "HBr",
+    "color": "",
+    "state": "aqueous",
+    "category": "Acid",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Hydrobromic Acid",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_hcho",
+    "displayNameAr": "",
+    "displayNameEn": "Formaldehyde",
+    "formula": "HCHO",
+    "color": "",
+    "state": "aqueous",
+    "category": "Organic",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "organic",
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Formaldehyde",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_hcl",
+    "displayNameAr": "",
+    "displayNameEn": "Hydrochloric Acid",
+    "formula": "HCl",
+    "color": "",
+    "state": "aqueous",
+    "category": "Acid",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Hydrochloric Acid",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_001",
+      "rxn_005",
+      "rxn_009"
+    ]
+  },
+  {
+    "id": "mat_he",
+    "displayNameAr": "",
+    "displayNameEn": "Helium",
+    "formula": "He",
+    "color": "",
+    "state": "gas",
+    "category": "Gas",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Helium",
+    "default_state": "gas",
+    "roles": [],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_hf",
+    "displayNameAr": "",
+    "displayNameEn": "Hydrofluoric Acid",
+    "formula": "HF",
+    "color": "",
+    "state": "aqueous",
+    "category": "Acid",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Hydrofluoric Acid",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_hi",
+    "displayNameAr": "",
+    "displayNameEn": "Hydroiodic Acid",
+    "formula": "HI",
+    "color": "",
+    "state": "aqueous",
+    "category": "Acid",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Hydroiodic Acid",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_hno3",
+    "displayNameAr": "",
+    "displayNameEn": "Nitric Acid",
+    "formula": "HNO3",
+    "color": "",
+    "state": "aqueous",
+    "category": "Acid",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "neutralization",
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Nitric Acid",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_i2",
+    "displayNameAr": "",
+    "displayNameEn": "Iodine",
+    "formula": "I2",
+    "color": "#4B0082",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Iodine",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_k",
+    "displayNameAr": "",
+    "displayNameEn": "Potassium",
+    "formula": "K",
+    "color": "#C0C0C0",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "displacement",
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Potassium",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_k2cr2o7",
+    "displayNameAr": "",
+    "displayNameEn": "Potassium Dichromate",
+    "formula": "K2Cr2O7",
+    "color": "#FF4500",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Potassium Dichromate",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_k2so4",
+    "displayNameAr": "",
+    "displayNameEn": "Potassium Sulfate",
+    "formula": "K2SO4",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Potassium Sulfate",
+    "default_state": "aqueous",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_010",
+      "rxn_011"
+    ]
+  },
+  {
+    "id": "mat_kbr",
+    "displayNameAr": "",
+    "displayNameEn": "Potassium Bromide",
+    "formula": "KBr",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Potassium Bromide",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_kcl",
+    "displayNameAr": "",
+    "displayNameEn": "Potassium Chloride",
+    "formula": "KCl",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Potassium Chloride",
+    "default_state": "aqueous",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_ki",
+    "displayNameAr": "",
+    "displayNameEn": "Potassium Iodide",
+    "formula": "KI",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "precipitation",
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Potassium Iodide",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_kmno4",
+    "displayNameAr": "",
+    "displayNameEn": "Potassium Permanganate",
+    "formula": "KMnO4",
+    "color": "#7B2D8B",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Potassium Permanganate",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_010"
+    ]
+  },
+  {
+    "id": "mat_kno3",
+    "displayNameAr": "",
+    "displayNameEn": "Potassium Nitrate",
+    "formula": "KNO3",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Potassium Nitrate",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_koh",
+    "displayNameAr": "",
+    "displayNameEn": "Potassium Hydroxide",
+    "formula": "KOH",
+    "color": "",
+    "state": "aqueous",
+    "category": "Base",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Potassium Hydroxide",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_kscn",
+    "displayNameAr": "",
+    "displayNameEn": "Potassium Thiocyanate",
+    "formula": "KSCN",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Potassium Thiocyanate",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_011"
+    ]
+  },
+  {
+    "id": "mat_li",
+    "displayNameAr": "",
+    "displayNameEn": "Lithium",
+    "formula": "Li",
+    "color": "#C0C0C0",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "displacement",
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Lithium",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_lioh",
+    "displayNameAr": "",
+    "displayNameEn": "Lithium Hydroxide",
+    "formula": "LiOH",
+    "color": "",
+    "state": "aqueous",
+    "category": "Base",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Lithium Hydroxide",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_mg",
+    "displayNameAr": "",
+    "displayNameEn": "Magnesium",
+    "formula": "Mg",
+    "color": "#C0C0C0",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "redox",
+      "displacement"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Magnesium",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_004"
+    ]
+  },
+  {
+    "id": "mat_mgoh2",
+    "displayNameAr": "",
+    "displayNameEn": "Magnesium Hydroxide",
+    "formula": "Mg(OH)2",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Base",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Magnesium Hydroxide",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_mgcl2",
+    "displayNameAr": "",
+    "displayNameEn": "Magnesium Chloride",
+    "formula": "MgCl2",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Magnesium Chloride",
+    "default_state": "aqueous",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_mgo",
+    "displayNameAr": "",
+    "displayNameEn": "Magnesium Oxide",
+    "formula": "MgO",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Oxide",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "combustion"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Magnesium Oxide",
+    "default_state": "solid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_004"
+    ]
+  },
+  {
+    "id": "mat_mgso4",
+    "displayNameAr": "",
+    "displayNameEn": "Magnesium Sulfate",
+    "formula": "MgSO4",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Magnesium Sulfate",
+    "default_state": "aqueous",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_mn",
+    "displayNameAr": "",
+    "displayNameEn": "Manganese",
+    "formula": "Mn",
+    "color": "#808080",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Manganese",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_mno2",
+    "displayNameAr": "",
+    "displayNameEn": "Manganese Dioxide",
+    "formula": "MnO2",
+    "color": "#1C1C1C",
+    "state": "solid",
+    "category": "Catalyst",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "catalysis"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Manganese Dioxide",
+    "default_state": "solid",
+    "roles": [
+      "catalyst"
+    ],
+    "used_in_reactions": [
+      "rxn_007"
+    ]
+  },
+  {
+    "id": "mat_mnso4",
+    "displayNameAr": "",
+    "displayNameEn": "Manganese(II) Sulfate",
+    "formula": "MnSO4",
+    "color": "#FFB6C1",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Manganese(II) Sulfate",
+    "default_state": "aqueous",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_010"
+    ]
+  },
+  {
+    "id": "mat_n2",
+    "displayNameAr": "",
+    "displayNameEn": "Nitrogen",
+    "formula": "N2",
+    "color": "",
+    "state": "gas",
+    "category": "Gas",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Nitrogen",
+    "default_state": "gas",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_na",
+    "displayNameAr": "",
+    "displayNameEn": "Sodium",
+    "formula": "Na",
+    "color": "#C0C0C0",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "redox",
+      "displacement"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sodium",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_008"
+    ]
+  },
+  {
+    "id": "mat_na2co3",
+    "displayNameAr": "",
+    "displayNameEn": "Sodium Carbonate",
+    "formula": "Na2CO3",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "neutralization",
+      "gas-evolution"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sodium Carbonate",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_na2o",
+    "displayNameAr": "",
+    "displayNameEn": "Sodium Oxide",
+    "formula": "Na2O",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Oxide",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sodium Oxide",
+    "default_state": "solid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_na2s2o3",
+    "displayNameAr": "",
+    "displayNameEn": "Sodium Thiosulfate",
+    "formula": "Na2S2O3",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sodium Thiosulfate",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_na2so4",
+    "displayNameAr": "",
+    "displayNameEn": "Sodium Sulfate",
+    "formula": "Na2SO4",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sodium Sulfate",
+    "default_state": "aqueous",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_na3po4",
+    "displayNameAr": "",
+    "displayNameEn": "Trisodium Phosphate",
+    "formula": "Na3PO4",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Trisodium Phosphate",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_naalo2",
+    "displayNameAr": "",
+    "displayNameEn": "Sodium Aluminate",
+    "formula": "NaAlO2",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sodium Aluminate",
+    "default_state": "aqueous",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_012"
+    ]
+  },
+  {
+    "id": "mat_nabr",
+    "displayNameAr": "",
+    "displayNameEn": "Sodium Bromide",
+    "formula": "NaBr",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sodium Bromide",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant",
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_nacl",
+    "displayNameAr": "",
+    "displayNameEn": "Sodium Chloride (Table Salt)",
+    "formula": "NaCl",
+    "color": "#FFFFFF",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sodium Chloride (Table Salt)",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant",
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_001",
+      "rxn_006"
+    ]
+  },
+  {
+    "id": "mat_nahco3",
+    "displayNameAr": "",
+    "displayNameEn": "Sodium Bicarbonate (Baking Soda)",
+    "formula": "NaHCO3",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sodium Bicarbonate (Baking Soda)",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_002"
+    ]
+  },
+  {
+    "id": "mat_nano3",
+    "displayNameAr": "",
+    "displayNameEn": "Sodium Nitrate",
+    "formula": "NaNO3",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sodium Nitrate",
+    "default_state": "aqueous",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_006"
+    ]
+  },
+  {
+    "id": "mat_naoh",
+    "displayNameAr": "",
+    "displayNameEn": "Sodium Hydroxide",
+    "formula": "NaOH",
+    "color": "",
+    "state": "aqueous",
+    "category": "Base",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sodium Hydroxide",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant",
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_001",
+      "rxn_008",
+      "rxn_012"
+    ]
+  },
+  {
+    "id": "mat_ne",
+    "displayNameAr": "",
+    "displayNameEn": "Neon",
+    "formula": "Ne",
+    "color": "",
+    "state": "gas",
+    "category": "Gas",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Neon",
+    "default_state": "gas",
+    "roles": [],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_nh3",
+    "displayNameAr": "",
+    "displayNameEn": "Ammonia",
+    "formula": "NH3",
+    "color": "",
+    "state": "gas",
+    "category": "Base",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "neutralization",
+      "gas-evolution"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Ammonia",
+    "default_state": "gas",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_nh4cl",
+    "displayNameAr": "",
+    "displayNameEn": "Ammonium Chloride",
+    "formula": "NH4Cl",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Ammonium Chloride",
+    "default_state": "solid",
+    "roles": [
+      "reactant",
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_nh4no3",
+    "displayNameAr": "",
+    "displayNameEn": "Ammonium Nitrate",
+    "formula": "NH4NO3",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Ammonium Nitrate",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_ni",
+    "displayNameAr": "",
+    "displayNameEn": "Nickel",
+    "formula": "Ni",
+    "color": "#A0A0A0",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "displacement",
+      "catalysis"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Nickel",
+    "default_state": "solid",
+    "roles": [
+      "reactant",
+      "catalyst"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_no2",
+    "displayNameAr": "",
+    "displayNameEn": "Nitrogen Dioxide",
+    "formula": "NO2",
+    "color": "#8B4513",
+    "state": "gas",
+    "category": "Oxide",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "gas-evolution",
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Nitrogen Dioxide",
+    "default_state": "gas",
+    "roles": [
+      "product",
+      "gas"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_o2",
+    "displayNameAr": "",
+    "displayNameEn": "Oxygen",
+    "formula": "O2",
+    "color": "",
+    "state": "gas",
+    "category": "Gas",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "gas-evolution"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Oxygen",
+    "default_state": "gas",
+    "roles": [
+      "reactant",
+      "product",
+      "gas"
+    ],
+    "used_in_reactions": [
+      "rxn_003",
+      "rxn_004",
+      "rxn_007",
+      "rxn_010"
+    ]
+  },
+  {
+    "id": "mat_p",
+    "displayNameAr": "",
+    "displayNameEn": "Phosphorus",
+    "formula": "P",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "combustion"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Phosphorus",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_p2o5",
+    "displayNameAr": "",
+    "displayNameEn": "Phosphorus Pentoxide",
+    "formula": "P2O5",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Oxide",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Phosphorus Pentoxide",
+    "default_state": "solid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_pb",
+    "displayNameAr": "",
+    "displayNameEn": "Lead",
+    "formula": "Pb",
+    "color": "#5C5C5C",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "displacement"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Lead",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_pbno32",
+    "displayNameAr": "",
+    "displayNameEn": "Lead(II) Nitrate",
+    "formula": "Pb(NO3)2",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "precipitation"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Lead(II) Nitrate",
+    "default_state": "aqueous",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_pbi2",
+    "displayNameAr": "",
+    "displayNameEn": "Lead(II) Iodide",
+    "formula": "PbI2",
+    "color": "#FFD700",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "precipitation"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Lead(II) Iodide",
+    "default_state": "solid",
+    "roles": [
+      "product",
+      "precipitate"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_pt",
+    "displayNameAr": "",
+    "displayNameEn": "Platinum",
+    "formula": "Pt",
+    "color": "#D0D0D0",
+    "state": "solid",
+    "category": "Catalyst",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "catalysis"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Platinum",
+    "default_state": "solid",
+    "roles": [
+      "catalyst"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_s",
+    "displayNameAr": "",
+    "displayNameEn": "Sulfur",
+    "formula": "S",
+    "color": "#FFFF00",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "combustion"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sulfur",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_si",
+    "displayNameAr": "",
+    "displayNameEn": "Silicon",
+    "formula": "Si",
+    "color": "#808080",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Silicon",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_sio2",
+    "displayNameAr": "",
+    "displayNameEn": "Silicon Dioxide (Sand)",
+    "formula": "SiO2",
+    "color": "#F5F5DC",
+    "state": "solid",
+    "category": "Oxide",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Silicon Dioxide (Sand)",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_sn",
+    "displayNameAr": "",
+    "displayNameEn": "Tin",
+    "formula": "Sn",
+    "color": "#D3D4D5",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "displacement"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Tin",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_so2",
+    "displayNameAr": "",
+    "displayNameEn": "Sulfur Dioxide",
+    "formula": "SO2",
+    "color": "",
+    "state": "gas",
+    "category": "Oxide",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "gas-evolution",
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sulfur Dioxide",
+    "default_state": "gas",
+    "roles": [
+      "product",
+      "gas"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_so3",
+    "displayNameAr": "",
+    "displayNameEn": "Sulfur Trioxide",
+    "formula": "SO3",
+    "color": "",
+    "state": "gas",
+    "category": "Oxide",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Sulfur Trioxide",
+    "default_state": "gas",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_tio2",
+    "displayNameAr": "",
+    "displayNameEn": "Titanium Dioxide",
+    "formula": "TiO2",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Oxide",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Titanium Dioxide",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_v2o5",
+    "displayNameAr": "",
+    "displayNameEn": "Vanadium Pentoxide",
+    "formula": "V2O5",
+    "color": "#FF8C00",
+    "state": "solid",
+    "category": "Catalyst",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "catalysis"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Vanadium Pentoxide",
+    "default_state": "solid",
+    "roles": [
+      "catalyst"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_zn",
+    "displayNameAr": "",
+    "displayNameEn": "Zinc",
+    "formula": "Zn",
+    "color": "#D3D4D5",
+    "state": "solid",
+    "category": "Element",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "redox",
+      "displacement"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Zinc",
+    "default_state": "solid",
+    "roles": [
+      "reactant"
+    ],
+    "used_in_reactions": [
+      "rxn_005"
+    ]
+  },
+  {
+    "id": "mat_zncl2",
+    "displayNameAr": "",
+    "displayNameEn": "Zinc Chloride",
+    "formula": "ZnCl2",
+    "color": "",
+    "state": "aqueous",
+    "category": "Salt",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "general"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Zinc Chloride",
+    "default_state": "aqueous",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_005"
+    ]
+  },
+  {
+    "id": "mat_zno",
+    "displayNameAr": "",
+    "displayNameEn": "Zinc Oxide",
+    "formula": "ZnO",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Oxide",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "neutralization"
+    ],
+    "requiresHeating": true,
+    "supportsCatalyst": true,
+    "name_ar": "",
+    "name_en": "Zinc Oxide",
+    "default_state": "solid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_alcl3",
+    "displayNameAr": "",
+    "displayNameEn": "Aluminum Chloride",
+    "formula": "AlCl3",
+    "color": "#EEEEDD",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "acid-base"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Aluminum Chloride",
+    "default_state": "solid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_nicl2",
+    "displayNameAr": "",
+    "displayNameEn": "Nickel(II) Chloride",
+    "formula": "NiCl2",
+    "color": "#66BB6A",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "acid-metal"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Nickel(II) Chloride",
+    "default_state": "solid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_pbcl2",
+    "displayNameAr": "",
+    "displayNameEn": "Lead(II) Chloride",
+    "formula": "PbCl2",
+    "color": "#FFFFFF",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "high",
+    "reactionTags": [
+      "precipitation"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Lead(II) Chloride",
+    "default_state": "solid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_cuno32",
+    "displayNameAr": "",
+    "displayNameEn": "Copper(II) Nitrate",
+    "formula": "Cu(NO3)2",
+    "color": "#2196F3",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "acid-metal"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Copper(II) Nitrate",
+    "default_state": "solid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_feno33",
+    "displayNameAr": "",
+    "displayNameEn": "Iron(III) Nitrate",
+    "formula": "Fe(NO3)3",
+    "color": "#795548",
+    "state": "solid",
+    "category": "Salt",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "acid-metal"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Iron(III) Nitrate",
+    "default_state": "solid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_fe3o4",
+    "displayNameAr": "",
+    "displayNameEn": "Iron(II,III) Oxide (Magnetite)",
+    "formula": "Fe3O4",
+    "color": "#212121",
+    "state": "solid",
+    "category": "Oxide",
+    "hazardLevel": "low",
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Magnetite",
+    "default_state": "solid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_hclo",
+    "displayNameAr": "",
+    "displayNameEn": "Hypochlorous Acid",
+    "formula": "HClO",
+    "color": "#E0F7FA",
+    "state": "liquid",
+    "category": "Acid",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "disinfection"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Hypochlorous Acid",
+    "default_state": "liquid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_naclo",
+    "displayNameAr": "",
+    "displayNameEn": "Sodium Hypochlorite (Bleach)",
+    "formula": "NaClO",
+    "color": "#FFF9C4",
+    "state": "liquid",
+    "category": "Salt",
+    "hazardLevel": "medium",
+    "reactionTags": [
+      "disinfection"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "name_ar": "",
+    "name_en": "Sodium Hypochlorite",
+    "default_state": "liquid",
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": []
+  },
+  {
+    "id": "mat_123",
+    "formula": "FeCl2",
+    "displayNameAr": "كلوريد الحديد الثنائي",
+    "displayNameEn": "Iron(II) Chloride",
+    "name_ar": "كلوريد الحديد الثنائي",
+    "name_en": "Iron(II) Chloride",
+    "color": "#507850",
+    "state": "aq",
+    "default_state": "aq",
+    "category": "Salt",
+    "hazardLevel": 2,
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_062",
+      "rxn_073"
+    ]
+  },
+  {
+    "id": "mat_124",
+    "formula": "ZnSO4",
+    "displayNameAr": "كبريتات الزنك",
+    "displayNameEn": "Zinc Sulfate",
+    "name_ar": "كبريتات الزنك",
+    "name_en": "Zinc Sulfate",
+    "color": "#FFFFFF",
+    "state": "aq",
+    "default_state": "aq",
+    "category": "Salt",
+    "hazardLevel": 1,
+    "reactionTags": [
+      "redox"
+    ],
+    "requiresHeating": false,
+    "supportsCatalyst": false,
+    "roles": [
+      "product"
+    ],
+    "used_in_reactions": [
+      "rxn_030"
+    ]
+  }
+]

@@ -12,12 +12,18 @@ public static class KeyMaterial
     private static string S3() => "a_7!";
     private static string Secret() => S1() + S2() + S3();
 
+    // Use constant identity strings to ensure key consistency across Editor, batch mode, and runtime builds.
+    // Application.identifier/companyName/productName can return different values in different contexts.
+    private const string AppId = "com.chemlabsim.app";
+    private const string Company = "ChemLabSim";
+    private const string Product = "ChemLabSim";
+
     public static byte[] DeriveKey32()
     {
         string ikmStr =
-            Application.identifier + "|" +
-            Application.companyName + "|" +
-            Application.productName + "|" +
+            AppId + "|" +
+            Company + "|" +
+            Product + "|" +
             Secret();
 
         byte[] ikm = CryptoUtil.Sha256Bytes(ikmStr);
@@ -28,6 +34,6 @@ public static class KeyMaterial
 
     public static byte[] Aad()
     {
-        return CryptoUtil.Sha256Bytes(Application.identifier + "|reactions-db-v1");
+        return CryptoUtil.Sha256Bytes(AppId + "|reactions-db-v1");
     }
 }

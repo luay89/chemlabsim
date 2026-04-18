@@ -65,94 +65,10 @@ Properties {
 	//_MaskSoftness		("Mask Softness", float) = 0
 }
 
-SubShader {
+// Surface shader disabled: incompatible with URP + OpenGL/GLSL on Linux.
+// Falls back to the standard Distance Field shader which works correctly.
 
-	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
-
-	LOD 300
-	Cull [_CullMode]
-
-	CGPROGRAM
-	#pragma surface PixShader BlinnPhong alpha:blend vertex:VertShader nolightmap nodirlightmap
-	#pragma target 3.0
-	#pragma shader_feature __ GLOW_ON
-	#pragma glsl
-
-	#include "TMPro_Properties.cginc"
-	#include "TMPro.cginc"
-
-	half _FaceShininess;
-	half _OutlineShininess;
-
-	struct Input
-	{
-		fixed4	color			: COLOR;
-		float2	uv_MainTex;
-		float2	uv2_FaceTex;
-		float2  uv2_OutlineTex;
-		float2	param;						// Weight, Scale
-		float3	viewDirEnv;
-	};
-
-
-	#define BEVEL_ON 1
-	#include "TMPro_Surface.cginc"
-
-	ENDCG
-
-	// Pass to render object as a shadow caster
-	Pass
-	{
-		Name "Caster"
-		Tags { "LightMode" = "ShadowCaster" }
-		Offset 1, 1
-
-		Fog {Mode Off}
-		ZWrite On
-		ZTest LEqual
-		Cull Off
-
-		CGPROGRAM
-		#pragma vertex vert
-		#pragma fragment frag
-		#pragma multi_compile_shadowcaster
-		#include "UnityCG.cginc"
-
-		struct v2f {
-			V2F_SHADOW_CASTER;
-			float2	uv			: TEXCOORD1;
-			float2	uv2			: TEXCOORD3;
-			float	alphaClip	: TEXCOORD2;
-		};
-
-		uniform float4 _MainTex_ST;
-		uniform float4 _OutlineTex_ST;
-		float _OutlineWidth;
-		float _FaceDilate;
-		float _ScaleRatioA;
-
-		v2f vert( appdata_base v )
-		{
-			v2f o;
-			TRANSFER_SHADOW_CASTER(o)
-			o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
-			o.uv2 = TRANSFORM_TEX(v.texcoord, _OutlineTex);
-			o.alphaClip = (1.0 - _OutlineWidth * _ScaleRatioA - _FaceDilate * _ScaleRatioA) / 2;
-			return o;
-		}
-
-		uniform sampler2D _MainTex;
-
-		float4 frag(v2f i) : COLOR
-		{
-			fixed4 texcol = tex2D(_MainTex, i.uv).a;
-			clip(texcol.a - i.alphaClip);
-			SHADOW_CASTER_FRAGMENT(i)
-		}
-		ENDCG
-	}
-}
-
+Fallback "TextMeshPro/Mobile/Distance Field"
 CustomEditor "TMPro.EditorUtilities.TMP_SDFShaderGUI"
 }
 
