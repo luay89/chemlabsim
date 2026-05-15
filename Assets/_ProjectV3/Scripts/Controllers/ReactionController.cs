@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using ChemLabSimV3.Data;
+using ChemLabSimV3.Engine.Chemistry;
 using ChemLabSimV3.Events;
 
 namespace ChemLabSimV3.Controllers
@@ -17,6 +18,38 @@ namespace ChemLabSimV3.Controllers
     public class ReactionController : V3ControllerBase
     {
         private ReactionDB db;
+
+        /// <summary>
+        /// The currently running <see cref="SimulationStepper"/>, if any.
+        /// Consumed by <c>HeatingController</c> / <c>StirringController</c> to route
+        /// per-frame inputs (heat, grinding factor) into the active simulation.
+        /// Returns <c>null</c> when no simulation is currently running.
+        /// </summary>
+        public SimulationStepper ActiveStepper
+        {
+            get
+            {
+                if (_activeStepper != null && _activeStepper.IsRunning)
+                    return _activeStepper;
+
+                _activeStepper = FindRunningStepper();
+                return _activeStepper;
+            }
+        }
+
+        private SimulationStepper _activeStepper;
+
+        private static SimulationStepper FindRunningStepper()
+        {
+#if UNITY_2023_1_OR_NEWER
+            var all = Object.FindObjectsByType<SimulationStepper>(FindObjectsSortMode.None);
+#else
+            var all = Object.FindObjectsOfType<SimulationStepper>();
+#endif
+            for (int i = 0; i < all.Length; i++)
+                if (all[i] != null && all[i].IsRunning) return all[i];
+            return null;
+        }
 
         protected override void OnInitialize()
         {

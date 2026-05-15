@@ -114,6 +114,31 @@ public class ReactionEntry
     {
         return producesGas || (visual_effects != null && visual_effects.gas);
     }
+
+    // ------------------------------------------------------------
+    // Next-gen chemistry fields (consumed by ChemLabSimV3.Engine)
+    // Added to the canonical ReactionEntry so v2 (legacy) and v3
+    // (next-gen) engines share a single data model. v2 ignores them.
+    // ------------------------------------------------------------
+    public float enthalpyKJPerMol;
+    public float activationEnergyKJ;
+    public float equilibriumConstant;
+    public bool  isReversible;
+    public float defaultPressureAtm = 1f;
+
+    // Solubility (used by PhaseInteractionModel)
+    public float ksp;
+    public float solubilityLimitMolPerL;
+
+    // Per-reactant rate orders. Empty => stoichiometric coefficients are used.
+    public List<float> reactantOrders = new List<float>();
+
+    // Compatibility alias kept for older code paths.
+    public List<int> reactantOrder = new List<int>();
+
+    // Optional pathway chaining (used by ReactionPathway/PathwayTracker)
+    public string nextReactionId;
+    public float  chainThreshold = 1f;
 }
 
 [Serializable]
@@ -122,6 +147,21 @@ public class ReactionChemical
     public string formula;
     public string state;
     public float stoich = 1f;
+
+    // ------------------------------------------------------------
+    // Next-gen physical properties (consumed by ChemLabSimV3.Engine).
+    // Defaults are 0f / NaN so the project compiles immediately even
+    // when reaction data files don't populate these values yet.
+    // ------------------------------------------------------------
+    public float molarMass = 0f;                  // ConservationValidator mass balance
+    public float charge = 0f;                     // ConservationValidator charge balance
+    public float meltingPointC = float.NaN;       // SimulationStepper / PhaseInteractionModel
+    public float boilingPointC = float.NaN;       // SimulationStepper / PhaseInteractionModel
+    public float latentFusionKJPerMol = 0f;       // SimulationStepper
+    public float latentVaporizationKJPerMol = 0f; // SimulationStepper
+    public float molarVolumeLPerMol = 0f;         // SimulationStepper
+    public float solubilityMolPerL = 0f;          // SimulationStepper.ResolveSolubilityMolPerL
+    public float solubilityGPer100mL = 0f;        // SimulationStepper.ResolveSolubilityMolPerL
 }
 
 [Serializable]

@@ -1,0 +1,109 @@
+{
+  "questions": [
+    {
+      "id": "q_001",
+      "reaction_id": "rxn_001",
+      "difficulty": 1,
+      "question_en": "What are the products of HCl reacting with NaOH?",
+      "question_ar": "ما نواتج تفاعل HCl مع NaOH؟",
+      "answers": [
+        { "text_en": "NaCl + H\u2082O", "text_ar": "NaCl + H\u2082O", "is_correct": true },
+        { "text_en": "Na\u2082O + HCl", "text_ar": "Na\u2082O + HCl", "is_correct": false },
+        { "text_en": "NaH + ClOH", "text_ar": "NaH + ClOH", "is_correct": false },
+        { "text_en": "H\u2082 + NaCl\u2082", "text_ar": "H\u2082 + NaCl\u2082", "is_correct": false }
+      ],
+      "explanation_en": "Acid-base neutralization between HCl and NaOH produces table salt (NaCl) and water.",
+      "explanation_ar": "تفاعل التعادل بين HCl و NaOH ينتج ملح الطعام (NaCl) والماء."
+    },
+    {
+      "id": "q_002",
+      "reaction_id": "rxn_002",
+      "difficulty": 1,
+      "question_en": "What type of reaction occurs between an acid and a base?",
+      "question_ar": "ما نوع التفاعل الذي يحدث بين حمض وقاعدة؟",
+      "answers": [
+        { "text_en": "Neutralization", "text_ar": "التعادل", "is_correct": true },
+        { "text_en": "Combustion", "text_ar": "الاحتراق", "is_correct": false },
+        { "text_en": "Decomposition", "text_ar": "التحلل", "is_correct": false },
+        { "text_en": "Synthesis", "text_ar": "التخليق", "is_correct": false }
+      ],
+      "explanation_en": "Acid-base reactions are classified as neutralization reactions because the acid and base cancel each other out.",
+      "explanation_ar": "تُصنَّف تفاعلات الحمض والقاعدة كتفاعلات تعادل لأن كلاً منهما يُعادل الآخر."
+    },
+    {
+      "id": "q_003",
+      "reaction_id": "rxn_003",
+      "difficulty": 2,
+      "question_en": "How does medium pH affect reaction rate?",
+      "question_ar": "كيف يؤثر pH الوسط على معدل التفاعل؟",
+      "answers": [
+        { "text_en": "Some reactions require a specific pH range to proceed", "text_ar": "بعض التفاعلات تحتاج مدى pH محدداً للحدوث", "is_correct": true },
+        { "text_en": "Higher pH always increases reaction rate", "text_ar": "pH أعلى يزيد دائماً معدل التفاعل", "is_correct": false },
+        { "text_en": "pH has no effect on reactions", "text_ar": "لا يؤثر pH على التفاعلات", "is_correct": false },
+        { "text_en": "Lower pH always increases reaction rate", "text_ar": "pH أقل يزيد دائماً معدل التفاعل", "is_correct": false }
+      ],
+      "explanation_en": "Reactions often have an optimal pH range. Outside that range the reaction may slow significantly or not occur at all.",
+      "explanation_ar": "للتفاعلات غالباً مدى pH أمثل، وخارج هذا المدى قد يتباطأ التفاعل أو لا يحدث أصلاً."
+    },
+    {
+      "id": "q_004",
+      "reaction_id": "rxn_004",
+      "difficulty": 2,
+      "question_en": "What is the effect of increasing temperature on most chemical reactions?",
+      "question_ar": "ما تأثير رفع درجة الحرارة على معظم التفاعلات الكيميائية؟",
+      "answers": [
+        { "text_en": "Increases the reaction rate", "text_ar": "يزيد معدل التفاعل", "is_correct": true },
+        { "text_en": "Decreases the reaction rate", "text_ar": "يقلل معدل التفاعل", "is_correct": false },
+        { "text_en": "Has no effect", "text_ar": "لا يؤثر على التفاعل", "is_correct": false },
+        { "text_en": "Stops the reaction", "text_ar": "يوقف التفاعل", "is_correct": false }
+      ],
+      "explanation_en": "Higher temperature gives molecules more kinetic energy, increasing collision frequency and reaction rate (Arrhenius equation).",
+      "explanation_ar": "ارتفاع درجة الحرارة يمنح الجزيئات طاقة حركية أكبر، مما يزيد تكرار التصادمات ومعدل التفاعل (معادلة أرينيوس)."
+    },
+    {
+      "id": "q_005",
+      "reaction_id": "rxn_005",
+      "difficulty": 3,
+      "question_en": "What is the role of a catalyst in a chemical reaction?",
+      "question_ar": "ما دور المحفز في التفاعل الكيميائي؟",
+      "answers": [
+        { "text_en": "Lowers the activation energy without being consumed", "text_ar": "يخفض طاقة التنشيط دون أن يُستهلك", "is_correct": true },
+        { "text_en": "Increases the activation energy", "text_ar": "يرفع طاقة التنشيط", "is_correct": false },
+        { "text_en": "Is consumed during the reaction", "text_ar": "يُستهلك أثناء التفاعل", "is_correct": false },
+        { "text_en": "Changes the products of the reaction", "text_ar": "يغيّر نواتج التفاعل", "is_correct": false }
+      ],
+      "explanation_en": "A catalyst provides an alternative reaction pathway with lower activation energy, speeding up the reaction without being consumed.",
+      "explanation_ar": "يوفر المحفز مساراً بديلاً للتفاعل بطاقة تنشيط أقل، فيُسرّع التفاعل دون أن يُستهلك."
+    },
+    {
+      "id": "q_006",
+      "reaction_id": "rxn_006",
+      "difficulty": 3,
+      "question_en": "What does 'surface area' affect in a heterogeneous reaction?",
+      "question_ar": "ما الذي تؤثر عليه 'مساحة السطح' في التفاعل غير المتجانس؟",
+      "answers": [
+        { "text_en": "Contact between reactants, increasing reaction rate", "text_ar": "التلامس بين المتفاعلات مما يزيد معدل التفاعل", "is_correct": true },
+        { "text_en": "The equilibrium constant", "text_ar": "ثابت الاتزان", "is_correct": false },
+        { "text_en": "The enthalpy of the reaction", "text_ar": "محتوى الحرارة للتفاعل", "is_correct": false },
+        { "text_en": "The type of products formed", "text_ar": "نوع النواتج المتكونة", "is_correct": false }
+      ],
+      "explanation_en": "Greater surface area means more reactant molecules can collide simultaneously, increasing the rate of a heterogeneous reaction.",
+      "explanation_ar": "تعني مساحة السطح الأكبر أن المزيد من جزيئات المتفاعلات يمكنها التصادم في وقت واحد، مما يزيد معدل التفاعل غير المتجانس."
+    },
+    {
+      "id": "q_007",
+      "reaction_id": "rxn_007",
+      "difficulty": 3,
+      "question_en": "Which principle describes how a system at equilibrium responds to changes in conditions?",
+      "question_ar": "أي مبدأ يصف كيف يستجيب النظام المتزن لتغيرات الظروف؟",
+      "answers": [
+        { "text_en": "Le Chatelier's principle", "text_ar": "مبدأ لوشاتيليه", "is_correct": true },
+        { "text_en": "Avogadro's law", "text_ar": "قانون أفوجادرو", "is_correct": false },
+        { "text_en": "Hess's law", "text_ar": "قانون هيس", "is_correct": false },
+        { "text_en": "Boyle's law", "text_ar": "قانون بويل", "is_correct": false }
+      ],
+      "explanation_en": "Le Chatelier's principle states that if a system at equilibrium is disturbed, it will shift to counteract the disturbance and re-establish equilibrium.",
+      "explanation_ar": "ينص مبدأ لوشاتيليه على أنه إذا اضطرب نظام متزن، فإنه سينحرف لمقاومة هذا الاضطراب وإعادة الاتزان."
+    }
+  ]
+}

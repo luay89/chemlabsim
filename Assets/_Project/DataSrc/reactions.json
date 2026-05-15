@@ -6584,5 +6584,59 @@
     "requiresHeating": false,
     "requiresCatalyst": false,
     "safety_notes": "Corrosive — wear gloves and eye protection. Irritant — avoid skin and eye contact. Extreme cold — risk of frostbite on container. Gas evolved — ensure adequate ventilation. Fume hood required."
+  },
+  {
+    "id": "rxn_106",
+    "name_ar": "",
+    "name_en": "Concentrated Nitric Acid + Copper (Stress Test)",
+    "reactionType": "Redox",
+    "reactants": [
+      { "formula": "HNO3", "state": "l", "stoich": 4, "molarMass": 63.01, "boilingPointC": 83 },
+      { "formula": "Cu",   "state": "s", "stoich": 1, "molarMass": 63.55, "meltingPointC": 1085 }
+    ],
+    "products": [
+      { "formula": "Cu(NO3)2", "state": "aq", "stoich": 1, "molarMass": 187.56, "solubilityMolPerL": 6.5 },
+      { "formula": "NO2",      "state": "g",  "stoich": 2, "molarMass": 46.01,  "boilingPointC": 21 },
+      { "formula": "H2O",      "state": "l",  "stoich": 2, "molarMass": 18.02,  "boilingPointC": 100, "latentVaporizationKJPerMol": 40.65 }
+    ],
+    "producesGas": true,
+    "activationTempC": 25,
+    "requiredMedium": "Acidic",
+    "catalystAllowed": false,
+    "catalystDeltaTempC": 0,
+    "visual_effects": {
+      "color_change": "#1565C0",
+      "precipitate": false,
+      "gas": true,
+      "temperature_delta": 60,
+      "sound_id": "fizz",
+      "smoke": true,
+      "glow": false
+    },
+    "safety": {
+      "ghs_icons": ["GHS05", "GHS06", "GHS03"],
+      "warnings_ar": [],
+      "warnings_en": [
+        "Highly corrosive — concentrated nitric acid causes severe burns.",
+        "Releases toxic NO2 (reddish-brown) gas — fume hood mandatory.",
+        "Strongly exothermic — temperature can spike beyond 80 °C.",
+        "Wear gloves, goggles, and a lab coat at all times."
+      ]
+    },
+    "validation": {
+      "require_acid_into_water_rule": false,
+      "min_moles_threshold": 0.001
+    },
+    "observation_en": "Copper metal vigorously dissolves into the concentrated nitric acid. The solution rapidly turns deep cyan/blue from Cu²⁺ ions, while a thick reddish-brown cloud of NO2 gas rises from the surface. The vessel becomes hot to the touch within seconds.",
+    "explanation_en": "Concentrated HNO3 oxidizes copper to Cu²⁺ while nitrogen is reduced from +5 (in NO3⁻) to +4 (in NO2). The full balanced equation is Cu + 4 HNO3 → Cu(NO3)2 + 2 NO2 + 2 H2O. The blue color is from the hexaaquacopper(II) complex; the reddish-brown gas is nitrogen dioxide. The reaction is strongly exothermic (~ΔH = −300 kJ/mol Cu).",
+    "condition_notes": "Use concentrated (≥ 8 M) HNO3 at room temperature. Reaction is self-accelerating because of the heat released. Stir gently. Always perform inside a fume hood.",
+    "requiresHeating": false,
+    "requiresCatalyst": false,
+    "safety_notes": "Highly corrosive and toxic gas. Fume hood required. Strongly exothermic — never scale up beyond a few mL.",
+    "enthalpyKJPerMol": -300,
+    "activationEnergyKJ": 35,
+    "equilibriumConstant": 0,
+    "isReversible": false,
+    "defaultPressureAtm": 1
   }
 ]

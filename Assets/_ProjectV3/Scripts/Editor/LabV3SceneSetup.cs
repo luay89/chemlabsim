@@ -188,7 +188,7 @@ namespace ChemLabSimV3.Editor
             // 9) Save scene
             string scenePath = "Assets/_ProjectV3/Scenes/LabV3.unity";
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(
-                System.IO.Path.Combine(Application.dataPath, "../", scenePath)));
+                System.IO.Path.Combine(UnityEngine.Application.dataPath, "../", scenePath)));
             EditorSceneManager.SaveScene(scene, scenePath);
 
             Debug.Log($"[LabV3SceneSetup] Scene created and saved: {scenePath}");

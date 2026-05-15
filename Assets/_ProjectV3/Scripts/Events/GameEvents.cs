@@ -167,6 +167,115 @@ namespace ChemLabSimV3.Events
         public Data.FxState State;
     }
 
+    /// <summary>Fired by ChemFXController / SimulationBridge with a rich
+    /// snapshot of chemistry visuals (continuous + discrete) for view components.</summary>
+    public struct ChemFxTriggeredEvent : IGameEvent
+    {
+        public Data.ChemFxState State;
+    }
+
+    // ----------------------------------------------
+    //  Chemistry / Simulation Events
+    // ----------------------------------------------
+
+    /// <summary>Fired after the ChemistryEngine processes a one-shot mix request,
+    /// carrying the full <see cref="Engine.Chemistry.ChemistryOutput"/> snapshot.</summary>
+    public struct ChemistryProcessedEvent : IGameEvent
+    {
+        public Engine.Chemistry.ChemistryOutput Output;
+
+        public ChemistryProcessedEvent(Engine.Chemistry.ChemistryOutput output)
+        {
+            Output = output;
+        }
+    }
+
+    /// <summary>Fired by SimulationStepper when a live reaction simulation begins.</summary>
+    public struct SimulationStartedEvent : IGameEvent
+    {
+        public Engine.Chemistry.ReactionState State;
+    }
+
+    /// <summary>Fired by SimulationStepper every simulation tick with the
+    /// current evolving <see cref="Engine.Chemistry.ReactionState"/>.</summary>
+    public struct SimulationTickEvent : IGameEvent
+    {
+        public Engine.Chemistry.ReactionState State;
+    }
+
+    /// <summary>Fired by SimulationStepper when a live reaction simulation ends.</summary>
+    public struct SimulationCompletedEvent : IGameEvent
+    {
+        public Engine.Chemistry.ReactionState State;
+        public Engine.Chemistry.StopReason Reason;
+    }
+
+    /// <summary>Fired by StirringController whenever stir intensity meaningfully changes.</summary>
+    public struct StirringChangedEvent : IGameEvent
+    {
+        public float Intensity;
+        public bool  IsActive;
+        public float RateMultiplier;
+        public float DissolutionMultiplier;
+    }
+
+    // ----------------------------------------------
+    //  Heating Events
+    // ----------------------------------------------
+
+    /// <summary>Fired by HeatingController when a burner session begins.</summary>
+    public struct HeatingStartedEvent : IGameEvent
+    {
+        public float PowerWatts;
+    }
+
+    /// <summary>Fired by HeatingController every frame while a burner is active.</summary>
+    public struct HeatingTickEvent : IGameEvent
+    {
+        public float PowerWatts;
+        public float DeltaTempC;
+        public float CurrentTempC;
+        public float TotalEnergyKJ;
+        public bool  IsBoiling;
+    }
+
+    /// <summary>Fired by HeatingController when a burner session ends.</summary>
+    public struct HeatingStoppedEvent : IGameEvent
+    {
+        public float TotalEnergyKJ;
+        public float FinalTempC;
+    }
+
+    // ----------------------------------------------
+    //  Liquid Transfer Events
+    // ----------------------------------------------
+
+    /// <summary>Fired by LiquidTransferController when a pour session begins.</summary>
+    public struct LiquidTransferStartedEvent : IGameEvent
+    {
+        public string SourceContainerId;
+        public string TargetContainerId;
+        public float  FlowRateLPerSec;
+    }
+
+    /// <summary>Fired by LiquidTransferController every frame while pouring.</summary>
+    public struct LiquidTransferTickEvent : IGameEvent
+    {
+        public string SourceContainerId;
+        public string TargetContainerId;
+        public float  DeltaVolumeLiters;
+        public float  TotalTransferredLiters;
+    }
+
+    /// <summary>Fired by LiquidTransferController when a pour session ends.</summary>
+    public struct LiquidTransferStoppedEvent : IGameEvent
+    {
+        public string SourceContainerId;
+        public string TargetContainerId;
+        public float  TotalTransferredLiters;
+        public bool   SourceExhausted;
+    }
+
     // ----------------------------------------------
     //  Notebook Events
     // ----------------------------------------------

@@ -1,0 +1,48 @@
+{
+  "challenges": [
+    {
+      "id": "ch_001",
+      "level": 1,
+      "title_en": "Complete a successful reaction without catalyst",
+      "title_ar": "أكمل تفاعلاً ناجحاً بدون محفز",
+      "reward_points": 10,
+      "condition": {
+        "type": "success_no_catalyst",
+        "value": 1
+      }
+    },
+    {
+      "id": "ch_002",
+      "level": 2,
+      "title_en": "Use the correct medium in one attempt",
+      "title_ar": "استخدم الوسط الصحيح من أول محاولة",
+      "reward_points": 10,
+      "condition": {
+        "type": "medium_match_first_try",
+        "value": 1
+      }
+    },
+    {
+      "id": "ch_003",
+      "level": 3,
+      "title_en": "Reach a strong contact factor (>=1.2)",
+      "title_ar": "حقق عامل تلامس قوي (>=1.2)",
+      "reward_points": 10,
+      "condition": {
+        "type": "contact_factor_gte",
+        "value": 1.2
+      }
+    },
+    {
+      "id": "ch_004",
+      "level": 4,
+      "title_en": "Complete two successful reactions in a row",
+      "title_ar": "أكمل تفاعلين ناجحين متتاليين",
+      "reward_points": 10,
+      "condition": {
+        "type": "streak_gte",
+        "value": 2
+      }
+    }
+  ]
+}
