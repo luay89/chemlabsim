@@ -14,6 +14,13 @@ namespace ChemLabSimV3.Data
         public float Stirring;
         public float Grinding;
         public bool HasCatalyst;
+        public float PressureAtm;
+        public bool IsClosedContainer;
+        public float HeadspaceVolumeLiters;
+        public float SurfaceAreaM2;
+        public float HeatTransferCoefficient;
+        public float GasEscapeRatePerSec;
+        public float MaxPressureAtm;
 
         public MixRequest(
             List<string> reagentNames,
@@ -29,6 +36,13 @@ namespace ChemLabSimV3.Data
             Stirring = stirring;
             Grinding = grinding;
             HasCatalyst = hasCatalyst;
+            PressureAtm = 1f;
+            IsClosedContainer = false;
+            HeadspaceVolumeLiters = 1f;
+            SurfaceAreaM2 = 0.02f;
+            HeatTransferCoefficient = 0.05f;
+            GasEscapeRatePerSec = 0.5f;
+            MaxPressureAtm = 4f;
         }
     }
 }

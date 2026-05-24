@@ -5,6 +5,7 @@
 //
 // Migration source: LabController.PlayReactionFx() decision logic only.
 
+using System;
 using UnityEngine;
 using ChemLabSimV3.Data;
 using ChemLabSimV3.Events;
@@ -34,7 +35,27 @@ namespace ChemLabSimV3.Controllers
 
         private void OnReactionEvaluated(ReactionEvaluatedEvent evt)
         {
-            PublishState(BuildFxState(evt.Result, evt.Input));
+            // Defensive guard: a "valid" evaluation with a null reaction reference
+            // would otherwise mask real data-corruption bugs (e.g. mis-decrypted
+            // reactions.bytes). Warn loudly but fall through to a safe fail state
+            // instead of crashing the FX pipeline.
+            if (evt.Result.IsValid && evt.Input.reaction == null)
+            {
+                Debug.LogWarning("[FXController] ReactionEvaluatedEvent marked valid but Input.reaction is null. " +
+                                 "Check reactions.bytes integrity (Tools/Security/Encrypt Reactions JSON -> bytes).");
+                PublishState(new FxState { StopAll = true, PlayFail = true });
+                return;
+            }
+
+            try
+            {
+                PublishState(BuildFxState(evt.Result, evt.Input));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[FXController] BuildFxState threw: {ex.Message}\n{ex.StackTrace}");
+                PublishState(new FxState { StopAll = true, PlayFail = true });
+            }
         }
 
         private void OnReactionNotFound(ReactionNotFoundEvent evt)
@@ -88,11 +109,19 @@ namespace ChemLabSimV3.Controllers
             if (vfx != null && vfx.precipitate)
                 state.PlayPrecipitate = true;
 
-            // Color change
+            // Color change — pre-validate hex so view layer never receives garbage.
             if (vfx != null && !string.IsNullOrEmpty(vfx.color_change))
             {
-                state.PlayColorChange = true;
-                state.ColorChangeHex = vfx.color_change;
+                if (ColorUtility.TryParseHtmlString(vfx.color_change, out _))
+                {
+                    state.PlayColorChange = true;
+                    state.ColorChangeHex = vfx.color_change;
+                }
+                else
+                {
+                    Debug.LogWarning($"[FXController] Invalid color_change hex '{vfx.color_change}' " +
+                                     $"on reaction '{input.reaction?.id ?? "<unknown>"}' — skipping color FX.");
+                }
             }
 
             // Extended VFX (glow, sparks, smoke, foam, frost)

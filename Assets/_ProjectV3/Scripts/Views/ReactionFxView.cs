@@ -309,7 +309,22 @@ namespace ChemLabSimV3.Views
 
             Material mat = GetOrCreateParticleMaterial();
             if (mat != null)
+            {
                 renderer.sharedMaterial = mat;
+                if (renderer.sharedMaterial == null)
+                {
+                    Debug.LogWarning(
+                        $"[ReactionFxView] Particle '{fxName}' failed to bind shared material " +
+                        "after assignment. Renderer will fall back to Unity's default material.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning(
+                    $"[ReactionFxView] Particle '{fxName}' has no runtime material (shader unavailable). " +
+                    "This particle will render with Unity's default material (often magenta in builds). " +
+                    "Verify URP Particles/Unlit shader is included in 'Always Included Shaders'.");
+            }
 
             ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             return ps;
@@ -327,11 +342,24 @@ namespace ChemLabSimV3.Views
 
             if (shader == null)
             {
-                Debug.LogWarning("[ReactionFxView] No compatible particle shader found.");
+                Debug.LogWarning(
+                    "[ReactionFxView] No compatible particle shader found " +
+                    "(tried: URP Particles/Unlit, Particles/Standard Unlit, Sprites/Default, Unlit/Transparent). " +
+                    "All particle effects will render with the engine default material.");
                 return null;
             }
 
             particleMaterial = new Material(shader) { name = "_V3_ParticleFxMaterial" };
+
+            if (particleMaterial == null || particleMaterial.shader == null)
+            {
+                Debug.LogWarning(
+                    $"[ReactionFxView] Failed to instantiate particle material from shader '{shader.name}'. " +
+                    "All particle effects will render with the engine default material.");
+                particleMaterial = null;
+                return null;
+            }
+
             particleMaterial.enableInstancing = true;
 
             if (particleMaterial.HasProperty("_BaseMap"))

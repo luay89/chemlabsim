@@ -1,0 +1,76 @@
+{
+  "achievements": [
+    {
+      "id": "ach_first_reaction",
+      "name_en": "First Successful Reaction",
+      "name_ar": "أول تفاعل ناجح",
+      "desc_en": "Complete your first successful reaction.",
+      "desc_ar": "أكمل أول تفاعل ناجح.",
+      "icon_id": "icon_flask",
+      "condition": {
+        "type": "success_count",
+        "value": 1
+      }
+    },
+    {
+      "id": "ach_level_2",
+      "name_en": "Reach Level 2",
+      "name_ar": "الوصول للمستوى 2",
+      "desc_en": "Progress to Level 2.",
+      "desc_ar": "تقدم إلى المستوى 2.",
+      "icon_id": "icon_star",
+      "condition": {
+        "type": "level_reached",
+        "value": 2
+      }
+    },
+    {
+      "id": "ach_5_experiments",
+      "name_en": "Complete 5 Experiments",
+      "name_ar": "أكمل 5 تجارب",
+      "desc_en": "Perform 5 experiments in a session.",
+      "desc_ar": "نفّذ 5 تجارب في جلسة واحدة.",
+      "icon_id": "icon_beaker",
+      "condition": {
+        "type": "experiment_count",
+        "value": 5
+      }
+    },
+    {
+      "id": "ach_score_100",
+      "name_en": "Score 100",
+      "name_ar": "احصل على 100 نقطة",
+      "desc_en": "Reach a session score of 100.",
+      "desc_ar": "حقق 100 نقطة في جلسة واحدة.",
+      "icon_id": "icon_trophy",
+      "condition": {
+        "type": "score_reached",
+        "value": 100
+      }
+    },
+    {
+      "id": "ach_catalyst_master",
+      "name_en": "Catalyst Master",
+      "name_ar": "محترف المحفز",
+      "desc_en": "Successfully use a catalyst in a reaction.",
+      "desc_ar": "استخدم محفزاً بنجاح في تفاعل.",
+      "icon_id": "icon_catalyst",
+      "condition": {
+        "type": "catalyst_success",
+        "value": 1
+      }
+    },
+    {
+      "id": "ach_first_challenge",
+      "name_en": "Challenge Accepted",
+      "name_ar": "قبلت التحدي",
+      "desc_en": "Complete your first challenge.",
+      "desc_ar": "أكمل أول تحدٍّ لك.",
+      "icon_id": "icon_medal",
+      "condition": {
+        "type": "challenge_count",
+        "value": 1
+      }
+    }
+  ]
+}

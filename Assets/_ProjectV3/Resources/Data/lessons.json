@@ -1,0 +1,72 @@
+{
+  "lessons": [
+    {
+      "id": "lesson_001",
+      "level": 1,
+      "title_en": "Basic Reactions",
+      "title_ar": "التفاعلات الأساسية",
+      "description_en": "Learn about simple acid-base and displacement reactions.",
+      "description_ar": "تعرف على تفاعلات الحموض والقواعد والإزاحة البسيطة.",
+      "objective": {
+        "title_en": "Perform one valid successful reaction.",
+        "title_ar": "نفّذ تفاعلاً واحداً صحيحاً وناجحاً.",
+        "condition": {
+          "type": "success_in_level",
+          "value": 1
+        }
+      },
+      "reaction_ids": ["rxn_001", "rxn_002"]
+    },
+    {
+      "id": "lesson_002",
+      "level": 2,
+      "title_en": "Medium and Temperature",
+      "title_ar": "الوسط ودرجة الحرارة",
+      "description_en": "Explore how medium pH and temperature affect reactions.",
+      "description_ar": "اكتشف تأثير الوسط ودرجة الحرارة على التفاعلات.",
+      "objective": {
+        "title_en": "Complete a reaction using the correct medium.",
+        "title_ar": "أكمل تفاعلاً باستخدام الوسط الصحيح.",
+        "condition": {
+          "type": "medium_match_in_level",
+          "value": 1
+        }
+      },
+      "reaction_ids": ["rxn_003", "rxn_004"]
+    },
+    {
+      "id": "lesson_003",
+      "level": 3,
+      "title_en": "Catalyst and Contact",
+      "title_ar": "المحفز والتلامس",
+      "description_en": "Understand catalysts and surface contact factors.",
+      "description_ar": "افهم دور المحفز وعوامل التلامس السطحي.",
+      "objective": {
+        "title_en": "Complete a reaction with strong contact or proper catalyst use.",
+        "title_ar": "أكمل تفاعلاً بتلامس قوي أو استخدام محفز صحيح.",
+        "condition": {
+          "type": "contact_or_catalyst",
+          "value": 1
+        }
+      },
+      "reaction_ids": ["rxn_005"]
+    },
+    {
+      "id": "lesson_004",
+      "level": 4,
+      "title_en": "Advanced Reaction Conditions",
+      "title_ar": "ظروف التفاعل المتقدمة",
+      "description_en": "Master all reaction parameters for complex reactions.",
+      "description_ar": "أتقن جميع معاملات التفاعل للتفاعلات المعقدة.",
+      "objective": {
+        "title_en": "Complete an advanced successful reaction under correct conditions.",
+        "title_ar": "أكمل تفاعلاً متقدماً ناجحاً في الظروف الصحيحة.",
+        "condition": {
+          "type": "advanced_success",
+          "value": 1
+        }
+      },
+      "reaction_ids": ["rxn_006", "rxn_007"]
+    }
+  ]
+}

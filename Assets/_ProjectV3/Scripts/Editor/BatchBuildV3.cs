@@ -14,7 +14,7 @@ namespace ChemLabSimV3.Editor
         {
             // 1) Generate LabV3 scene if missing
             string scenePath = "Assets/_ProjectV3/Scenes/LabV3.unity";
-            string fullPath = System.IO.Path.Combine(Application.dataPath, "../", scenePath);
+            string fullPath = System.IO.Path.Combine(UnityEngine.Application.dataPath, "../", scenePath);
             if (!System.IO.File.Exists(fullPath))
             {
                 Debug.Log("[BatchBuild] Generating LabV3 scene...");
@@ -33,11 +33,11 @@ namespace ChemLabSimV3.Editor
             string bootScene = "Assets/Boot.unity";
             string labScene = "Assets/Lab Scene.unity";
             string menuScene = "Assets/_Project/Scenes/Menu.unity";
-            if (System.IO.File.Exists(System.IO.Path.Combine(Application.dataPath, "../", bootScene)))
+            if (System.IO.File.Exists(System.IO.Path.Combine(UnityEngine.Application.dataPath, "../", bootScene)))
                 scenes.Add(bootScene);
-            if (System.IO.File.Exists(System.IO.Path.Combine(Application.dataPath, "../", menuScene)))
+            if (System.IO.File.Exists(System.IO.Path.Combine(UnityEngine.Application.dataPath, "../", menuScene)))
                 scenes.Add(menuScene);
-            if (System.IO.File.Exists(System.IO.Path.Combine(Application.dataPath, "../", labScene)))
+            if (System.IO.File.Exists(System.IO.Path.Combine(UnityEngine.Application.dataPath, "../", labScene)))
                 scenes.Add(labScene);
 
             Debug.Log($"[BatchBuild] Building with {scenes.Count} scene(s): {string.Join(", ", scenes)}");
