@@ -8,7 +8,10 @@
 //     ├── VFX_Hub
 //     │    ├── BubbleSystem             ← LiquidVFXController + ParticleSystem
 //     │    ├── GasExitPoint             ← GasEvolutionController + ParticleSystem
-//     │    └── HeatVolume               ← VesselHeatDistortionController + Renderer
+//     │    ├── HeatVolume               ← VesselHeatDistortionController + Renderer
+//     │    └── Audio_Hub                ← VesselAudioController
+//     │         ├── BubbleAudio         ← AudioSource (looping, !playOnAwake)
+//     │         └── HissAudio           ← AudioSource (looping, !playOnAwake)
 //     └── InfoCanvas                    ← VesselInfoDisplay (world-space HUD)
 //          ├── ReactionNameText         ← TextMeshProUGUI
 //          ├── TemperatureText          ← TextMeshProUGUI
@@ -39,6 +42,9 @@ namespace ChemLabSimV3.Editor
         public const string BubbleName      = "BubbleSystem";
         public const string GasExitName     = "GasExitPoint";
         public const string HeatVolumeName  = "HeatVolume";
+        public const string AudioHubName    = "Audio_Hub";
+        public const string BubbleAudioName = "BubbleAudio";
+        public const string HissAudioName   = "HissAudio";
 
         // HUD subtree (mirrors VesselInfoDisplay constants).
         public const string InfoCanvasName  = "InfoCanvas";
@@ -144,8 +150,58 @@ namespace ChemLabSimV3.Editor
             }
             EnsureComponent<VesselHeatDistortionController>(heat.gameObject);
 
+            // 3d) Audio_Hub — VesselAudioController + two looping AudioSources
+            BuildAudioHub(vfxHub);
+
             // 4) InfoCanvas — VesselInfoDisplay world-space HUD
             BuildInfoHud(root.transform);
+        }
+
+        // ── Audio scaffolding ─────────────────────────────────
+        private static void BuildAudioHub(Transform vfxHub)
+        {
+            var audioHub = GetOrCreateChild(vfxHub, AudioHubName);
+
+            // Two child carriers for the AudioSources. Splitting them out
+            // keeps mixer routing per-clip and lets designers reposition
+            // the bubble vs. hiss emission origin independently if desired.
+            var bubbleAudio = GetOrCreateChild(audioHub, BubbleAudioName);
+            var hissAudio   = GetOrCreateChild(audioHub, HissAudioName);
+
+            var bubbleSrc = EnsureAudioSource(bubbleAudio.gameObject);
+            var hissSrc   = EnsureAudioSource(hissAudio.gameObject);
+
+            // VesselAudioController itself lives on the hub so a single
+            // component owns both sources and the ChemistryProcessedEvent
+            // subscription (no double-subscribe risk).
+            var controller = audioHub.GetComponent<VesselAudioController>();
+            if (controller == null)
+                controller = Undo.AddComponent<VesselAudioController>(audioHub.gameObject);
+
+            // Wire the [SerializeField] references via SerializedObject so the
+            // assignment is recorded in the scene/prefab file and undoable.
+            var so = new SerializedObject(controller);
+            so.FindProperty("_bubblingSource").objectReferenceValue = bubbleSrc;
+            so.FindProperty("_hissingSource").objectReferenceValue  = hissSrc;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static AudioSource EnsureAudioSource(GameObject host)
+        {
+            var src = host.GetComponent<AudioSource>();
+            if (src == null) src = Undo.AddComponent<AudioSource>(host);
+
+            // Mirror VesselAudioController.ConfigureSource() defaults so the
+            // template behaves identically before the controller's Awake runs.
+            src.playOnAwake  = false;
+            src.loop         = true;
+            src.spatialBlend = 1f;                              // full 3D
+            src.rolloffMode  = AudioRolloffMode.Logarithmic;
+            src.minDistance  = 0.2f;
+            src.maxDistance  = 5f;
+            src.dopplerLevel = 0f;
+            src.volume       = 0f;                              // controller ramps it up
+            return src;
         }
 
         // ── HUD scaffolding ───────────────────────────────────
