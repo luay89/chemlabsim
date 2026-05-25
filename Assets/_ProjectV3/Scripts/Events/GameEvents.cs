@@ -137,6 +137,37 @@ namespace ChemLabSimV3.Events
     /// <summary>Fired when any lab input control changes (reagent, slider, toggle).</summary>
     public struct InputChangedEvent : IGameEvent { }
 
+    /// <summary>Fired when the temperature or stirring sliders move. Carries the raw
+    /// values so subscribers (e.g. <see cref="Controllers.FXController"/>) can drive
+    /// continuous environmental VFX without reaching into the input layer.</summary>
+    public struct EnvironmentChangedEvent : IGameEvent
+    {
+        public float Temperature; // °C, 0–100
+        public float Stirring;    // 0–1
+    }
+
+    /// <summary>Fired by <see cref="Controllers.FXController"/> with the computed
+    /// continuous environmental VFX parameters (heat / steam / vortex). Views
+    /// translate these into particle emission rates, rotation, distortion, etc.</summary>
+    public struct EnvironmentFxChangedEvent : IGameEvent
+    {
+        public float HeatIntensity;     // 0–1, 0 below 50°C, ramps to 1 at 100°C
+        public float SteamEmissionRate; // particles per second (0–30)
+        public float ScreenDistortion;  // 0–1 normalised distortion strength
+        public float VortexSpinSpeed;   // deg/sec around vessel axis (0 below 20% stirring)
+        public bool  ShowVortex;        // true when stirring > 0.20
+    }
+
+    /// <summary>Fired when the primary (Reagent A) material selection changes,
+    /// carrying enough data for views to render an idle physical-state preview
+    /// of the chemical inside the reaction vessel (powder / liquid / gas).</summary>
+    public struct MaterialPreviewChangedEvent : IGameEvent
+    {
+        public string Formula;
+        public string State;     // "solid", "liquid", "gas", "aqueous"
+        public string ColorHex;  // e.g. "#33AAEE" or empty for default
+    }
+
     // ----------------------------------------------
     //  Guidance Events
     // ----------------------------------------------

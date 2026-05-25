@@ -22,6 +22,7 @@ namespace ChemLabSimV3.Controllers
         {
             EventBus.Subscribe<ReactionEvaluatedEvent>(OnReactionEvaluated);
             EventBus.Subscribe<ReactionNotFoundEvent>(OnReactionNotFound);
+            EventBus.Subscribe<EnvironmentChangedEvent>(OnEnvironmentChanged);
             Debug.Log("[FXController] Initialized.");
         }
 
@@ -29,6 +30,7 @@ namespace ChemLabSimV3.Controllers
         {
             EventBus.Unsubscribe<ReactionEvaluatedEvent>(OnReactionEvaluated);
             EventBus.Unsubscribe<ReactionNotFoundEvent>(OnReactionNotFound);
+            EventBus.Unsubscribe<EnvironmentChangedEvent>(OnEnvironmentChanged);
         }
 
         // -- Event Handlers ------------------------------------
@@ -143,6 +145,59 @@ namespace ChemLabSimV3.Controllers
         {
             CurrentState = state;
             EventBus.Publish(new FxTriggeredEvent { State = state });
+        }
+
+        // ============================================================
+        //  Continuous environmental VFX (temperature / stirring sliders)
+        // ============================================================
+
+        // Threshold constants — chosen to match the task spec.
+        private const float HeatStartC      = 50f;   // °C at which steam/glow begin
+        private const float HeatFullC       = 100f;  // °C at which heat FX peak
+        private const float StirringStart   = 0.20f; // fraction at which vortex engages
+        private const float MaxSteamRate    = 30f;   // particles/sec at full heat
+        private const float MaxDistortion   = 0.80f; // normalised screen distortion
+        private const float MinSpinDegPerS  = 60f;   // vortex spin at threshold
+        private const float MaxSpinDegPerS  = 240f;  // vortex spin at full stirring
+
+        public EnvironmentFxChangedEvent CurrentEnvironmentFx { get; private set; }
+
+        private void OnEnvironmentChanged(EnvironmentChangedEvent evt)
+        {
+            var fx = ComputeEnvironmentFx(evt.Temperature, evt.Stirring);
+            CurrentEnvironmentFx = fx;
+            EventBus.Publish(fx);
+        }
+
+        /// <summary>
+        /// Pure threshold mapping for the temperature/stirring sliders. Kept
+        /// internal-static so it can be unit-tested without instantiating a
+        /// MonoBehaviour and so the rules live in one place.
+        /// </summary>
+        internal static EnvironmentFxChangedEvent ComputeEnvironmentFx(float temperatureC, float stirring)
+        {
+            // Temperature → heat/steam/distortion (kicks in above 50 °C).
+            float heat = Mathf.Clamp01((temperatureC - HeatStartC) / (HeatFullC - HeatStartC));
+            float steam = heat * MaxSteamRate;
+            float distortion = heat * MaxDistortion;
+
+            // Stirring → vortex spin (engages above 20%).
+            float spin = 0f;
+            bool showVortex = stirring > StirringStart;
+            if (showVortex)
+            {
+                float t = Mathf.InverseLerp(StirringStart, 1f, Mathf.Clamp01(stirring));
+                spin = Mathf.Lerp(MinSpinDegPerS, MaxSpinDegPerS, t);
+            }
+
+            return new EnvironmentFxChangedEvent
+            {
+                HeatIntensity     = heat,
+                SteamEmissionRate = steam,
+                ScreenDistortion  = distortion,
+                VortexSpinSpeed   = spin,
+                ShowVortex        = showVortex
+            };
         }
     }
 }

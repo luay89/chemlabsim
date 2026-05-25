@@ -36,6 +36,7 @@ namespace ChemLabSimV3.Views
         private Image flashImage;
         private Image frostImage;
         private Image foamStrip;
+        private Image powderPile;   // Solid-state powder mound at the bottom of the beaker
 
         // ── Particle pools ──────────────────────────────────────
         private Image[] bubbles;
@@ -54,6 +55,21 @@ namespace ChemLabSimV3.Views
         private static readonly Color LiquidIdle  = new Color(0.32f, 0.52f, 0.72f, 0.55f);
         private static readonly Color Transparent = new Color(1, 1, 1, 0);
 
+        // ── Idle preview state (driven by MaterialPreviewChangedEvent) ──────
+        private bool isPlayingReaction;
+        private bool hasIdlePreview;
+        private string idleState = "solid";
+        private Color  idleColor = LiquidIdle;
+
+        // ── Continuous environmental FX (driven by EnvironmentFxChangedEvent) ─────
+        private float envHeatIntensity;     // 0–1
+        private float envSteamRate;         // particles/sec
+        private float envSpinDegPerSec;     // vortex spin around vessel Z
+        private bool  envShowVortex;
+        private float steamSpawnAccumulator;
+        private float liquidSpinAngle;
+        private static readonly Color EnvHeatTint = new Color(1f, 0.45f, 0.15f, 0.55f);
+
         // ── Lifecycle ───────────────────────────────────────────
 
         private void Awake()
@@ -64,9 +80,98 @@ namespace ChemLabSimV3.Views
             vesselGroup.alpha = 0f;
         }
 
-        private void OnEnable()  => EventBus.Subscribe<FxTriggeredEvent>(OnFx);
-        private void OnDisable() => EventBus.Unsubscribe<FxTriggeredEvent>(OnFx);
+        private void OnEnable()
+        {
+            EventBus.Subscribe<FxTriggeredEvent>(OnFx);
+            EventBus.Subscribe<MaterialPreviewChangedEvent>(OnMaterialPreview);
+            EventBus.Subscribe<EnvironmentFxChangedEvent>(OnEnvironmentFx);
+        }
+
+        private void OnDisable()
+        {
+            EventBus.Unsubscribe<FxTriggeredEvent>(OnFx);
+            EventBus.Unsubscribe<MaterialPreviewChangedEvent>(OnMaterialPreview);
+            EventBus.Unsubscribe<EnvironmentFxChangedEvent>(OnEnvironmentFx);
+        }
+
         private void OnFx(FxTriggeredEvent e) => Play(e.State);
+        private void OnMaterialPreview(MaterialPreviewChangedEvent e) => ApplyIdleState(e);
+
+        private void OnEnvironmentFx(EnvironmentFxChangedEvent e)
+        {
+            envHeatIntensity = e.HeatIntensity;
+            envSteamRate     = e.SteamEmissionRate;
+            envSpinDegPerSec = e.VortexSpinSpeed;
+            envShowVortex    = e.ShowVortex;
+
+            // When stirring drops below the threshold, snap the liquid back
+            // to its resting orientation so we don't leave it visibly skewed.
+            if (!envShowVortex && liquidImage != null)
+            {
+                liquidSpinAngle = 0f;
+                liquidImage.rectTransform.localRotation = Quaternion.identity;
+                if (powderPile != null)
+                    powderPile.rectTransform.localRotation = Quaternion.identity;
+            }
+        }
+
+        private void Update()
+        {
+            // Continuous environmental FX run in the background. We skip them
+            // while a one-shot reaction sequence is animating so the dedicated
+            // coroutines (Bubbles/HeatGlow/Smoke/…) stay visually authoritative.
+            if (isPlayingReaction || vesselGroup == null) return;
+
+            float dt = Time.deltaTime;
+
+            // ── Heat (> 50 °C) → warm glow + steam wisps ─────────────────────
+            if (envHeatIntensity > 0.001f && glowImage != null)
+            {
+                float pulse = 0.65f + 0.35f * Mathf.Sin(Time.time * 3.5f);
+                var c = EnvHeatTint;
+                c.a *= envHeatIntensity * pulse;
+                glowImage.color = c;
+
+                // Drip-feed steam particles at the configured rate.
+                if (smokes != null && smokes.Length > 0 && envSteamRate > 0f)
+                {
+                    steamSpawnAccumulator += envSteamRate * dt;
+                    while (steamSpawnAccumulator >= 1f)
+                    {
+                        steamSpawnAccumulator -= 1f;
+                        var img = NextIdleSmoke();
+                        if (img != null) StartCoroutine(AnimSmoke(img));
+                    }
+                }
+            }
+            else if (glowImage != null && glowImage.color.a > 0f)
+            {
+                // Smooth fade-out when temperature drops below the threshold.
+                var c = glowImage.color; c.a = Mathf.MoveTowards(c.a, 0f, dt * 1.5f);
+                glowImage.color = c;
+                steamSpawnAccumulator = 0f;
+            }
+
+            // ── Stirring (> 20%) → vortex rotation of liquid + powder ──────────
+            if (envShowVortex && envSpinDegPerSec > 0f)
+            {
+                liquidSpinAngle = (liquidSpinAngle + envSpinDegPerSec * dt) % 360f;
+                var rot = Quaternion.Euler(0f, 0f, liquidSpinAngle);
+                if (liquidImage != null) liquidImage.rectTransform.localRotation = rot;
+                if (powderPile != null && powderPile.enabled)
+                    powderPile.rectTransform.localRotation = rot;
+            }
+        }
+
+        // Round-robin helper: returns the next currently-disabled smoke image
+        // from the pool, or null if every slot is in use this frame.
+        private Image NextIdleSmoke()
+        {
+            if (smokes == null) return null;
+            for (int i = 0; i < smokes.Length; i++)
+                if (smokes[i] != null && !smokes[i].enabled) return smokes[i];
+            return null;
+        }
 
         // ════════════════════════════════════════════════════════
         //  UI CONSTRUCTION
@@ -127,6 +232,16 @@ namespace ChemLabSimV3.Views
             frostImage = Img("_Frost", br, new Color(0.7f, 0.9f, 1f, 0f));
             Stretch(frostImage.rectTransform);
 
+            // Powder pile (solid-state idle preview at the bottom of the beaker).
+            // Uses the soft circle sprite stretched into a wide low "mound".
+            powderPile = Img("_PowderPile", br, Transparent, softSprite);
+            var pp = powderPile.rectTransform;
+            pp.anchorMin = new Vector2(0.08f, 0f);
+            pp.anchorMax = new Vector2(0.92f, 0.18f);
+            pp.offsetMin = new Vector2(0f, 2f);
+            pp.offsetMax = new Vector2(0f, 0f);
+            powderPile.enabled = false;
+
             // Particle pools inside beaker (clipped by mask)
             bubbles      = Pool("_Bub",  br, BUBBLES,     circleSprite, new Color(1,1,1,0.7f),         8);
             precipitates = Pool("_Prec", br, PRECIPITATE,  circleSprite, new Color(.92f,.90f,.85f,.8f), 6);
@@ -149,6 +264,7 @@ namespace ChemLabSimV3.Views
         {
             StopAllCoroutines();
             ResetAll();
+            isPlayingReaction = true;
             StartCoroutine(Sequence(s));
         }
 
@@ -197,6 +313,11 @@ namespace ChemLabSimV3.Views
             yield return new WaitForSeconds(dur);
             yield return Fade(1f, 0f, 1.2f);
             ResetAll();
+            isPlayingReaction = false;
+
+            // Restore the idle physical-state preview once the reaction
+            // animation completes so the vessel never lingers blank.
+            ReapplyIdleState();
         }
 
         // ════════════════════════════════════════════════════════
@@ -495,6 +616,87 @@ namespace ChemLabSimV3.Views
         {
             PoolOff(bubbles); PoolOff(precipitates); PoolOff(sparks);
             PoolOff(smokes); PoolOff(foamDots);
+        }
+
+        // ════════════════════════════════════════════════════════
+        //  IDLE STATE PREVIEW  (Solid / Liquid / Gas)
+        // ════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Updates the vessel to reflect the physical state of the currently
+        /// selected chemical. Called from the EventBus whenever the player
+        /// changes Reagent A. Skipped while a reaction sequence is playing
+        /// so the FX animation isn't visually overridden mid-flight — the
+        /// idle preview is then re-applied automatically when the sequence ends.
+        /// </summary>
+        private void ApplyIdleState(MaterialPreviewChangedEvent e)
+        {
+            idleState = string.IsNullOrEmpty(e.State) ? "solid" : e.State.ToLowerInvariant();
+            idleColor = ResolveColor(e.ColorHex, LiquidIdle);
+            hasIdlePreview = true;
+
+            if (isPlayingReaction) return;
+            RenderIdleState();
+        }
+
+        private void ReapplyIdleState()
+        {
+            if (!hasIdlePreview) return;
+            RenderIdleState();
+        }
+
+        private void RenderIdleState()
+        {
+            if (vesselGroup == null) return;
+
+            // Always reset transient FX layers so the idle look is predictable.
+            glowImage.color   = Transparent;
+            flashImage.color  = Transparent;
+            frostImage.color  = new Color(0.7f, 0.9f, 1f, 0f);
+            foamStrip.color   = Transparent;
+
+            switch (idleState)
+            {
+                case "liquid":
+                case "aqueous":
+                {
+                    // Tinted liquid fill, powder hidden, vessel fully visible.
+                    var c = idleColor; c.a = 0.65f;
+                    liquidImage.color = c;
+                    powderPile.enabled = false;
+                    vesselGroup.alpha = 1f;
+                    break;
+                }
+                case "gas":
+                {
+                    // No liquid, no powder, vessel kept faintly visible to hint
+                    // that the reagent is present but invisible until mixed.
+                    liquidImage.color = Transparent;
+                    powderPile.enabled = false;
+                    vesselGroup.alpha = 0.25f;
+                    break;
+                }
+                default: // "solid" and any unknown value
+                {
+                    // Powder mound tinted with the chemical's base color; empty liquid.
+                    var pc = idleColor; pc.a = 0.92f;
+                    powderPile.color = pc;
+                    powderPile.enabled = true;
+                    liquidImage.color = Transparent;
+                    vesselGroup.alpha = 1f;
+                    break;
+                }
+            }
+        }
+
+        private static Color ResolveColor(string hex, Color fallback)
+        {
+            if (!string.IsNullOrEmpty(hex)
+                && ColorUtility.TryParseHtmlString(hex, out var c))
+            {
+                return c;
+            }
+            return fallback;
         }
 
         private static void PoolOff(Image[] pool)

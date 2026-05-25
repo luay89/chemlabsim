@@ -20,6 +20,25 @@ namespace ChemLabSimV3.Controllers
 {
     public class LabInputController : V3ControllerBase
     {
+        // ──────────────────────────────────────────────────────────────
+        // UI Layout Notes (the actual hierarchy is built in LabV3SceneSetup):
+        //   • Root Canvas       → CanvasScaler: ScaleWithScreenSize, reference
+        //                          resolution 1920×1080, MatchWidthOrHeight = 0.5
+        //                          (handles 16:9 → 4:3 without clipping).
+        //   • Left input column → VerticalLayoutGroup + ContentSizeFitter
+        //                          (vertical = PreferredSize) so the title
+        //                          "Interactive Simulation Deck" can never
+        //                          overlap the reagent dropdowns below it.
+        //   • Each dropdown row → LayoutElement with minHeight ≥ 48 so TMP
+        //                          dropdowns don't get clipped on tall aspects.
+        //                          DO NOT nest TMP_Dropdown under another
+        //                          VerticalLayoutGroup — it manages its own
+        //                          template (see LabController.cs line ~1259).
+        //   • Vessel viewport   → anchored to the right half on its own panel
+        //                          so the dropdowns and the flask never share
+        //                          screen space, regardless of aspect ratio.
+        // ──────────────────────────────────────────────────────────────
+
         // -- View References (wired in Inspector or scene setup) ---
         [Header("Reagent Dropdowns")]
         [SerializeField] private ReagentDropdownView reagentADropdown;
@@ -43,6 +62,14 @@ namespace ChemLabSimV3.Controllers
         [Header("Materials Database")]
         [SerializeField] private TextAsset materialsJsonAsset;  // Drag materials.json here in Inspector
 
+        [Header("Vessel Integration (optional)")]
+        [Tooltip("Drag a MonoBehaviour that implements IVesselContainer (e.g. ConicalFlaskContainer " +
+                 "or ReactionVesselView). Leave unassigned to rely on MaterialPreviewChangedEvent only.")]
+        [SerializeField] private MonoBehaviour vesselContainer;
+
+        // Resolved interface reference (cached in OnInitialize). Reference type — safe to null-check.
+        private IVesselContainer vessel;
+
         // -- Internal State ------------------------------------
         private LabInputViewModel inputState;
         private List<string> availableReagents = new List<string>();
@@ -60,7 +87,27 @@ namespace ChemLabSimV3.Controllers
             if (reactionController == null)
                 reactionController = FindObjectOfType<ReactionController>();
 
+            // Resolve the optional vessel hook. Unity can't serialize interface fields
+            // directly, so we accept a MonoBehaviour in the Inspector and cast here.
+            vessel = vesselContainer as IVesselContainer;
+            if (vesselContainer != null && vessel == null)
+            {
+                Debug.LogWarning($"[LabInputController] '{vesselContainer.GetType().Name}' is assigned " +
+                                 "to the Vessel Integration slot but does not implement IVesselContainer.");
+            }
+
             LoadMaterialLookup();
+
+            // Force the SecureReactionLoader to finish decrypting reactions.bytes
+            // before we bind dropdowns. Without this guarantee, controllers wired
+            // in by LabV3SceneSetup can race AppManager.Awake on first scene load
+            // and end up with an empty reagent list ("No valid reaction matches").
+            if (AppManager.Instance != null && !AppManager.Instance.EnsureDatabaseLoaded())
+            {
+                Debug.LogWarning("[LabInputController] AppManager.EnsureDatabaseLoaded() failed; " +
+                                 "dropdowns will fall back to materials.json formulas.");
+            }
+
             var langService = ServiceLocator.Get<LanguageService>();
             currentLanguageIndex = langService != null ? (int)langService.CurrentLanguage : 0;
 
@@ -69,6 +116,14 @@ namespace ChemLabSimV3.Controllers
             BindViews();
 
             EventBus.Subscribe<LanguageChangedEvent>(OnLanguageChanged);
+
+            // Emit an initial idle preview so the vessel view renders the
+            // default Reagent A's physical state immediately after the scene loads.
+            PublishMaterialPreview();
+
+            // Seed the environmental VFX pipeline with the default slider values
+            // so FXController has a baseline before the user touches anything.
+            PublishEnvironment();
 
             Debug.Log($"[LabInputController] Initialized with {availableReagents.Count} reagents.");
         }
@@ -81,30 +136,95 @@ namespace ChemLabSimV3.Controllers
 
         // -- Material Lookup -----------------------------------
 
+#if UNITY_EDITOR
+        private const string EditorMaterialsJsonPath = "Assets/_Project/DataSrc/materials.json";
+#endif
+
         private void LoadMaterialLookup()
         {
             materialLookup.Clear();
 
-            if (materialsJsonAsset != null)
+            string jsonText = materialsJsonAsset != null ? materialsJsonAsset.text : null;
+
+#if UNITY_EDITOR
+            // Editor-only safety net: if the TextAsset is unassigned (e.g. when
+            // opening LabV3 directly without prior bake), read the source file
+            // straight off disk so the UI never starts with an empty material list.
+            if (string.IsNullOrEmpty(jsonText) && System.IO.File.Exists(EditorMaterialsJsonPath))
             {
                 try
                 {
-                    var db = JsonUtility.FromJson<MaterialDB>(materialsJsonAsset.text);
-                    if (db?.materials != null)
-                    {
-                        foreach (var mat in db.materials)
-                        {
-                            if (!string.IsNullOrEmpty(mat.formula) && !materialLookup.ContainsKey(mat.formula))
-                                materialLookup[mat.formula] = mat;
-                        }
-                        Debug.Log($"[LabInputController] Loaded {materialLookup.Count} materials from JSON.");
-                    }
+                    jsonText = System.IO.File.ReadAllText(EditorMaterialsJsonPath);
+                    Debug.Log("[LabInputController] materialsJsonAsset was unassigned; loaded materials.json directly from disk (Editor only).");
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogWarning($"[LabInputController] Failed to parse materials JSON: {ex.Message}");
+                    Debug.LogWarning($"[LabInputController] Editor fallback failed to read materials.json: {ex.Message}");
                 }
             }
+#endif
+
+            if (string.IsNullOrEmpty(jsonText))
+                return;
+
+            try
+            {
+                List<ChemicalMaterial> materials = ParseMaterialsJson(jsonText);
+                if (materials == null || materials.Count == 0)
+                {
+                    Debug.LogWarning("[LabInputController] materials.json parsed to zero entries. Check JSON shape.");
+                    return;
+                }
+
+                foreach (var mat in materials)
+                {
+                    if (mat == null || string.IsNullOrEmpty(mat.formula)) continue;
+                    if (!materialLookup.ContainsKey(mat.formula))
+                        materialLookup[mat.formula] = mat;
+                }
+
+                Debug.Log($"[LabInputController] Loaded {materialLookup.Count} materials from JSON.");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[LabInputController] Failed to parse materials JSON: {ex.Message}");
+            }
+        }
+
+        // materials.json is a bare top-level JSON array ("[ { ... }, ... ]").
+        // JsonUtility cannot deserialise root-level arrays, so we try the object
+        // shape first and fall back to wrapping the array under a known field.
+        [Serializable]
+        private class MaterialListWrapper
+        {
+            public List<ChemicalMaterial> items = new List<ChemicalMaterial>();
+        }
+
+        private static List<ChemicalMaterial> ParseMaterialsJson(string jsonText)
+        {
+            if (string.IsNullOrWhiteSpace(jsonText))
+                return null;
+
+            // Case 1: object shape { "materials": [...] }
+            try
+            {
+                var db = JsonUtility.FromJson<MaterialDB>(jsonText);
+                if (db != null && db.materials != null && db.materials.Count > 0)
+                    return db.materials;
+            }
+            catch { /* fall through to array handling */ }
+
+            // Case 2: bare array shape "[ ... ]" — wrap so JsonUtility accepts it.
+            string trimmed = jsonText.TrimStart();
+            if (trimmed.StartsWith("["))
+            {
+                string wrapped = "{\"items\":" + jsonText + "}";
+                var wrapper = JsonUtility.FromJson<MaterialListWrapper>(wrapped);
+                if (wrapper != null && wrapper.items != null)
+                    return wrapper.items;
+            }
+
+            return null;
         }
 
         private string GetDisplayLabel(string formula)
@@ -123,17 +243,29 @@ namespace ChemLabSimV3.Controllers
         private void PopulateReagentOptions()
         {
             var db = AppManager.Instance != null ? AppManager.Instance.ReactionDatabase : null;
-            if (db == null || db.reactions == null)
-            {
-                Debug.LogWarning("[LabInputController] ReactionDB unavailable — reagent dropdowns will be empty.");
-                return;
-            }
+            bool dbAvailable = db != null && db.reactions != null && db.reactions.Count > 0;
 
-            availableReagents = db.reactions
-                .SelectMany(r => r != null ? r.GetReactantFormulas() : new List<string>())
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Distinct()
-                .ToList();
+            if (dbAvailable)
+            {
+                availableReagents = db.reactions
+                    .SelectMany(r => r != null ? r.GetReactantFormulas() : new List<string>())
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct()
+                    .ToList();
+            }
+            else
+            {
+                // Fallback: SecureReactionLoader couldn't decrypt/parse reactions.bytes
+                // (or the blob is stale and validation rejected it). Surface every
+                // formula declared in materials.json so the UI is never blank — the
+                // user can still browse the chemical catalog, and the mix action will
+                // surface a clear "no reaction" message until the DB is regenerated.
+                Debug.LogWarning("[LabInputController] ReactionDB unavailable — falling back to materials.json formulas for the reagent dropdowns.");
+                availableReagents = materialLookup.Keys
+                    .Where(f => !string.IsNullOrWhiteSpace(f))
+                    .Distinct()
+                    .ToList();
+            }
 
             // Sort by display name in current language
             availableReagents.Sort((a, b) =>
@@ -238,19 +370,105 @@ namespace ChemLabSimV3.Controllers
 
         // -- Callbacks from Views ------------------------------
 
-        private void OnReagentAChanged(string value) { inputState.ReagentA = value; NotifyInputChanged(); }
+        private void OnReagentAChanged(string value)
+        {
+            inputState.ReagentA = value;
+            NotifyInputChanged();
+            PublishMaterialPreview();
+        }
         private void OnReagentBChanged(string value) { inputState.ReagentB = value; NotifyInputChanged(); }
         private void OnReagentCChanged(string value) { inputState.ReagentC = value; NotifyInputChanged(); }
         private void OnReagentDChanged(string value) { inputState.ReagentD = value; NotifyInputChanged(); }
         private void OnMediumChanged(int index)      { inputState.MediumIndex = index; NotifyInputChanged(); }
-        private void OnTemperatureChanged(float val)  { inputState.Temperature = val; NotifyInputChanged(); }
-        private void OnStirringChanged(float val)     { inputState.Stirring = val; NotifyInputChanged(); }
+        private void OnTemperatureChanged(float val)  { inputState.Temperature = val; NotifyInputChanged(); PublishEnvironment(); }
+        private void OnStirringChanged(float val)     { inputState.Stirring = val; NotifyInputChanged(); PublishEnvironment(); }
         private void OnGrindingChanged(float val)     { inputState.Grinding = val; NotifyInputChanged(); }
         private void OnCatalystChanged(bool val)      { inputState.HasCatalyst = val; NotifyInputChanged(); }
 
         private static void NotifyInputChanged()
         {
             EventBus.Publish(new InputChangedEvent());
+        }
+
+        /// <summary>
+        /// Publishes the current temperature and stirring values so
+        /// <see cref="FXController"/> can drive continuous environmental VFX
+        /// (steam emission, screen distortion, liquid vortex) in real time.
+        /// </summary>
+        private void PublishEnvironment()
+        {
+            // LabInputViewModel is a struct, so it is always a valid value.
+            EventBus.Publish(new EnvironmentChangedEvent
+            {
+                Temperature = inputState.Temperature,
+                Stirring    = inputState.Stirring
+            });
+        }
+
+        /// <summary>
+        /// Publishes a <see cref="MaterialPreviewChangedEvent"/> describing the
+        /// currently selected Reagent A so that vessel/3D views can show an idle
+        /// physical-state preview (powder pile, tinted liquid, transparent gas)
+        /// without coupling the view layer to <see cref="AppManager"/> or the JSON DB.
+        /// </summary>
+        private void PublishMaterialPreview()
+        {
+            // LabInputViewModel is a struct, so ReagentA is read directly.
+            string formula = inputState.ReagentA;
+            string state = "solid";
+            string colorHex = string.Empty;
+
+            if (!string.IsNullOrEmpty(formula)
+                && materialLookup.TryGetValue(formula, out var mat) && mat != null)
+            {
+                state = mat.GetState();
+                colorHex = mat.color ?? string.Empty;
+            }
+
+            EventBus.Publish(new MaterialPreviewChangedEvent
+            {
+                Formula = formula ?? string.Empty,
+                State = state,
+                ColorHex = colorHex
+            });
+
+            // Drive the optional vessel hook (3D flask, future presenters). No-op when unwired.
+            UpdateVesselVisuals(state, ParseHexColor(colorHex));
+        }
+
+        // ── Vessel Integration ──────────────────────────────────────
+
+        /// <summary>
+        /// Forwards an idle-preview update to any wired <see cref="IVesselContainer"/>
+        /// implementation (e.g. <c>ConicalFlaskContainer</c>). Safe to call when no
+        /// vessel is wired — the call becomes a no-op. Public so external systems
+        /// (e.g. scripted tutorials) can also drive the visual flask directly.
+        /// </summary>
+        /// <param name="physicalState">"solid", "liquid", "gas", or anything else (treated as Unknown).</param>
+        /// <param name="substanceColor">RGBA tint; alpha 0 signals "no colour info".</param>
+        public void UpdateVesselVisuals(string physicalState, Color substanceColor)
+        {
+            if (vessel == null) return;
+            vessel.UpdateVesselVisuals(ParsePhysicalState(physicalState), substanceColor);
+        }
+
+        private static PhysicalState ParsePhysicalState(string raw)
+        {
+            if (string.IsNullOrEmpty(raw)) return PhysicalState.Unknown;
+            switch (raw.Trim().ToLowerInvariant())
+            {
+                case "solid":  return PhysicalState.Solid;
+                case "liquid": return PhysicalState.Liquid;
+                case "gas":    return PhysicalState.Gas;
+                default:       return PhysicalState.Unknown;
+            }
+        }
+
+        private static Color ParseHexColor(string hex)
+        {
+            if (string.IsNullOrEmpty(hex)) return Color.clear;
+            var s = hex.StartsWith("#") ? hex : "#" + hex;
+            return ColorUtility.TryParseHtmlString(s, out var c) ? c : Color.clear;
         }
 
         // -- Mix Action ----------------------------------------
