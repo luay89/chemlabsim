@@ -439,110 +439,180 @@ public class LabController : MonoBehaviour
         if (canvas == null) canvas = FindObjectOfType<Canvas>();
         if (canvas == null) return;
 
-        // Fix CanvasScaler
+        // CanvasScaler: landscape 1920x1080, ScaleWithScreenSize, balanced match.
         var scaler = canvas.GetComponent<CanvasScaler>();
         if (scaler != null)
         {
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080f, 1920f);
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
             scaler.matchWidthOrHeight = 0.5f;
         }
 
-        // Resize UI elements for 1080-wide reference
-        const float elementW = 680f;
-        const float dropH = 64f;
-        const float sliderH = 48f;
-        const float btnH = 72f;
+        // Build (or reuse) the left-side input column driven by a VerticalLayoutGroup
+        // so the reagent/medium dropdowns, sliders, toggle and mix button never
+        // overlap the top HUD header on smaller aspect ratios.
+        RectTransform container = BuildOrGetInputContainer(canvas);
 
-        // Top section starts higher now
-        float y = 640f;
-        const float gap = 18f;
+        // Reparent inspector-referenced controls into the container, each preceded
+        // by a label row. ControlChildSize is enabled so widths track the column.
+        AddLabelRow(container, "_ReagentALabel", ref reagentALabelText, "Reagent A");
+        AttachToContainer(reagentADropdown, container, 54f);
+        AddLabelRow(container, "_ReagentBLabel", ref reagentBLabelText, "Reagent B");
+        AttachToContainer(reagentBDropdown, container, 54f);
+        AddLabelRow(container, "_ReagentCLabel", ref reagentCLabelText, "Reagent C (Optional)");
+        AttachToContainer(reagentCDropdown, container, 54f);
+        AddLabelRow(container, "_ReagentDLabel", ref reagentDLabelText, "Reagent D (Optional)");
+        AttachToContainer(reagentDDropdown, container, 54f);
+        AddLabelRow(container, "_MediumLabel", ref mediumLabelText, "Medium");
+        AttachToContainer(mediumDropdown, container, 54f);
+        AddLabelRow(container, "_StirringLabel", ref stirringLabelText, "Stirring");
+        AttachToContainer(stirringSlider, container, 32f);
+        AddLabelRow(container, "_GrindingLabel", ref grindingLabelText, "Grinding");
+        AttachToContainer(grindingSlider, container, 32f);
+        AddLabelRow(container, "_TemperatureLabel", ref temperatureLabelText, "Temperature");
+        AttachToContainer(temperatureSlider, container, 32f);
+        AddLabelRow(container, "_CatalystLabel", ref catalystLabelText, "Catalyst");
+        AttachToContainer(catalystToggle, container, 40f);
+        AttachToContainer(mixButton, container, 60f);
 
-        // Dropdown stack
-        ResizeElement(reagentADropdown, 0f, y, elementW, dropH);
-        y -= dropH + gap;
-        ResizeElement(reagentBDropdown, 0f, y, elementW, dropH);
-        y -= dropH + gap;
-        ResizeElement(reagentCDropdown, 0f, y, elementW, dropH);
-        y -= dropH + gap;
-        ResizeElement(reagentDDropdown, 0f, y, elementW, dropH);
-        y -= dropH + gap;
-        ResizeElement(mediumDropdown, 0f, y, elementW, dropH);
-        y -= dropH + gap + 8f;
-
-        // Sliders
-        ResizeElement(stirringSlider, 0f, y, elementW, sliderH);
-        y -= sliderH + gap;
-        ResizeElement(grindingSlider, 0f, y, elementW, sliderH);
-        y -= sliderH + gap;
-        ResizeElement(temperatureSlider, 0f, y, elementW, sliderH);
-        y -= sliderH + gap + 8f;
-
-        // Toggle
         if (catalystToggle != null)
         {
-            var toggleRect = catalystToggle.GetComponent<RectTransform>();
-            if (toggleRect != null)
-            {
-                toggleRect.anchorMin = new Vector2(0.5f, 0.5f);
-                toggleRect.anchorMax = new Vector2(0.5f, 0.5f);
-                toggleRect.pivot = new Vector2(0.5f, 0.5f);
-                toggleRect.anchoredPosition = new Vector2(0f, y);
-                toggleRect.sizeDelta = new Vector2(elementW, 50f);
-
-                // Scale toggle label if it exists
-                var toggleLabel = catalystToggle.GetComponentInChildren<TextMeshProUGUI>();
-                if (toggleLabel != null) toggleLabel.fontSize = Mathf.Max(toggleLabel.fontSize, 26f);
-            }
-            y -= 50f + gap + 8f;
+            var toggleLabel = catalystToggle.GetComponentInChildren<TextMeshProUGUI>();
+            if (toggleLabel != null) toggleLabel.fontSize = Mathf.Max(toggleLabel.fontSize, 22f);
         }
 
-        // Mix button
-        ResizeElement(mixButton, 0f, y, elementW, btnH);
-        y -= btnH + gap;
-        reactionDashboardAnchorY = y;
-        const float dashboardH = 124f;
-        y -= dashboardH + gap;
-
-        // Result text panel will be created by SetupScrollableResult later,
-        // but update the base resultText position so it anchors correctly
+        // Result panel anchored to the right half of the canvas, stretched vertically
+        // so it always fits between the top header and the bottom back-button row.
         if (resultText != null)
         {
             var rr = resultText.rectTransform;
-            rr.anchorMin = new Vector2(0.5f, 0.5f);
-            rr.anchorMax = new Vector2(0.5f, 0.5f);
-            rr.pivot = new Vector2(0.5f, 1f);
-            rr.anchoredPosition = new Vector2(0f, y);
-            rr.sizeDelta = new Vector2(elementW, 356f);
+            rr.SetParent(canvas.transform, false);
+            rr.anchorMin = new Vector2(1f, 0f);
+            rr.anchorMax = new Vector2(1f, 1f);
+            rr.pivot = new Vector2(1f, 0.5f);
+            rr.anchoredPosition = new Vector2(-40f, -40f);
+            rr.sizeDelta = new Vector2(820f, -220f); // stretched height = canvas.height - 220
         }
-        y -= 356f + gap;
 
-        // Back button (below result panel)
-        ResizeElement(backButton, 0f, y, elementW, btnH);
-        y -= btnH + gap;
+        // Reaction dashboard sits just below the top header, centered.
+        reactionDashboardAnchorY = -130f;
 
-        // Scale up dropdown fonts
-        ScaleDropdownFont(reagentADropdown, 28);
-        ScaleDropdownFont(reagentBDropdown, 28);
-        ScaleDropdownFont(reagentCDropdown, 28);
-        ScaleDropdownFont(reagentDDropdown, 28);
-        ScaleDropdownFont(mediumDropdown, 30);
+        // Back button anchored bottom-left, clear of the input column padding.
+        if (backButton != null)
+        {
+            var br = backButton.GetComponent<RectTransform>();
+            br.SetParent(canvas.transform, false);
+            br.anchorMin = new Vector2(0f, 0f);
+            br.anchorMax = new Vector2(0f, 0f);
+            br.pivot = new Vector2(0f, 0f);
+            br.anchoredPosition = new Vector2(40f, 30f);
+            br.sizeDelta = new Vector2(220f, 56f);
+        }
 
-        // Scale up button fonts
-        ScaleButtonFont(mixButton, 32);
-        ScaleButtonFont(backButton, 30);
+        // Fonts and visual styling (unchanged behaviour, smaller sizes to fit landscape column).
+        ScaleDropdownFont(reagentADropdown, 22);
+        ScaleDropdownFont(reagentBDropdown, 22);
+        ScaleDropdownFont(reagentCDropdown, 22);
+        ScaleDropdownFont(reagentDDropdown, 22);
+        ScaleDropdownFont(mediumDropdown, 24);
 
-        // Style buttons
+        ScaleButtonFont(mixButton, 26);
+        ScaleButtonFont(backButton, 22);
+
         StyleLabButton(mixButton, new Color32(25, 115, 78, 255), new Color32(40, 150, 100, 255));
         StyleLabButton(backButton, new Color32(55, 58, 78, 255), new Color32(72, 78, 102, 255));
 
-        // Style dropdowns for visibility
         StyleDropdownVisuals(reagentADropdown);
         StyleDropdownVisuals(reagentBDropdown);
         StyleDropdownVisuals(reagentCDropdown);
         StyleDropdownVisuals(reagentDDropdown);
         StyleDropdownVisuals(mediumDropdown, openUpward: true);
+    }
+
+    private RectTransform BuildOrGetInputContainer(Canvas canvas)
+    {
+        const string ContainerName = "_LabInputContainer";
+        var existing = canvas.transform.Find(ContainerName) as RectTransform;
+        if (existing != null) return existing;
+
+        var go = new GameObject(ContainerName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        var rt = go.GetComponent<RectTransform>();
+        rt.SetParent(canvas.transform, false);
+        // Top-left anchored, stretched vertically so the column scales with canvas height.
+        rt.anchorMin = new Vector2(0f, 0f);
+        rt.anchorMax = new Vector2(0f, 1f);
+        rt.pivot = new Vector2(0f, 1f);
+        rt.anchoredPosition = new Vector2(40f, -120f); // 40px from left, 120px below top (clear of header)
+        rt.sizeDelta = new Vector2(620f, -220f); // width = 620, height = canvas.height - 220
+
+        var bg = go.GetComponent<Image>();
+        bg.color = new Color(0.04f, 0.08f, 0.13f, 0.55f);
+        bg.raycastTarget = false;
+
+        var layout = go.AddComponent<VerticalLayoutGroup>();
+        layout.padding = new RectOffset(16, 16, 14, 14);
+        layout.spacing = 8f;
+        layout.childAlignment = TextAnchor.UpperCenter;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = false;
+        return rt;
+    }
+
+    private static void AttachToContainer(Component target, RectTransform container, float preferredHeight)
+    {
+        if (target == null || container == null) return;
+        var rt = target.GetComponent<RectTransform>();
+        if (rt == null) return;
+        rt.SetParent(container, false);
+
+        var le = target.GetComponent<LayoutElement>();
+        if (le == null) le = target.gameObject.AddComponent<LayoutElement>();
+        le.preferredHeight = preferredHeight;
+        le.minHeight = preferredHeight;
+        le.flexibleWidth = 1f;
+        le.flexibleHeight = 0f;
+    }
+
+    private static void AddLabelRow(RectTransform container, string objectName, ref TextMeshProUGUI labelField, string defaultText)
+    {
+        if (container == null) return;
+
+        if (labelField != null)
+        {
+            var existingRt = labelField.rectTransform;
+            if (existingRt.parent != container)
+                existingRt.SetParent(container, false);
+
+            var leExisting = labelField.GetComponent<LayoutElement>();
+            if (leExisting == null) leExisting = labelField.gameObject.AddComponent<LayoutElement>();
+            leExisting.preferredHeight = 22f;
+            leExisting.minHeight = 22f;
+            leExisting.flexibleWidth = 1f;
+            return;
+        }
+
+        var go = new GameObject(objectName, typeof(RectTransform));
+        var rt = go.GetComponent<RectTransform>();
+        rt.SetParent(container, false);
+
+        var text = go.AddComponent<TextMeshProUGUI>();
+        text.fontSize = 16;
+        text.color = new Color(0.78f, 0.88f, 0.96f, 0.95f);
+        text.alignment = TextAlignmentOptions.MidlineLeft;
+        text.fontStyle = FontStyles.Bold;
+        text.raycastTarget = false;
+        text.enableAutoSizing = false;
+        text.text = defaultText;
+
+        var le = go.AddComponent<LayoutElement>();
+        le.preferredHeight = 22f;
+        le.minHeight = 22f;
+        le.flexibleWidth = 1f;
+
+        labelField = text;
     }
 
     private void EnsureAdditionalReagentDropdowns()
@@ -646,10 +716,25 @@ public class LabController : MonoBehaviour
 
         if (hudTitleText == null)
         {
-            var headerPanel = CreateHudPanel(rootRect, "_HeaderPanel", new Vector2(0.5f, 1f), new Vector2(0f, -28f), new Vector2(760f, 132f), new Color(0.04f, 0.08f, 0.13f, 0.88f));
-            hudTitleText = CreateHudText(headerPanel, "_HudTitle", new Vector2(0.5f, 1f), new Vector2(0f, -24f), new Vector2(680f, 44f), 38, new Color(0.92f, 0.97f, 1f, 1f), TextAlignmentOptions.Center);
-            hudSubtitleText = CreateHudText(headerPanel, "_HudSubtitle", new Vector2(0.5f, 1f), new Vector2(0f, -66f), new Vector2(680f, 28f), 18, new Color(0.56f, 0.82f, 1f, 0.95f), TextAlignmentOptions.Center);
-            hudStatusText = CreateHudText(headerPanel, "_HudStatus", new Vector2(0.5f, 0f), new Vector2(0f, 18f), new Vector2(700f, 26f), 18, new Color(0.79f, 0.88f, 0.96f, 0.92f), TextAlignmentOptions.Center);
+            // Slim top-stretch header bar (full canvas width minus side margins) so it
+            // cannot overlap the left-side reagent column on landscape aspect ratios.
+            var headerGo = new GameObject("_HeaderPanel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            var headerPanel = headerGo.GetComponent<RectTransform>();
+            headerPanel.SetParent(rootRect, false);
+            headerPanel.anchorMin = new Vector2(0f, 1f);
+            headerPanel.anchorMax = new Vector2(1f, 1f);
+            headerPanel.pivot = new Vector2(0.5f, 1f);
+            headerPanel.anchoredPosition = new Vector2(0f, -10f);
+            headerPanel.sizeDelta = new Vector2(-260f, 86f); // stretched width = canvas.width - 260 (leaves room for language button)
+
+            var headerImage = headerGo.GetComponent<Image>();
+            headerImage.color = new Color(0.04f, 0.08f, 0.13f, 0.88f);
+            headerImage.raycastTarget = false;
+            RegisterAnimatedGlow(headerImage, 0.025f, 0.5f, 0.008f);
+
+            hudTitleText = CreateHudText(headerPanel, "_HudTitle", new Vector2(0.5f, 1f), new Vector2(0f, -12f), new Vector2(900f, 34f), 26, new Color(0.92f, 0.97f, 1f, 1f), TextAlignmentOptions.Center);
+            hudSubtitleText = CreateHudText(headerPanel, "_HudSubtitle", new Vector2(0.5f, 1f), new Vector2(0f, -46f), new Vector2(900f, 22f), 15, new Color(0.56f, 0.82f, 1f, 0.95f), TextAlignmentOptions.Center);
+            hudStatusText = CreateHudText(headerPanel, "_HudStatus", new Vector2(0.5f, 0f), new Vector2(0f, 6f), new Vector2(900f, 18f), 13, new Color(0.79f, 0.88f, 0.96f, 0.92f), TextAlignmentOptions.Center);
         }
 
         reagentALabelText ??= CreateFieldLabel(rootRect, "_ReagentALabel", new Vector2(-340f, 700f));
@@ -679,6 +764,10 @@ public class LabController : MonoBehaviour
             reactionDashboardStateText = existing.Find("_State")?.GetComponent<TextMeshProUGUI>();
             reactionDashboardMetricsText = existing.Find("_Metrics")?.GetComponent<TextMeshProUGUI>();
             reactionDashboardOutcomeText = existing.Find("_Outcome")?.GetComponent<TextMeshProUGUI>();
+            // Re-dock on reuse so anchoring/sibling order is always correct after
+            // hot-reload, scene reloads, or Inspector edits to the input column.
+            DockReactionDashboardBelowMix(canvas);
+            StretchDashboardChildren();
             RefreshReactionDashboard();
             return;
         }
@@ -703,7 +792,90 @@ public class LabController : MonoBehaviour
         reactionDashboardOutcomeText = CreateDashboardText(reactionDashboardRect, "_Outcome", new Vector2(0f, 1f), new Vector2(18f, -90f), new Vector2(644f, 34f), 16, new Color(0.95f, 0.97f, 1f, 0.86f), TextAlignmentOptions.TopLeft);
         reactionDashboardOutcomeText.enableWordWrapping = true;
         reactionDashboardOutcomeText.overflowMode = TextOverflowModes.Ellipsis;
+        // Dock the panel below the Mix button inside the input column's
+        // VerticalLayoutGroup so it can never float over the slider area.
+        DockReactionDashboardBelowMix(canvas);
+        StretchDashboardChildren();
         RefreshReactionDashboard();
+    }
+
+    // ── Reaction Dashboard placement helpers ──────────────────────────────
+
+    /// <summary>
+    /// Re-parents the Live Reaction Chamber panel into the input column's
+    /// VerticalLayoutGroup directly after the Mix button and gives it a
+    /// LayoutElement so it participates in the flow. Falls back to the
+    /// legacy floating anchor when no input container exists yet.
+    /// </summary>
+    private void DockReactionDashboardBelowMix(Canvas canvas)
+    {
+        if (reactionDashboardRect == null || canvas == null) return;
+
+        var inputContainer = canvas.transform.Find("_LabInputContainer") as RectTransform;
+        if (inputContainer != null)
+        {
+            reactionDashboardRect.SetParent(inputContainer, false);
+            // Stretch horizontally; VerticalLayoutGroup drives width via LayoutElement.
+            reactionDashboardRect.anchorMin = new Vector2(0f, 1f);
+            reactionDashboardRect.anchorMax = new Vector2(1f, 1f);
+            reactionDashboardRect.pivot     = new Vector2(0.5f, 1f);
+            reactionDashboardRect.anchoredPosition = Vector2.zero;
+            reactionDashboardRect.sizeDelta = new Vector2(0f, 160f);
+
+            var le = reactionDashboardRect.GetComponent<LayoutElement>();
+            if (le == null) le = reactionDashboardRect.gameObject.AddComponent<LayoutElement>();
+            le.minHeight = 140f;
+            le.preferredHeight = 160f;
+            le.flexibleWidth = 1f;
+            le.flexibleHeight = 0f;
+
+            // Force the dashboard to render below the Mix button regardless of
+            // the order CreateReactionDashboard() runs in.
+            if (mixButton != null && mixButton.transform.parent == inputContainer)
+            {
+                int mixIndex = mixButton.transform.GetSiblingIndex();
+                reactionDashboardRect.SetSiblingIndex(mixIndex + 1);
+            }
+            else
+            {
+                reactionDashboardRect.SetAsLastSibling();
+            }
+        }
+        else
+        {
+            // Legacy fallback (used by scenes that never built the column):
+            // float just below the top header, centred.
+            reactionDashboardRect.SetParent(canvas.transform, false);
+            reactionDashboardRect.anchorMin = new Vector2(0.5f, 1f);
+            reactionDashboardRect.anchorMax = new Vector2(0.5f, 1f);
+            reactionDashboardRect.pivot     = new Vector2(0.5f, 1f);
+            reactionDashboardRect.anchoredPosition = new Vector2(0f, reactionDashboardAnchorY);
+            reactionDashboardRect.sizeDelta = new Vector2(680f, 124f);
+        }
+    }
+
+    /// <summary>
+    /// Converts the dashboard's inner texts from fixed-width corner anchors
+    /// to horizontally-stretched anchors so they adapt to the container
+    /// width once the panel is hosted in the VerticalLayoutGroup.
+    /// </summary>
+    private void StretchDashboardChildren()
+    {
+        StretchDashboardText(reactionDashboardTitleText,   topOffset: -12f, height: 24f);
+        StretchDashboardText(reactionDashboardStateText,   topOffset: -38f, height: 28f);
+        StretchDashboardText(reactionDashboardMetricsText, topOffset: -66f, height: 22f);
+        StretchDashboardText(reactionDashboardOutcomeText, topOffset: -90f, height: 60f);
+    }
+
+    private static void StretchDashboardText(TextMeshProUGUI text, float topOffset, float height)
+    {
+        if (text == null) return;
+        var rt = text.rectTransform;
+        rt.anchorMin = new Vector2(0f, 1f);
+        rt.anchorMax = new Vector2(1f, 1f);
+        rt.pivot     = new Vector2(0f, 1f);
+        rt.offsetMin = new Vector2(18f, topOffset - height);
+        rt.offsetMax = new Vector2(-18f, topOffset);
     }
 
     private TextMeshProUGUI CreateDashboardText(RectTransform parent, string name, Vector2 anchorMin, Vector2 offset, Vector2 size, int fontSize, Color color, TextAlignmentOptions alignment)
@@ -1559,8 +1731,14 @@ public class LabController : MonoBehaviour
 
     private void RefreshReactionDashboard()
     {
-        if (reactionDashboardRect != null)
+        // Only reset the floating anchor when the dashboard is NOT docked into
+        // the input column (i.e. legacy fallback path). Docked panels are
+        // positioned by the VerticalLayoutGroup.
+        if (reactionDashboardRect != null &&
+            reactionDashboardRect.GetComponent<LayoutElement>() == null)
+        {
             reactionDashboardRect.anchoredPosition = new Vector2(0f, reactionDashboardAnchorY);
+        }
 
         if (reactionDashboardTitleText == null || reactionDashboardStateText == null ||
             reactionDashboardMetricsText == null || reactionDashboardOutcomeText == null)
@@ -1672,6 +1850,37 @@ public class LabController : MonoBehaviour
         reactionDashboardStateText.text = stateText;
         reactionDashboardMetricsText.text = metricLine;
         reactionDashboardOutcomeText.text = $"{telemetryLine}\n{outcomeText}";
+
+        // Dynamically resize the dashboard so verbose messages (e.g. the
+        // "Duplicate reactants selected" warning) grow downward inside the
+        // VerticalLayoutGroup rather than overlapping the sliders. Capped so
+        // it can never push the panel off the bottom of the input column.
+        ResizeDashboardToContent();
+    }
+
+    private void ResizeDashboardToContent()
+    {
+        if (reactionDashboardRect == null || reactionDashboardOutcomeText == null) return;
+
+        reactionDashboardOutcomeText.ForceMeshUpdate();
+        float outcomeH = Mathf.Clamp(reactionDashboardOutcomeText.preferredHeight + 8f, 60f, 140f);
+        // Reposition the outcome text to match its new height.
+        var ort = reactionDashboardOutcomeText.rectTransform;
+        ort.offsetMin = new Vector2(ort.offsetMin.x, -90f - outcomeH);
+        ort.offsetMax = new Vector2(ort.offsetMax.x, -90f);
+
+        float total = Mathf.Clamp(110f + outcomeH, 140f, 240f);
+        var le = reactionDashboardRect.GetComponent<LayoutElement>();
+        if (le != null)
+        {
+            // Docked path — let the VerticalLayoutGroup re-flow.
+            le.preferredHeight = total;
+        }
+        else
+        {
+            // Floating fallback — just resize directly.
+            reactionDashboardRect.sizeDelta = new Vector2(reactionDashboardRect.sizeDelta.x, total);
+        }
     }
 
     private bool IsCurrentSetupMatchingLastEvaluation(List<string> selectedReagents, float temperature, float stirring, float grinding, bool catalystEnabled)

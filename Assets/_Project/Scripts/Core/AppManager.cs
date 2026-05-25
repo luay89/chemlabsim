@@ -44,8 +44,12 @@ public class AppManager : MonoBehaviour
 
         if (loader == null)
         {
-            Debug.LogError("[AppManager] loader reference missing. Drag SecureReactionLoader onto AppManager.");
-            return false;
+            loader = FindObjectOfType<SecureReactionLoader>();
+            if (loader == null)
+            {
+                Debug.LogError("[AppManager] loader reference missing. Drag SecureReactionLoader onto AppManager.");
+                return false;
+            }
         }
 
         try
@@ -58,6 +62,20 @@ public class AppManager : MonoBehaviour
             Debug.LogError("[AppManager] Initialization failed: " + ex);
             return false;
         }
+    }
+
+    /// <summary>
+    /// Public entry point used by controllers (e.g. LabInputController) that need to
+    /// guarantee the encrypted reactions blob has been decrypted and validated
+    /// before they bind UI dropdowns. Safe to call repeatedly; returns true if a
+    /// valid <see cref="ReactionDatabase"/> is available after the call.
+    /// </summary>
+    public bool EnsureDatabaseLoaded()
+    {
+        if (ReactionDatabase != null)
+            return true;
+
+        return InitializeDatabase();
     }
 
     private static int GetReactionCountSafe(ReactionDB db)
