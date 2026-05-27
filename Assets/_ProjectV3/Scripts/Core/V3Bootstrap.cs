@@ -5,8 +5,14 @@
 // This component is independent of v2's AppManager — both can coexist.
 
 using UnityEngine;
+using ChemLabSimV3.Application.UseCases;
 using ChemLabSimV3.Controllers;
+using ChemLabSimV3.Domain.Events;
 using ChemLabSimV3.Events;
+using ChemLabSimV3.Infrastructure.EventBus;
+using ChemLabSimV3.Infrastructure.Logging;
+using ChemLabSimV3.Infrastructure.Services;
+using ChemLabSimV3.Presentation.Presenters;
 using ChemLabSimV3.Services;
 
 namespace ChemLabSimV3.Core
@@ -85,6 +91,35 @@ namespace ChemLabSimV3.Core
             ServiceLocator.Register(audioService);
             ServiceLocator.Register(languageService);
             ServiceLocator.Register(sceneService);
+
+            // Presentation-layer infrastructure: liquid pour VFX.
+            // Hosted on this bootstrap GameObject so it survives scene loads
+            // alongside the rest of the v3 infrastructure (DontDestroyOnLoad).
+            var pourParticleService = gameObject.GetComponent<UnityPourParticleService>()
+                                      ?? gameObject.AddComponent<UnityPourParticleService>();
+            ServiceLocator.Register<IPourParticleService>(pourParticleService);
+
+            // Domain event bus — reused by use cases that need to notify
+            // listeners (UI counters, fluid shaders, notebook entries, …).
+            // Register once and only once; if another bootstrap (e.g.
+            // ProductionBootstrapper) already provided one, prefer that.
+            IDomainEventBus eventBus;
+            if (ServiceLocator.Has<IDomainEventBus>())
+            {
+                eventBus = ServiceLocator.Get<IDomainEventBus>();
+            }
+            else
+            {
+                eventBus = new DomainEventBus(new UnityLogger());
+                ServiceLocator.Register(eventBus);
+            }
+
+            // Application use case: time-based pour. Drives per-frame mass
+            // transfer when a vessel is dragged into a target trigger zone.
+            // ChemistryEngine is intentionally optional — passing null
+            // disables live recompute but pour transfer still works.
+            var pourUseCase = new TimeBasedPourUseCase(chemistryEngine: null, eventBus: eventBus);
+            ServiceLocator.Register<ITimeBasedPourUseCase>(pourUseCase);
 
             Debug.Log("[V3Bootstrap] Services initialized and registered.");
         }

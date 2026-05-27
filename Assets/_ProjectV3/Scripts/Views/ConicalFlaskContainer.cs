@@ -162,7 +162,9 @@ namespace ChemLabSimV3.Views
             var col = go.GetComponent<Collider>();
             if (col != null)
             {
-                if (Application.isPlaying) Destroy(col);
+                // Fully-qualified to avoid shadowing by any ChemLabSimV3.* type
+                // named "Application" pulled in via the project's umbrella usings.
+                if (UnityEngine.Application.isPlaying) Destroy(col);
                 else DestroyImmediate(col);
             }
 
