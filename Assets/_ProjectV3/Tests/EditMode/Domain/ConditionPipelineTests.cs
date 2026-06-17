@@ -98,14 +98,11 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
             };
 
             var result = pipeline.Execute(input);
-            Assert.Multiple(() =>
-            {
-                Assert.That(result.TemperatureScore, Is.GreaterThanOrEqualTo(0f));
-                Assert.That(result.MediumScore, Is.GreaterThanOrEqualTo(0f));
-                Assert.That(result.ContactScore, Is.GreaterThanOrEqualTo(0f));
-                Assert.That(result.CatalystScore, Is.GreaterThanOrEqualTo(0f));
-                Assert.That(result.OverallScore, Is.GreaterThanOrEqualTo(0f));
-            });
+            Assert.That(result.TemperatureScore, Is.GreaterThanOrEqualTo(0f));
+            Assert.That(result.MediumScore, Is.GreaterThanOrEqualTo(0f));
+            Assert.That(result.ContactScore, Is.GreaterThanOrEqualTo(0f));
+            Assert.That(result.CatalystScore, Is.GreaterThanOrEqualTo(0f));
+            Assert.That(result.OverallScore, Is.GreaterThanOrEqualTo(0f));
         }
     }
 }

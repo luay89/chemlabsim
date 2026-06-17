@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using ChemLabSimV3.Core;
+using ChemLabSimV3.Data;
 
 namespace ChemLabSimV3.Tests.EditMode.Core
 {

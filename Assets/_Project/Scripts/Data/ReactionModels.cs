@@ -178,6 +178,16 @@ public class ReactionVisualEffects
     public bool smoke;
     public bool foam;
     public bool frost;
+
+    // ── Enhanced VFX (Phase 2) ──
+    public bool dissolution;
+    public bool crystallization;
+    public string effervescence;  // "none", "mild", "vigorous", "violent"
+    public bool vortex;
+    public bool vapor;
+    public bool turbidity;
+    public bool electrical;
+    public string precipitate_color;
 }
 
 [Serializable]

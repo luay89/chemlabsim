@@ -4,6 +4,21 @@ using ChemLabSimV3.Events;
 
 namespace ChemLabSimV3.Tests.EditMode.Core
 {
+    // ── Test event types (must implement IGameEvent for EventBus) ──
+
+    public struct TestEvent : IGameEvent
+    {
+        public string Data { get; set; }
+    }
+
+    public struct AnotherEvent : IGameEvent
+    {
+        public int Value { get; set; }
+    }
+}
+
+namespace ChemLabSimV3.Tests.EditMode.Core
+{
     /// <summary>
     /// Tests for the EventBus system — ensures pub/sub works correctly.
     /// </summary>
@@ -19,18 +34,6 @@ namespace ChemLabSimV3.Tests.EditMode.Core
         public void Teardown()
         {
             EventBus.Clear();
-        }
-
-        // ── Test event types ──
-
-        public class TestEvent
-        {
-            public string Data { get; set; }
-        }
-
-        public class AnotherEvent
-        {
-            public int Value { get; set; }
         }
 
         // ── Tests ──
@@ -121,11 +124,8 @@ namespace ChemLabSimV3.Tests.EditMode.Core
             EventBus.Publish(new TestEvent { Data = "test" });
             EventBus.Publish(new AnotherEvent { Value = 99 });
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(testData, Is.EqualTo("test"));
-                Assert.That(anotherValue, Is.EqualTo(99));
-            });
+            Assert.That(testData, Is.EqualTo("test"));
+            Assert.That(anotherValue, Is.EqualTo(99));
         }
     }
 }

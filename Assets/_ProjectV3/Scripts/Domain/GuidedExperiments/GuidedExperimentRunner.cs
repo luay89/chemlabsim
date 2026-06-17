@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using ChemLabSimV3.Data;
+using ChemLabSimV3.Engine;
 
 namespace ChemLabSimV3.Domain.GuidedExperiments
 {
@@ -108,7 +109,7 @@ namespace ChemLabSimV3.Domain.GuidedExperiments
         /// Validate a step against the current step's validation rules.
         /// Returns a StepResult with pass/fail and score.
         /// </summary>
-        public StepResult ValidateStep(ExperimentSession session, MixRequest mixRequest, ReactionEvaluationResult evaluation)
+        public StepResult ValidateStep(ExperimentSession session, MixRequest mixRequest, ReactionEvaluationResult? evaluation)
         {
             var result = new StepResult
             {
@@ -164,16 +165,11 @@ namespace ChemLabSimV3.Domain.GuidedExperiments
             // Validate medium
             if (!string.IsNullOrEmpty(validation.RequiredMedium))
             {
-                var reqMedium = validation.RequiredMedium;
-                var actualMedium = mixRequest.Medium;
-                if (!string.Equals(reqMedium, actualMedium, StringComparison.OrdinalIgnoreCase))
+                string reqMedium = validation.RequiredMedium;
+                string actualStr = mixRequest.Medium.ToString();
+                if (!string.Equals(reqMedium, actualStr, StringComparison.OrdinalIgnoreCase))
                 {
-                    // Check against ReactionMedium enum values
-                    string actualStr = actualMedium;
-                    if (!string.Equals(reqMedium, actualStr, StringComparison.OrdinalIgnoreCase))
-                    {
-                        earnedScore -= 0.3f;
-                    }
+                    earnedScore -= 0.3f;
                 }
             }
 
@@ -197,16 +193,15 @@ namespace ChemLabSimV3.Domain.GuidedExperiments
             }
 
             // Validate result status
-            if (!string.IsNullOrEmpty(validation.ExpectedResultStatus))
+            if (!string.IsNullOrEmpty(validation.ExpectedResultStatus) && evaluation.HasValue)
             {
-                if (evaluation != null)
+                var eval = evaluation.Value;
+                string actualStatus = eval.Status.ToString().ToUpperInvariant();
+                string expected = validation.ExpectedResultStatus.ToUpperInvariant();
+
+                if (expected != "ANY" && expected != actualStatus)
                 {
-                    string actualStatus = evaluation.Status;
-                    if (!string.Equals(validation.ExpectedResultStatus, actualStatus, StringComparison.OrdinalIgnoreCase)
-                        && validation.ExpectedResultStatus != "Any")
-                    {
-                        earnedScore -= 0.3f;
-                    }
+                    earnedScore -= 0.3f;
                 }
             }
 

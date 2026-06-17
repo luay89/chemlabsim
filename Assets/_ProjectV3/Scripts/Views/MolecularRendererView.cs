@@ -137,7 +137,7 @@ namespace ChemLabSimV3.Views
 
         private void OnReactionEvaluated(ReactionEvaluatedEvent evt)
         {
-            if (evt?.Input?.reaction == null) return;
+            if (evt.Input.reaction == null) return;
 
             // Build molecules from reaction data
             var transformation = BuildTransformationFromReaction(evt.Input.reaction);
@@ -150,7 +150,7 @@ namespace ChemLabSimV3.Views
 
         private void OnChemistryProcessed(ChemistryProcessedEvent evt)
         {
-            if (evt?.Output?.Substances == null) return;
+            if (evt.Output.Substances == null) return;
 
             // Update based on chemistry output (temperature, phase changes)
             _simulator.SetTemperatureC(evt.Output.TemperatureC);
@@ -199,7 +199,11 @@ namespace ChemLabSimV3.Views
             }
 
             // Remove stale atoms
-            var currentIds = new HashSet<string>(snapshot.AtomStates.SelectSafe(a => a?.Id));
+            var currentIds = new HashSet<string>();
+            foreach (var a in snapshot.AtomStates)
+            {
+                if (a != null && a.Id != null) currentIds.Add(a.Id);
+            }
             RemoveStaleVisuals(_atomSpheres, currentIds);
             RemoveStaleVisuals(_atomLabels, currentIds);
         }
@@ -471,19 +475,4 @@ namespace ChemLabSimV3.Views
         }
     }
 
-    /// <summary>
-    /// Extension to safely enumerate potentially null collections.
-    /// </summary>
-    internal static class MolSimExtensions
-    {
-        public static IEnumerable<T> SelectSafe<T>(this IEnumerable<T> source, System.Func<T, T> selector)
-        {
-            if (source == null) yield break;
-            foreach (var item in source)
-            {
-                if (item != null)
-                    yield return selector(item);
-            }
-        }
-    }
 }

@@ -151,10 +151,12 @@ namespace ChemLabSimV3.Application.UseCases
             {
                 try
                 {
-                    var reagents = new List<string>(targetCopy.AccumulatedReagents?.Keys ?? new List<string>());
+                    var reagents = targetCopy.AccumulatedReagents != null
+                        ? new List<string>(targetCopy.AccumulatedReagents.Keys)
+                        : new List<string>();
                     var mixRequest = new ChemLabSimV3.Data.MixRequest(
                         reagentNames: reagents,
-                        medium: ChemLabSimV3.Data.ReactionMedium.Neutral,
+                        medium: ReactionMedium.Neutral,
                         temperature: 25f,
                         stirring: 0f,
                         grinding: 0f,
@@ -203,7 +205,7 @@ namespace ChemLabSimV3.Application.UseCases
 
         // No longer needed: chemistry is now always run in ExecutePour and output is propagated.
 
-        private void PublishContentsChanged(VesselSnapshot v, float deltaMl, bool isPouring, ChemistryOutput chemistryOutput)
+        private void PublishContentsChanged(VesselSnapshot v, float deltaMl, bool isPouring, ChemistryOutput? chemistryOutput)
         {
             if (_eventBus == null) return;
             var evt = new VesselContentsChangedEvent(
