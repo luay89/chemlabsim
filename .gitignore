@@ -18,6 +18,24 @@
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
+# Unity build artifacts (local builds)
+/Build_Output.x86_64
+/Build_Output_Data/
+/UnityPlayer.so
+/ChemLabSim_BurstDebugInformation_DoNotShip/
+
+# Duplicate project folders
+/My project/
+
+# Crash / diagnostic dumps
+mono_crash.*
+
+# Default sample scene
+Assets/Scenes/SampleScene.unity
+Assets/Scenes/SampleScene.unity.meta
+Assets/Settings/SampleSceneProfile.asset
+Assets/Settings/SampleSceneProfile.asset.meta
+
 /[Mm]emoryCaptures/
 
 # Recordings can get excessive in size
@@ -65,8 +83,7 @@ ExportedObj/
 # Unity3D generated file on crash reports
 sysinfo.txt
 
-# Mono auto generated files
-mono_crash.*
+# (covered above: mono_crash.* listed under crash/diagnostic)
 
 # Builds
 *.apk
