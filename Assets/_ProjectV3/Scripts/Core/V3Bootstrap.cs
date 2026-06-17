@@ -40,6 +40,10 @@ namespace ChemLabSimV3.Core
         [SerializeField] private GuidanceController guidanceController;
         [SerializeField] private NotebookController notebookController;
 
+        // Chemistry engine dependencies
+        [Header("Chemistry Engine (optional)")]
+        [SerializeField] private SecureReactionLoader reactionLoader;
+
         #pragma warning disable CS0414
         private bool initialized;
         #pragma warning restore CS0414
@@ -93,16 +97,11 @@ namespace ChemLabSimV3.Core
             ServiceLocator.Register(sceneService);
 
             // Presentation-layer infrastructure: liquid pour VFX.
-            // Hosted on this bootstrap GameObject so it survives scene loads
-            // alongside the rest of the v3 infrastructure (DontDestroyOnLoad).
             var pourParticleService = gameObject.GetComponent<UnityPourParticleService>()
                                       ?? gameObject.AddComponent<UnityPourParticleService>();
             ServiceLocator.Register<IPourParticleService>(pourParticleService);
 
-            // Domain event bus — reused by use cases that need to notify
-            // listeners (UI counters, fluid shaders, notebook entries, …).
-            // Register once and only once; if another bootstrap (e.g.
-            // ProductionBootstrapper) already provided one, prefer that.
+            // Domain event bus
             IDomainEventBus eventBus;
             if (ServiceLocator.Has<IDomainEventBus>())
             {
@@ -114,11 +113,47 @@ namespace ChemLabSimV3.Core
                 ServiceLocator.Register(eventBus);
             }
 
-            // Application use case: time-based pour. Drives per-frame mass
-            // transfer when a vessel is dragged into a target trigger zone.
-            // ChemistryEngine is intentionally optional — passing null
-            // disables live recompute but pour transfer still works.
-            var pourUseCase = new TimeBasedPourUseCase(chemistryEngine: null, eventBus: eventBus);
+
+            // ChemistryEngine: resolve from ServiceLocator or instantiate if missing
+            ChemLabSimV3.Engine.Chemistry.ChemistryEngine chemistryEngine = null;
+            if (ServiceLocator.Has<ChemLabSimV3.Engine.Chemistry.ChemistryEngine>())
+            {
+                chemistryEngine = ServiceLocator.Get<ChemLabSimV3.Engine.Chemistry.ChemistryEngine>();
+            }
+            else
+            {
+                try
+                {
+                    if (reactionLoader == null)
+                    {
+                        reactionLoader = GetComponent<SecureReactionLoader>() ?? FindObjectOfType<SecureReactionLoader>();
+                    }
+                    if (reactionLoader != null)
+                    {
+                        var db = reactionLoader.Load();
+                        if (db != null)
+                        {
+                            chemistryEngine = new ChemLabSimV3.Engine.Chemistry.ChemistryEngine(db);
+                            ServiceLocator.Register(chemistryEngine);
+                        }
+                        else
+                        {
+                            Debug.LogWarning("[V3Bootstrap] SecureReactionLoader returned null ReactionDB. ChemistryEngine will be unavailable.");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[V3Bootstrap] No SecureReactionLoader found. ChemistryEngine will be unavailable.");
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"[V3Bootstrap] ChemistryEngine initialization failed: {ex.Message}");
+                }
+            }
+
+            // Application use case: time-based pour. Inject resolved chemistryEngine.
+            var pourUseCase = new ChemLabSimV3.Application.UseCases.TimeBasedPourUseCase(chemistryEngine, eventBus);
             ServiceLocator.Register<ITimeBasedPourUseCase>(pourUseCase);
 
             Debug.Log("[V3Bootstrap] Services initialized and registered.");

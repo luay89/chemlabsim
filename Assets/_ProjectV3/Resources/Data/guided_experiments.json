@@ -1,0 +1,389 @@
+{
+  "experiments": [
+    {
+      "id": "exp_acid_base_001",
+      "titleKey": "guidedExp_title_acidBase",
+      "descriptionKey": "guidedExp_desc_acidBase",
+      "category": "Acid-Base",
+      "difficultyLevel": 1,
+      "estimatedMinutes": 5,
+      "prerequisiteExperimentId": null,
+      "requiredReagents": ["HCl", "NaOH"],
+      "rewardSkillPoints": 50,
+      "achievementId": "ach_first_neutralization",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instructionKey": "guidedExp_step1_acidBase",
+          "hintKey": "guidedExp_hint1_acidBase",
+          "actionType": "SelectReagents",
+          "isOptional": false,
+          "expectedObservations": ["HCl selected", "NaOH selected"],
+          "validation": {
+            "expectedReagents": ["HCl", "NaOH"]
+          }
+        },
+        {
+          "stepNumber": 2,
+          "instructionKey": "guidedExp_step2_acidBase",
+          "hintKey": "guidedExp_hint2_acidBase",
+          "actionType": "SetMedium",
+          "isOptional": false,
+          "expectedObservations": ["Medium set to Neutral"],
+          "validation": {
+            "requiredMedium": "Neutral"
+          }
+        },
+        {
+          "stepNumber": 3,
+          "instructionKey": "guidedExp_step3_acidBase",
+          "hintKey": "guidedExp_hint3_acidBase",
+          "actionType": "SetTemperature",
+          "isOptional": false,
+          "expectedObservations": ["Temperature above 25°C"],
+          "validation": {
+            "minTemperature": 25.0
+          }
+        },
+        {
+          "stepNumber": 4,
+          "instructionKey": "guidedExp_step4_acidBase",
+          "hintKey": "guidedExp_hint4_acidBase",
+          "actionType": "Mix",
+          "isOptional": false,
+          "expectedObservations": ["Reaction produces NaCl and H₂O"],
+          "validation": {
+            "expectedResultStatus": "COMPLETE"
+          }
+        },
+        {
+          "stepNumber": 5,
+          "instructionKey": "guidedExp_step5_acidBase",
+          "hintKey": "guidedExp_hint5_acidBase",
+          "actionType": "AnswerQuestion",
+          "isOptional": false,
+          "expectedObservations": [],
+          "validation": null
+        }
+      ],
+      "evaluation": {
+        "perfectScoreThreshold": 0.9,
+        "passingScoreThreshold": 0.5,
+        "criteria": [
+          { "nameKey": "criterion_correctReagents", "weight": 0.25, "descriptionKey": "criterion_desc_correctReagents" },
+          { "nameKey": "criterion_correctMedium", "weight": 0.2, "descriptionKey": "criterion_desc_correctMedium" },
+          { "nameKey": "criterion_correctTemp", "weight": 0.2, "descriptionKey": "criterion_desc_correctTemp" },
+          { "nameKey": "criterion_successfulReaction", "weight": 0.25, "descriptionKey": "criterion_desc_successfulReaction" },
+          { "nameKey": "criterion_quiz", "weight": 0.1, "descriptionKey": "criterion_desc_quiz" }
+        ]
+      }
+    },
+    {
+      "id": "exp_catalyst_001",
+      "titleKey": "guidedExp_title_catalyst",
+      "descriptionKey": "guidedExp_desc_catalyst",
+      "category": "Catalysis",
+      "difficultyLevel": 2,
+      "estimatedMinutes": 8,
+      "prerequisiteExperimentId": "exp_acid_base_001",
+      "requiredReagents": ["H2O2", "KI"],
+      "rewardSkillPoints": 75,
+      "achievementId": "ach_catalyst_master",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instructionKey": "guidedExp_step1_catalyst",
+          "hintKey": "guidedExp_hint1_catalyst",
+          "actionType": "SelectReagents",
+          "isOptional": false,
+          "expectedObservations": ["H₂O₂ selected", "KI selected"],
+          "validation": {
+            "expectedReagents": ["H2O2", "KI"]
+          }
+        },
+        {
+          "stepNumber": 2,
+          "instructionKey": "guidedExp_step2_catalyst",
+          "hintKey": "guidedExp_hint2_catalyst",
+          "actionType": "SetTemperature",
+          "isOptional": false,
+          "expectedObservations": ["Temperature below 30°C"],
+          "validation": {
+            "maxTemperature": 30.0
+          }
+        },
+        {
+          "stepNumber": 3,
+          "instructionKey": "guidedExp_step3_catalyst",
+          "hintKey": "guidedExp_hint3_catalyst",
+          "actionType": "ToggleCatalyst",
+          "isOptional": false,
+          "expectedObservations": ["Catalyst added"],
+          "validation": {
+            "requireCatalyst": true
+          }
+        },
+        {
+          "stepNumber": 4,
+          "instructionKey": "guidedExp_step4_catalyst",
+          "hintKey": "guidedExp_hint4_catalyst",
+          "actionType": "Mix",
+          "isOptional": false,
+          "expectedObservations": ["Reaction accelerated by catalyst"],
+          "validation": {
+            "expectedResultStatus": "COMPLETE"
+          }
+        },
+        {
+          "stepNumber": 5,
+          "instructionKey": "guidedExp_step5_catalyst",
+          "hintKey": "guidedExp_hint5_catalyst",
+          "actionType": "AnswerQuestion",
+          "isOptional": false,
+          "expectedObservations": [],
+          "validation": null
+        }
+      ],
+      "evaluation": {
+        "perfectScoreThreshold": 0.9,
+        "passingScoreThreshold": 0.5,
+        "criteria": [
+          { "nameKey": "criterion_correctReagents", "weight": 0.2, "descriptionKey": "criterion_desc_correctReagents" },
+          { "nameKey": "criterion_temperature", "weight": 0.15, "descriptionKey": "criterion_desc_temperature" },
+          { "nameKey": "criterion_catalystUsage", "weight": 0.3, "descriptionKey": "criterion_desc_catalystUsage" },
+          { "nameKey": "criterion_successfulReaction", "weight": 0.25, "descriptionKey": "criterion_desc_successfulReaction" },
+          { "nameKey": "criterion_quiz", "weight": 0.1, "descriptionKey": "criterion_desc_quiz" }
+        ]
+      }
+    },
+    {
+      "id": "exp_precipitation_001",
+      "titleKey": "guidedExp_title_precipitation",
+      "descriptionKey": "guidedExp_desc_precipitation",
+      "category": "Precipitation",
+      "difficultyLevel": 2,
+      "estimatedMinutes": 7,
+      "prerequisiteExperimentId": "exp_acid_base_001",
+      "requiredReagents": ["AgNO3", "NaCl"],
+      "rewardSkillPoints": 75,
+      "achievementId": "ach_precipitate",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instructionKey": "guidedExp_step1_precip",
+          "hintKey": "guidedExp_hint1_precip",
+          "actionType": "SelectReagents",
+          "isOptional": false,
+          "expectedObservations": ["AgNO₃ selected", "NaCl selected"],
+          "validation": {
+            "expectedReagents": ["AgNO3", "NaCl"]
+          }
+        },
+        {
+          "stepNumber": 2,
+          "instructionKey": "guidedExp_step2_precip",
+          "hintKey": "guidedExp_hint2_precip",
+          "actionType": "SetStirring",
+          "isOptional": false,
+          "expectedObservations": ["Stirring set high"],
+          "validation": {
+            "minStirring": 0.5
+          }
+        },
+        {
+          "stepNumber": 3,
+          "instructionKey": "guidedExp_step3_precip",
+          "hintKey": "guidedExp_hint3_precip",
+          "actionType": "Mix",
+          "isOptional": false,
+          "expectedObservations": ["White precipitate of AgCl forms"],
+          "validation": {
+            "expectedResultStatus": "COMPLETE"
+          }
+        },
+        {
+          "stepNumber": 4,
+          "instructionKey": "guidedExp_step4_precip",
+          "hintKey": "guidedExp_hint4_precip",
+          "actionType": "Observe",
+          "isOptional": false,
+          "expectedObservations": ["Precipitate visible in flask"],
+          "validation": null
+        }
+      ],
+      "evaluation": {
+        "perfectScoreThreshold": 0.9,
+        "passingScoreThreshold": 0.5,
+        "criteria": [
+          { "nameKey": "criterion_correctReagents", "weight": 0.3, "descriptionKey": "criterion_desc_correctReagents" },
+          { "nameKey": "criterion_stirring", "weight": 0.2, "descriptionKey": "criterion_desc_stirring" },
+          { "nameKey": "criterion_successfulReaction", "weight": 0.3, "descriptionKey": "criterion_desc_successfulReaction" },
+          { "nameKey": "criterion_observation", "weight": 0.2, "descriptionKey": "criterion_desc_observation" }
+        ]
+      }
+    },
+    {
+      "id": "exp_gas_001",
+      "titleKey": "guidedExp_title_gas",
+      "descriptionKey": "guidedExp_desc_gas",
+      "category": "Gas Formation",
+      "difficultyLevel": 3,
+      "estimatedMinutes": 10,
+      "prerequisiteExperimentId": "exp_acid_base_001",
+      "requiredReagents": ["Zn", "HCl"],
+      "rewardSkillPoints": 100,
+      "achievementId": "ach_gas_collector",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instructionKey": "guidedExp_step1_gas",
+          "hintKey": "guidedExp_hint1_gas",
+          "actionType": "SelectReagents",
+          "isOptional": false,
+          "expectedObservations": ["Zinc selected", "HCl selected"],
+          "validation": {
+            "expectedReagents": ["Zn", "HCl"]
+          }
+        },
+        {
+          "stepNumber": 2,
+          "instructionKey": "guidedExp_step2_gas",
+          "hintKey": "guidedExp_hint2_gas",
+          "actionType": "SetTemperature",
+          "isOptional": false,
+          "expectedObservations": ["Temperature above 30°C for faster reaction"],
+          "validation": {
+            "minTemperature": 30.0
+          }
+        },
+        {
+          "stepNumber": 3,
+          "instructionKey": "guidedExp_step3_gas",
+          "hintKey": "guidedExp_hint3_gas",
+          "actionType": "Mix",
+          "isOptional": false,
+          "expectedObservations": ["Hydrogen gas bubbles (H₂) released"],
+          "validation": {
+            "expectedResultStatus": "COMPLETE"
+          }
+        },
+        {
+          "stepNumber": 4,
+          "instructionKey": "guidedExp_step4_gas",
+          "hintKey": "guidedExp_hint4_gas",
+          "actionType": "Observe",
+          "isOptional": false,
+          "expectedObservations": ["Gas evolution visible"],
+          "validation": null
+        },
+        {
+          "stepNumber": 5,
+          "instructionKey": "guidedExp_step5_gas",
+          "hintKey": "guidedExp_hint5_gas",
+          "actionType": "AnswerQuestion",
+          "isOptional": false,
+          "expectedObservations": [],
+          "validation": null
+        }
+      ],
+      "evaluation": {
+        "perfectScoreThreshold": 0.9,
+        "passingScoreThreshold": 0.5,
+        "criteria": [
+          { "nameKey": "criterion_correctReagents", "weight": 0.25, "descriptionKey": "criterion_desc_correctReagents" },
+          { "nameKey": "criterion_temperature", "weight": 0.2, "descriptionKey": "criterion_desc_temperature" },
+          { "nameKey": "criterion_successfulReaction", "weight": 0.3, "descriptionKey": "criterion_desc_successfulReaction" },
+          { "nameKey": "criterion_observation", "weight": 0.15, "descriptionKey": "criterion_desc_observation" },
+          { "nameKey": "criterion_quiz", "weight": 0.1, "descriptionKey": "criterion_desc_quiz" }
+        ]
+      }
+    },
+    {
+      "id": "exp_temperature_effect_001",
+      "titleKey": "guidedExp_title_tempEffect",
+      "descriptionKey": "guidedExp_desc_tempEffect",
+      "category": "Thermodynamics",
+      "difficultyLevel": 3,
+      "estimatedMinutes": 12,
+      "prerequisiteExperimentId": "exp_acid_base_001",
+      "requiredReagents": ["CaCO3", "HCl"],
+      "rewardSkillPoints": 100,
+      "achievementId": "ach_temp_master",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "instructionKey": "guidedExp_step1_temp",
+          "hintKey": "guidedExp_hint1_temp",
+          "actionType": "SelectReagents",
+          "isOptional": false,
+          "expectedObservations": ["CaCO₃ selected", "HCl selected"],
+          "validation": {
+            "expectedReagents": ["CaCO3", "HCl"]
+          }
+        },
+        {
+          "stepNumber": 2,
+          "instructionKey": "guidedExp_step2_temp",
+          "hintKey": "guidedExp_hint2_temp",
+          "actionType": "SetTemperature",
+          "isOptional": false,
+          "expectedObservations": ["Set temperature low (< 25°C)"],
+          "validation": {
+            "maxTemperature": 25.0
+          }
+        },
+        {
+          "stepNumber": 3,
+          "instructionKey": "guidedExp_step3_temp",
+          "hintKey": "guidedExp_hint3_temp",
+          "actionType": "Mix",
+          "isOptional": false,
+          "expectedObservations": ["Observe slow reaction rate"],
+          "validation": {}
+        },
+        {
+          "stepNumber": 4,
+          "instructionKey": "guidedExp_step4_temp",
+          "hintKey": "guidedExp_hint4_temp",
+          "actionType": "SetTemperature",
+          "isOptional": false,
+          "expectedObservations": ["Increase temperature to > 50°C"],
+          "validation": {
+            "minTemperature": 50.0
+          }
+        },
+        {
+          "stepNumber": 5,
+          "instructionKey": "guidedExp_step5_temp",
+          "hintKey": "guidedExp_hint5_temp",
+          "actionType": "Mix",
+          "isOptional": false,
+          "expectedObservations": ["Reaction rate increases significantly"],
+          "validation": {
+            "expectedResultStatus": "COMPLETE"
+          }
+        },
+        {
+          "stepNumber": 6,
+          "instructionKey": "guidedExp_step6_temp",
+          "hintKey": "guidedExp_hint6_temp",
+          "actionType": "AnswerQuestion",
+          "isOptional": false,
+          "expectedObservations": ["Understand temperature effect on reaction rate"],
+          "validation": null
+        }
+      ],
+      "evaluation": {
+        "perfectScoreThreshold": 0.9,
+        "passingScoreThreshold": 0.5,
+        "criteria": [
+          { "nameKey": "criterion_correctReagents", "weight": 0.15, "descriptionKey": "criterion_desc_correctReagents" },
+          { "nameKey": "criterion_lowTemp", "weight": 0.2, "descriptionKey": "criterion_desc_lowTemp" },
+          { "nameKey": "criterion_highTemp", "weight": 0.25, "descriptionKey": "criterion_desc_highTemp" },
+          { "nameKey": "criterion_comparison", "weight": 0.25, "descriptionKey": "criterion_desc_comparison" },
+          { "nameKey": "criterion_quiz", "weight": 0.15, "descriptionKey": "criterion_desc_quiz" }
+        ]
+      }
+    }
+  ]
+}

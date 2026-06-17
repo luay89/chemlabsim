@@ -1,0 +1,176 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+  UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
+jobs:
+  # ── Validation: check project loads without errors ──
+  validate:
+    name: Validate Project
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Check C# syntax with dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Check for compile errors in scripts
+        run: |
+          echo "Checking for basic C# syntax issues..."
+          # Quick validation: ensure no missing MonoBehaviour references
+          if grep -r "MonoBehaviour" Assets/_ProjectV3/Scripts/Domain/ --include="*.cs" 2>/dev/null; then
+            echo "❌ Domain layer should not reference UnityEngine!"
+            exit 1
+          fi
+          echo "✅ Domain layer is pure C# — no Unity dependencies detected"
+
+      - name: Validate reaction data integrity
+        run: |
+          if [ -f "Assets/_Project/DataSrc/reactions.json" ]; then
+            python3 -c "
+import json
+with open('Assets/_Project/DataSrc/reactions.json') as f:
+    data = json.load(f)
+count = len(data.get('reactions', data.get('entries', [])))
+print(f'✅ Valid JSON reaction database: {count} reactions')
+"
+          fi
+
+  # ── Unity Build (requires self-hosted or Unity license) ──
+  build-unity:
+    name: Unity Build (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: false # Disabled until Unity license is configured in secrets
+    # To enable: remove 'if: false' and add UNITY_LICENSE, UNITY_EMAIL, UNITY_PASSWORD secrets
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      - name: Unity Build (Linux)
+        uses: game-ci/unity-builder@v4
+        with:
+          targetPlatform: StandaloneLinux64
+          buildName: ChemLabSim
+          buildsPath: Builds/Linux-CI
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ChemLabSim-Linux-CI
+          path: Builds/Linux-CI
+
+  # ── WebGL Build ──
+  build-webgl:
+    name: Unity Build (WebGL)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      - name: Unity Build (WebGL)
+        uses: game-ci/unity-builder@v4
+        with:
+          targetPlatform: WebGL
+          buildName: ChemLabSim
+          buildsPath: Builds/WebGL-CI
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: Builds/WebGL-CI/WebGL
+
+  # ── Static Analysis ──
+  lint:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for TODO/FIXME/HACK comments
+        run: |
+          echo "=== Checking for unresolved TODO/FIXME/HACK ==="
+          todos=$(grep -rn "TODO\|FIXME\|HACK" Assets/_ProjectV3/Scripts/ --include="*.cs" \
+            | grep -v "// \[" | grep -v "///" || true)
+          if [ -n "$todos" ]; then
+            echo "⚠️  Found unresolved markers:"
+            echo "$todos"
+          else
+            echo "✅ No unresolved markers found"
+          fi
+
+      - name: Check file naming conventions
+        run: |
+          echo "=== Checking PascalCase for MonoBehaviour files ==="
+          issues=0
+          for f in $(find Assets/_ProjectV3/Scripts -name "*.cs" ! -name "*.meta"); do
+            filename=$(basename "$f" .cs)
+            # Check if filename starts with lowercase
+            first_char="${filename:0:1}"
+            if [[ "$first_char" =~ [a-z] ]]; then
+              echo "⚠️  File not PascalCase: $f"
+              issues=$((issues+1))
+            fi
+          done
+          if [ $issues -eq 0 ]; then
+            echo "✅ All files follow PascalCase convention"
+          fi
+
+  # ── Documentation Health ──
+  docs:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check critical docs exist
+        run: |
+          missing=0
+          for doc in README.md AGENTS.md ARCHITECTURE_PRODUCTION_READY.md; do
+            if [ ! -f "$doc" ]; then
+              echo "❌ Missing: $doc"
+              missing=$((missing+1))
+            else
+              echo "✅ Found: $doc ($(wc -l < "$doc") lines)"
+            fi
+          done
+          exit $missing

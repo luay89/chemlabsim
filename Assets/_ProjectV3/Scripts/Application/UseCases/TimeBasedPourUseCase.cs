@@ -145,13 +145,32 @@ namespace ChemLabSimV3.Application.UseCases
                 targetCopy = target;
             }
 
-            // Live chemistry recompute (optional) and event broadcast happen
-            // outside the lock so subscribers can call back into the use case
-            // (e.g. to query GetVolumeMl) without deadlocking.
-            TryRunLiveChemistry(targetCopy);
+            // Always create a MixRequest and process chemistry if engine is available
+            ChemLabSimV3.Engine.Chemistry.ChemistryOutput? chemistryOutput = null;
+            if (_chemistryEngine != null)
+            {
+                try
+                {
+                    var reagents = new List<string>(targetCopy.AccumulatedReagents?.Keys ?? new List<string>());
+                    var mixRequest = new ChemLabSimV3.Data.MixRequest(
+                        reagentNames: reagents,
+                        medium: ChemLabSimV3.Data.ReactionMedium.Neutral,
+                        temperature: 25f,
+                        stirring: 0f,
+                        grinding: 0f,
+                        hasCatalyst: false);
+                    chemistryOutput = _chemistryEngine.Process(mixRequest);
+                }
+                catch (Exception)
+                {
+                    // Swallow engine errors — a corrupt mixture must never break the pour loop.
+                    chemistryOutput = null;
+                }
+            }
 
-            PublishContentsChanged(sourceCopy, -addedMl, isPouring: true);
-            PublishContentsChanged(targetCopy, +addedMl, isPouring: true);
+            // Publish events, now with chemistry output if available
+            PublishContentsChanged(sourceCopy, -addedMl, isPouring: true, chemistryOutput);
+            PublishContentsChanged(targetCopy, +addedMl, isPouring: true, chemistryOutput);
 
             return sourceCopy.CurrentVolumeMl > 0f;
         }
@@ -182,44 +201,9 @@ namespace ChemLabSimV3.Application.UseCases
             target.ReagentId = dominant ?? string.Empty;
         }
 
-        private void TryRunLiveChemistry(VesselSnapshot target)
-        {
-            if (_chemistryEngine == null) return;
-            if (target.AccumulatedReagents == null || target.AccumulatedReagents.Count < 2) return;
+        // No longer needed: chemistry is now always run in ExecutePour and output is propagated.
 
-            var reagents = new List<string>(target.AccumulatedReagents.Count);
-            foreach (var pair in target.AccumulatedReagents)
-            {
-                if (!string.IsNullOrEmpty(pair.Key))
-                    reagents.Add(pair.Key);
-            }
-            if (reagents.Count < 2) return;
-
-            var request = new MixRequest(
-                reagentNames: reagents,
-                medium: ReactionMedium.Neutral,
-                temperature: 25f,
-                stirring: 0f,
-                grinding: 0f,
-                hasCatalyst: false);
-
-            try
-            {
-                // The result is consumed by the chemistry engine's internal state /
-                // its own event hooks. We deliberately ignore it here — the pour
-                // use case's job is to drive the recompute cadence, not to
-                // interpret the chemistry result.
-                _ = _chemistryEngine.Process(request);
-            }
-            catch (Exception)
-            {
-                // Swallow engine errors — a corrupt mixture must never break the
-                // pour loop. Subscribers can listen for engine-specific events
-                // if they need diagnostic detail.
-            }
-        }
-
-        private void PublishContentsChanged(VesselSnapshot v, float deltaMl, bool isPouring)
+        private void PublishContentsChanged(VesselSnapshot v, float deltaMl, bool isPouring, ChemistryOutput chemistryOutput)
         {
             if (_eventBus == null) return;
             var evt = new VesselContentsChangedEvent(
@@ -228,7 +212,8 @@ namespace ChemLabSimV3.Application.UseCases
                 currentVolumeMl: v.CurrentVolumeMl,
                 deltaVolumeMl: deltaMl,
                 capacityMl: v.CapacityMl,
-                isPouring: isPouring);
+                isPouring: isPouring,
+                chemistryOutput: chemistryOutput);
             _eventBus.Publish(evt);
         }
 

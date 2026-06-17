@@ -37,13 +37,17 @@ namespace ChemLabSimV3.Domain.Events
         /// </summary>
         public bool IsPouring { get; }
 
+        // ChemistryOutput is optional and may be null if no chemistry was run or it failed
+        public ChemLabSimV3.Engine.Chemistry.ChemistryOutput? ChemistryOutput { get; }
+
         public VesselContentsChangedEvent(
             string vesselId,
             string reagentId,
             float currentVolumeMl,
             float deltaVolumeMl,
             float capacityMl,
-            bool isPouring)
+            bool isPouring,
+            ChemLabSimV3.Engine.Chemistry.ChemistryOutput? chemistryOutput = null)
         {
             VesselId = vesselId ?? string.Empty;
             ReagentId = reagentId ?? string.Empty;
@@ -51,6 +55,7 @@ namespace ChemLabSimV3.Domain.Events
             DeltaVolumeMl = deltaVolumeMl;
             CapacityMl = capacityMl;
             IsPouring = isPouring;
+            ChemistryOutput = chemistryOutput;
         }
     }
 }

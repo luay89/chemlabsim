@@ -1,0 +1,23 @@
+{
+    "name": "ChemLabSimV3.EditModeTests",
+    "rootNamespace": "",
+    "references": [
+        "ChemLabSimV3",
+        "ChemLabSim.Core"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
