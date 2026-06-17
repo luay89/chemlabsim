@@ -134,6 +134,50 @@ namespace ChemLabSimV3.Controllers
                 if (vfx.smoke)  state.PlaySmoke  = true;
                 if (vfx.foam)   state.PlayFoam   = true;
                 if (vfx.frost)  state.PlayFrost  = true;
+
+                // ── Enhanced VFX (Phase 2) ──
+                // Dissolution: solid disappearing into liquid
+                if (vfx.dissolution)
+                    state.PlayDissolution = true;
+
+                // Crystallization: crystals forming from solution
+                if (vfx.crystallization)
+                    state.PlayCrystallization = true;
+
+                // Effervescence level
+                if (!string.IsNullOrEmpty(vfx.effervescence) && vfx.effervescence != "none")
+                {
+                    state.EffervescenceLevel = vfx.effervescence switch
+                    {
+                        "mild"     => 1,
+                        "vigorous" => 2,
+                        "violent"  => 3,
+                        _          => 0
+                    };
+                    // Also ensure gas bubbles play for effervescent reactions
+                    if (state.EffervescenceLevel > 0)
+                        state.PlayGas = true;
+                }
+
+                // Vortex (stirring-related visual)
+                if (vfx.vortex)
+                    state.PlayVortex = true;
+
+                // Vapor/steam
+                if (vfx.vapor)
+                    state.PlayVapor = true;
+
+                // Turbidity (liquid becomes cloudy)
+                if (vfx.turbidity)
+                    state.PlayTurbidity = true;
+
+                // Electrical effect (electrochemistry)
+                if (vfx.electrical)
+                    state.PlayElectrical = true;
+
+                // Precipitate color override
+                if (!string.IsNullOrEmpty(vfx.precipitate_color))
+                    state.PrecipitateColorHex = vfx.precipitate_color;
             }
 
             return state;

@@ -117,6 +117,135 @@ namespace ChemLabSimV3.Views
             if (state.PlaySmoke && smokeFx != null) smokeFx.Play();
             if (state.PlayFoam && foamFx != null) foamFx.Play();
             if (state.PlayFrost && frostFx != null) frostFx.Play();
+
+            // ── Enhanced VFX (Phase 2) ──
+
+            // Dissolution: solid particles fading into liquid
+            if (state.PlayDissolution)
+            {
+                // Re-use precipitate particles in reverse: spawn and fade out
+                if (precipitateFx != null)
+                {
+                    var main = precipitateFx.main;
+                    main.startLifetime = 1.2f;
+                    main.startSpeed = 0.3f;
+                    main.startSize = 0.15f;
+                    main.gravityModifier = 0.1f;
+                    var col = main.startColor;
+                    col.color = new Color(0.80f, 0.85f, 0.95f, 0.6f);
+                    main.startColor = col;
+                    precipitateFx.Play();
+                }
+            }
+
+            // Crystallization: particles growing and settling
+            if (state.PlayCrystallization)
+            {
+                // Use precipitate with grow effect
+                if (precipitateFx != null)
+                {
+                    var main = precipitateFx.main;
+                    main.startLifetime = 3f;
+                    main.startSpeed = 0.05f;
+                    main.startSize = 0.04f;
+                    main.gravityModifier = 0.5f;
+                    var col = main.startColor;
+                    col.color = new Color(0.90f, 0.92f, 0.98f, 0.9f);
+                    main.startColor = col;
+                    precipitateFx.Play();
+                }
+                // Also trigger a gentle glow
+                if (glowFx != null) glowFx.Play();
+            }
+
+            // Effervescence: scale gas intensity
+            if (state.EffervescenceLevel > 0 && gasFx != null)
+            {
+                float intensity = state.EffervescenceLevel / 3f;
+                var main = gasFx.main;
+                main.startSpeed = Mathf.Lerp(0.4f, 1.8f, intensity);
+                main.startSize = Mathf.Lerp(0.12f, 0.35f, intensity);
+                main.startLifetime = Mathf.Lerp(2.0f, 1.0f, intensity);
+                var emission = gasFx.emission;
+                emission.SetBursts(new[] {
+                    new ParticleSystem.Burst(0f, (short)(15 + state.EffervescenceLevel * 15))
+                });
+
+                // Violent effervescence adds smoke
+                if (state.EffervescenceLevel >= 3 && smokeFx != null)
+                    smokeFx.Play();
+            }
+
+            // Vortex (stirring spiral)
+            if (state.PlayVortex && gasFx != null)
+            {
+                var main = gasFx.main;
+                main.startSpeed = 0.8f;
+                main.startSize = 0.08f;
+                main.startLifetime = 1.5f;
+                main.gravityModifier = -0.1f; // Slight upward
+                gasFx.Play();
+            }
+
+            // Vapor/steam
+            if (state.PlayVapor)
+            {
+                if (smokeFx != null)
+                {
+                    var main = smokeFx.main;
+                    var col = main.startColor;
+                    col.color = new Color(0.85f, 0.88f, 0.92f, 0.35f);
+                    main.startColor = col;
+                    main.startSpeed = 0.6f;
+                    main.startSize = 0.35f;
+                    main.startLifetime = 2.5f;
+                    smokeFx.Play();
+                }
+            }
+
+            // Turbidity: cloudy effect using colorChange particles
+            if (state.PlayTurbidity && colorChangeFx != null)
+            {
+                var main = colorChangeFx.main;
+                var col = main.startColor;
+                col.color = new Color(0.70f, 0.65f, 0.55f, 0.4f);
+                main.startColor = col;
+                main.startSize = 0.3f;
+                colorChangeFx.Play();
+            }
+
+            // Electrical: sparks effect with blue/white color
+            if (state.PlayElectrical)
+            {
+                if (sparksFx != null)
+                {
+                    var main = sparksFx.main;
+                    var col = main.startColor;
+                    col.color = new Color(0.3f, 0.6f, 1f, 0.9f);
+                    main.startColor = col;
+                    main.startSpeed = 3.5f;
+                    main.startSize = 0.04f;
+                    var emission = sparksFx.emission;
+                    emission.SetBursts(new[] {
+                        new ParticleSystem.Burst(0f, 30)
+                    });
+                    sparksFx.Play();
+                }
+                // Accompany with glow
+                if (glowFx != null) glowFx.Play();
+            }
+
+            // Precipitate with color override
+            if (state.PlayPrecipitate && precipitateFx != null)
+            {
+                if (!string.IsNullOrEmpty(state.PrecipitateColorHex) &&
+                    ColorUtility.TryParseHtmlString(state.PrecipitateColorHex, out Color precipColor))
+                {
+                    var main = precipitateFx.main;
+                    main.startColor = new Color(precipColor.r, precipColor.g, precipColor.b, 0.85f);
+                }
+                precipitateFx.Play();
+            }
         }
 
         // -- Gradient Helper -----------------------------------

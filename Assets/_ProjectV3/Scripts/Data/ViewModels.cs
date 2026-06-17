@@ -145,6 +145,7 @@ namespace ChemLabSimV3.Data
     /// <summary>Describes which visual effects should play after a reaction.</summary>
     public struct FxState
     {
+        // Core effects
         public bool PlaySuccess;
         public bool PlayFail;
         public bool PlayGas;
@@ -158,6 +159,24 @@ namespace ChemLabSimV3.Data
         public bool PlayFoam;
         public bool PlayFrost;
         public bool StopAll;
+
+        // ── Enhanced VFX (Phase 2) ──
+        /// <summary>Solid dissolving in liquid — particles fade into solution.</summary>
+        public bool PlayDissolution;
+        /// <summary>Crystals forming from solution — particles grow and settle.</summary>
+        public bool PlayCrystallization;
+        /// <summary>Effervescence intensity: 0=none, 1=mild, 2=vigorous, 3=violent.</summary>
+        public int EffervescenceLevel;
+        /// <summary>Liquid vortex/stirring visual.</summary>
+        public bool PlayVortex;
+        /// <summary>Vapor/steam rising (boiling/evaporation).</summary>
+        public bool PlayVapor;
+        /// <summary>Liquid becomes cloudy/turbid.</summary>
+        public bool PlayTurbidity;
+        /// <summary>Electrical sparks/discharge (electrochemistry).</summary>
+        public bool PlayElectrical;
+        /// <summary>Precipitate color hex override.</summary>
+        public string PrecipitateColorHex;
 
         /// <summary>Hex color string for color-change effect (e.g. "#66CCFF").</summary>
         public string ColorChangeHex;
