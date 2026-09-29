@@ -1,15 +1,12 @@
 // ChemLabSim v3 — Reaction Controller
-// Orchestrates the "Mix" action: accepts a MixRequest, finds a matching reaction,
-// evaluates via ReactionEvaluator, and publishes results through EventBus.
-//
-// Migration source: LabController.OnMix(), TryBuildEvaluationInput(),
-//   TryFindReactionBySelectedReagents(), BuildSortedReagentKey().
-// Reuses v2: ReactionEvaluator (static, untouched), ReactionModels (untouched).
+// Orchestrates the "Mix" action: accepts a MixRequest, evaluates via ReactionEngine,
+// publishes legacy-compatible events, and starts live SimulationStepper playback.
 
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using ChemLabSimV3.Data;
+using ChemLabSimV3.Engine;
 using ChemLabSimV3.Engine.Chemistry;
 using ChemLabSimV3.Events;
 
@@ -17,7 +14,11 @@ namespace ChemLabSimV3.Controllers
 {
     public class ReactionController : V3ControllerBase
     {
+        [Header("Live Simulation (optional — auto-created if null)")]
+        [SerializeField] private SimulationStepper simulationStepper;
+
         private ReactionDB db;
+        private ReactionEngine engine;
 
         /// <summary>
         /// The currently running <see cref="SimulationStepper"/>, if any.
@@ -56,9 +57,17 @@ namespace ChemLabSimV3.Controllers
             db = AppManager.Instance != null ? AppManager.Instance.ReactionDatabase : null;
 
             if (db == null || db.reactions == null)
+            {
                 Debug.LogWarning("[ReactionController] ReactionDB is unavailable at init.");
+                engine = new ReactionEngine((ReactionDB)null);
+            }
             else
+            {
+                engine = new ReactionEngine(db);
                 Debug.Log($"[ReactionController] Initialized with {db.reactions.Count} reactions.");
+            }
+
+            EnsureSimulationRuntime();
         }
 
         protected override void OnTeardown() { }
@@ -80,37 +89,100 @@ namespace ChemLabSimV3.Controllers
                 return;
             }
 
-            if (!TryFindReaction(request.ReagentNames, out ReactionEntry reaction))
+            ReactionEngineResult detailed = engine.ProcessDetailed(request);
+
+            if (!detailed.Found)
             {
-                string msg = BuildNoMatchMessage(request.ReagentNames);
+                string msg = string.IsNullOrWhiteSpace(detailed.Output.Summary)
+                    ? BuildNoMatchMessage(request.ReagentNames)
+                    : detailed.Output.Summary;
                 EventBus.Publish(new ReactionNotFoundEvent { Message = msg });
                 return;
             }
 
-            var input = new ReactionEvaluationInput(
-                reaction,
-                request.Stirring,
-                request.Grinding,
-                request.Temperature,
-                request.Medium,
-                request.HasCatalyst
-            );
+            var input = ReactionEvaluationAdapter.ToLegacyInput(request, detailed.Reaction);
+            ReactionEvaluationResult result = ReactionEvaluationAdapter.ToLegacyResult(detailed);
 
-            ReactionEvaluationResult result = ReactionEvaluator.Evaluate(input);
-
-            Debug.Log($"[ReactionController] Evaluated '{reaction.id}' → {result.Status} (Valid={result.IsValid})");
+            Debug.Log($"[ReactionController] Evaluated '{detailed.Reaction.id}' → {result.Status} (Valid={result.IsValid})");
 
             EventBus.Publish(new ReactionEvaluatedEvent(input, result));
+
+            if (ShouldStartLiveSimulation(result))
+                StartLiveSimulation(detailed, request);
         }
 
-        // -- Internal helpers (ported from LabController) --------
+        // -- Simulation wiring -----------------------------------
+
+        private static bool ShouldStartLiveSimulation(ReactionEvaluationResult result)
+        {
+            if (!result.IsValid) return false;
+            return result.Status == ReactionStatus.Success
+                || result.Status == ReactionStatus.Partial;
+        }
+
+        private void StartLiveSimulation(ReactionEngineResult detailed, MixRequest request)
+        {
+            SimulationStepper stepper = EnsureSimulationRuntime();
+            if (stepper == null)
+            {
+                Debug.LogWarning("[ReactionController] SimulationStepper unavailable — skipping live playback.");
+                return;
+            }
+
+            if (stepper.IsRunning)
+                stepper.Stop();
+
+            stepper.StartSimulation(
+                detailed.Reaction,
+                request,
+                detailed.Pipeline,
+                engine.Registry);
+
+            _activeStepper = stepper;
+            Debug.Log($"[ReactionController] Live simulation started for '{detailed.Reaction.id}'.");
+        }
+
+        private SimulationStepper EnsureSimulationRuntime()
+        {
+            if (simulationStepper != null)
+            {
+                EnsureSimulationBridge(simulationStepper.gameObject);
+                return simulationStepper;
+            }
+
+#if UNITY_2023_1_OR_NEWER
+            simulationStepper = Object.FindFirstObjectByType<SimulationStepper>();
+#else
+            simulationStepper = Object.FindObjectOfType<SimulationStepper>();
+#endif
+            if (simulationStepper != null)
+            {
+                EnsureSimulationBridge(simulationStepper.gameObject);
+                return simulationStepper;
+            }
+
+            var runtimeGo = new GameObject("SimulationRuntime");
+            runtimeGo.transform.SetParent(transform, false);
+            simulationStepper = runtimeGo.AddComponent<SimulationStepper>();
+            EnsureSimulationBridge(runtimeGo);
+
+            Debug.Log("[ReactionController] Created SimulationRuntime (SimulationStepper + SimulationBridge).");
+            return simulationStepper;
+        }
+
+        private static void EnsureSimulationBridge(GameObject host)
+        {
+            if (host.GetComponent<SimulationBridge>() == null)
+                host.AddComponent<SimulationBridge>();
+        }
+
+        // -- Internal helpers ------------------------------------
 
         private bool TryEnsureDatabase()
         {
-            if (db != null && db.reactions != null)
+            if (db != null && db.reactions != null && engine != null)
                 return true;
 
-            // Retry once — AppManager may have loaded after our init.
             db = AppManager.Instance != null ? AppManager.Instance.ReactionDatabase : null;
 
             if (db == null || db.reactions == null)
@@ -120,6 +192,7 @@ namespace ChemLabSimV3.Controllers
                 return false;
             }
 
+            engine = new ReactionEngine(db);
             return true;
         }
 
@@ -142,36 +215,11 @@ namespace ChemLabSimV3.Controllers
             return true;
         }
 
-        private bool TryFindReaction(List<string> reagentNames, out ReactionEntry reaction)
-        {
-            reaction = null;
-            if (db == null || db.reactions == null || reagentNames == null || reagentNames.Count < 2)
-                return false;
-
-            string key = BuildSortedReagentKey(reagentNames);
-            reaction = db.reactions.FirstOrDefault(
-                r => r != null && BuildSortedReagentKey(r.GetReactantFormulas()) == key);
-            return reaction != null;
-        }
-
-        private static string BuildSortedReagentKey(IEnumerable<string> reagents)
-        {
-            return string.Join("|", reagents
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Select(x => x.Trim())
-                .OrderBy(x => x));
-        }
-
         private string BuildNoMatchMessage(List<string> reagentNames)
         {
             string display = string.Join(" + ", reagentNames.Where(x => !string.IsNullOrWhiteSpace(x)));
 
-            bool needsMore = db.reactions.Any(r =>
-                r != null &&
-                r.GetReactantFormulas().Count > reagentNames.Count &&
-                reagentNames.All(sel => r.GetReactantFormulas().Contains(sel)));
-
-            if (needsMore)
+            if (engine?.Registry != null && engine.Registry.NeedsMoreReagents(reagentNames))
                 return $"The selected set ({display}) looks incomplete. Some reactions need 3 or 4 reactants.";
 
             return $"No valid reaction matches the selected set ({display}).";

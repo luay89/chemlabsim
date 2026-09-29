@@ -5,104 +5,120 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
 {
     /// <summary>
     /// Tests for the ConditionPipeline — verifies condition evaluation logic.
+    /// The pipeline evaluates a ReactionEntry against a ConditionInput.
     /// </summary>
     public class ConditionPipelineTests
     {
+        private static ReactionEntry CreateSampleReaction()
+        {
+            return new ReactionEntry
+            {
+                id = "rxn_test_001",
+                reactantA = "HCl",
+                reactantB = "NaOH",
+                product = "NaCl",
+                requiredMedium = "Neutral",
+                activationTempC = 25f,
+                catalystAllowed = true,
+                catalystDeltaTempC = 10f
+            };
+        }
+
         [Test]
-        public void CreateDefault_ReturnsPipelineWithAllConditions()
+        public void CreateDefault_ReturnsNonNullPipeline()
         {
             var pipeline = ConditionPipeline.CreateDefault();
             Assert.IsNotNull(pipeline);
-            // Default pipeline should have at least Temperature, Medium, Catalyst, SurfaceArea
-            Assert.That(pipeline.ConditionCount, Is.GreaterThanOrEqualTo(4));
         }
 
         [Test]
-        public void Execute_WithPerfectConditions_ReturnsHighScore()
+        public void Evaluate_WithPerfectConditions_ReturnsSuccess()
         {
             var pipeline = ConditionPipeline.CreateDefault();
+            var reaction = CreateSampleReaction();
             var input = new ConditionInput
             {
                 TemperatureC = 50f,
                 Stirring = 1f,
                 Grinding = 1f,
-                Medium = "Neutral",
+                Medium = ReactionMedium.Neutral,
+                HasCatalyst = true,
+                EffectiveActivationC = 15f, // catalyst lowers from 25 to 15
+                ContactFactor = 1.6f,
+                PressureAtm = 1f
+            };
+
+            var result = pipeline.Evaluate(reaction, input);
+            Assert.IsNotNull(result);
+            Assert.That(result.OverallStatus, Is.EqualTo(ReactionStatus.Success));
+            Assert.That(result.AnyFailed, Is.False);
+        }
+
+        [Test]
+        public void Evaluate_WithWrongMedium_ReturnsFailure()
+        {
+            var pipeline = ConditionPipeline.CreateDefault();
+            var reaction = CreateSampleReaction();
+            var input = new ConditionInput
+            {
+                TemperatureC = 50f,
+                Stirring = 1f,
+                Grinding = 1f,
+                Medium = ReactionMedium.Acidic, // reaction requires Neutral
                 HasCatalyst = true,
                 EffectiveActivationC = 20f,
                 ContactFactor = 1.6f,
                 PressureAtm = 1f
             };
 
-            var result = pipeline.Execute(input);
+            var result = pipeline.Evaluate(reaction, input);
             Assert.IsNotNull(result);
-            Assert.That(result.Success, Is.True);
+            Assert.That(result.OverallStatus, Is.EqualTo(ReactionStatus.Fail));
         }
 
         [Test]
-        public void Execute_WithWrongMedium_ReturnsFailure()
+        public void Evaluate_WithLowTemperature_BelowActivation()
         {
             var pipeline = ConditionPipeline.CreateDefault();
-            var input = new ConditionInput
-            {
-                TemperatureC = 50f,
-                Stirring = 1f,
-                Grinding = 1f,
-                Medium = "Acidic",
-                HasCatalyst = true,
-                EffectiveActivationC = 20f,
-                ContactFactor = 1.6f,
-                PressureAtm = 1f
-            };
-
-            var result = pipeline.Execute(input);
-            Assert.IsNotNull(result);
-            // Medium condition should reduce success for non-matching media
-            Assert.That(result.MediumScore, Is.LessThanOrEqualTo(0.5f));
-        }
-
-        [Test]
-        public void Execute_WithLowTemperature_BelowActivation()
-        {
-            var pipeline = ConditionPipeline.CreateDefault();
+            var reaction = CreateSampleReaction();
             var input = new ConditionInput
             {
                 TemperatureC = 10f,
                 Stirring = 0f,
                 Grinding = 0f,
-                Medium = "Neutral",
+                Medium = ReactionMedium.Neutral,
                 HasCatalyst = false,
                 EffectiveActivationC = 25f,
                 ContactFactor = 0.6f,
                 PressureAtm = 1f
             };
 
-            var result = pipeline.Execute(input);
+            var result = pipeline.Evaluate(reaction, input);
             Assert.IsNotNull(result);
-            Assert.That(result.TemperatureScore, Is.LessThan(0.5f));
+            Assert.That(result.OverallStatus, Is.EqualTo(ReactionStatus.Fail));
         }
 
         [Test]
-        public void PipelineResult_ContainsAllExpectedScores()
+        public void PipelineResult_ContainsConditionsList()
         {
             var pipeline = ConditionPipeline.CreateDefault();
+            var reaction = CreateSampleReaction();
             var input = new ConditionInput
             {
                 TemperatureC = 30f,
                 Stirring = 0.5f,
                 Grinding = 0.5f,
-                Medium = "Neutral",
+                Medium = ReactionMedium.Neutral,
                 HasCatalyst = false,
                 EffectiveActivationC = 25f,
                 ContactFactor = 1.0f,
                 PressureAtm = 1f
             };
 
-            var result = pipeline.Execute(input);
-            Assert.That(result.TemperatureScore, Is.GreaterThanOrEqualTo(0f));
-            Assert.That(result.MediumScore, Is.GreaterThanOrEqualTo(0f));
-            Assert.That(result.ContactScore, Is.GreaterThanOrEqualTo(0f));
-            Assert.That(result.CatalystScore, Is.GreaterThanOrEqualTo(0f));
-            Assert.That(result.OverallScore, Is.GreaterThanOrEqualTo(0f));
+            var result = pipeline.Evaluate(reaction, input);
+            Assert.IsNotNull(result.Conditions);
+            Assert.That(result.Conditions.Count, Is.GreaterThanOrEqualTo(4));
+            Assert.That(result.OverallRate, Is.GreaterThanOrEqualTo(0f));
         }
     }
 }

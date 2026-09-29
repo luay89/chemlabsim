@@ -116,25 +116,50 @@ public class AppManager : MonoBehaviour
             return false;
         }
 
+        // Scan every entry (do not stop at the first problem) so all issues are reported.
+        int invalidCount = 0;
+        var singleReactantIds = new System.Collections.Generic.List<string>();
+
         for (int i = 0; i < db.reactions.Count; i++)
         {
             ReactionEntry rx = db.reactions[i];
             if (rx == null)
             {
                 Debug.LogError($"[AppManager] Invalid reaction at index {i}: entry is null.");
-                return false;
+                invalidCount++;
+                continue;
             }
 
             int reactantCount = rx.GetReactantFormulas().Count;
             int productCount = rx.GetProductFormulas().Count;
-            if (reactantCount < 2 || productCount < 1)
+            if (reactantCount < 1 || productCount < 1)
             {
                 Debug.LogError(
-                    $"[AppManager] Invalid reaction at index {i}: reactants/products are missing. " +
+                    $"[AppManager] Invalid reaction at index {i} ('{rx.id}'): reactants/products are missing. " +
                     "Data schema does not match runtime model."
                 );
-                return false;
+                invalidCount++;
+                continue;
             }
+
+            // Single-reactant entries (decompositions, electrolysis, dissociation) are valid data,
+            // but the mix flow currently requires at least two reactants, so they cannot be triggered yet.
+            if (reactantCount == 1)
+                singleReactantIds.Add($"{rx.id}@{i}");
+        }
+
+        if (singleReactantIds.Count > 0)
+        {
+            Debug.LogWarning(
+                $"[AppManager] {singleReactantIds.Count} single-reactant reaction(s) loaded but not reachable " +
+                $"from the two-reactant mix flow: {string.Join(", ", singleReactantIds)}"
+            );
+        }
+
+        if (invalidCount > 0)
+        {
+            Debug.LogError($"[AppManager] Reactions loaded with {invalidCount} invalid entr(y/ies) out of {count}.");
+            return false;
         }
 
         Debug.Log($"[AppManager] Reactions loaded and validated: {count}");

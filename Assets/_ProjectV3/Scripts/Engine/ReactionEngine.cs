@@ -50,9 +50,23 @@ namespace ChemLabSimV3.Engine
         /// </summary>
         public ReactionOutput Process(MixRequest request)
         {
+            return ProcessDetailed(request).Output;
+        }
+
+        /// <summary>
+        /// Like <see cref="Process"/>, but also returns the matched reaction entry,
+        /// condition input, and pipeline result for live simulation startup.
+        /// </summary>
+        public ReactionEngineResult ProcessDetailed(MixRequest request)
+        {
             // 1. Input validation
             if (request.ReagentNames == null || request.ReagentNames.Count < 2)
-                return ReactionOutput.NotFound(request.ReagentNames);
+            {
+                return new ReactionEngineResult
+                {
+                    Output = ReactionOutput.NotFound(request.ReagentNames)
+                };
+            }
 
             if (float.IsNaN(request.Temperature) || float.IsInfinity(request.Temperature) ||
                 request.Temperature < MinReasonableTemperatureC ||
@@ -60,7 +74,7 @@ namespace ChemLabSimV3.Engine
             {
                 var invalid = ReactionOutput.NotFound(request.ReagentNames);
                 invalid.Summary = "Temperature value is outside the supported range.";
-                return invalid;
+                return new ReactionEngineResult { Output = invalid };
             }
 
             // 2. Find matching reaction
@@ -70,7 +84,7 @@ namespace ChemLabSimV3.Engine
                 var output = ReactionOutput.NotFound(request.ReagentNames);
                 if (_registry.NeedsMoreReagents(request.ReagentNames))
                     output.Summary = "The selected set looks incomplete. Some reactions need 3 or 4 reactants.";
-                return output;
+                return new ReactionEngineResult { Output = output };
             }
 
             // 3. Pre-compute derived values
@@ -132,7 +146,13 @@ namespace ChemLabSimV3.Engine
             // 6. Resolve visual effect hints
             result.Visuals = VisualDirector.Resolve(reaction, result);
 
-            return result;
+            return new ReactionEngineResult
+            {
+                Output          = result,
+                Reaction        = reaction,
+                Pipeline        = pipeResult,
+                ConditionInput  = condInput
+            };
         }
 
         // -- Helpers --

@@ -41,13 +41,8 @@ jobs:
       - name: Validate reaction data integrity
         run: |
           if [ -f "Assets/_Project/DataSrc/reactions.json" ]; then
-            python3 -c "
-import json
-with open('Assets/_Project/DataSrc/reactions.json') as f:
-    data = json.load(f)
-count = len(data.get('reactions', data.get('entries', [])))
-print(f'✅ Valid JSON reaction database: {count} reactions')
-"
+            # Runtime (JsonUtility -> ReactionDB) requires a top-level object: {"reactions": [...]}
+            python3 -c "import json,sys; data=json.load(open('Assets/_Project/DataSrc/reactions.json')); ok=isinstance(data,dict) and isinstance(data.get('reactions'),list) and len(data['reactions'])>0; print(f'Valid JSON reaction database: {len(data[\"reactions\"])} reactions') if ok else sys.exit('reactions.json must be an object with a non-empty \"reactions\" array (found top-level '+type(data).__name__+')')"
           fi
 
   # ── Unity Build (requires self-hosted or Unity license) ──

@@ -1,5 +1,5 @@
 // ChemLabSim v3 — TemperatureSliderView
-// Thin wrapper around Unity Slider for temperature input (0–100°C).
+// Thin wrapper around Unity Slider for temperature input (0–1000°C, matches ReactionEngine/ChemistryEngine limits).
 // No logic — just forwards value changes via OnValueChanged event.
 
 using System;
@@ -11,6 +11,10 @@ namespace ChemLabSimV3.Views
 {
     public class TemperatureSliderView : V3ViewBase
     {
+        // Upper bound matches ReactionEngine.MaxReasonableTemperatureC and ChemistryEngine.MaxTempC,
+        // so high-activation reactions (thermal decompositions, combustion) are reachable.
+        private const float MaxTemperatureC = 1000f;
+
         [Header("UI")]
         [SerializeField] private Slider slider;
         [SerializeField] private TextMeshProUGUI valueLabel;
@@ -23,7 +27,7 @@ namespace ChemLabSimV3.Views
             if (slider != null)
             {
                 slider.minValue = 0f;
-                slider.maxValue = 100f;
+                slider.maxValue = MaxTemperatureC;
                 slider.wholeNumbers = true;
                 slider.onValueChanged.AddListener(HandleSliderChanged);
             }

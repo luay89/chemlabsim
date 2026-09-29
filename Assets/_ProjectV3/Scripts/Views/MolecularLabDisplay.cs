@@ -5,8 +5,6 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using ChemLabSimV3.Domain.MolecularSimulation;
-using ChemLabSimV3.Events;
 
 namespace ChemLabSimV3.Views
 {
@@ -43,6 +41,26 @@ namespace ChemLabSimV3.Views
 
         /// <summary>The render texture showing molecular simulation.</summary>
         public RenderTexture RenderTexture => _rt;
+
+        /// <summary>Display static reagent molecules.</summary>
+        public void DisplayReagents(List<string> reagentFormulas)
+        {
+            if (reagentFormulas == null || reagentFormulas.Count == 0) return;
+            _renderer?.DisplayReagents(reagentFormulas);
+            if (_rendererGO != null)
+                _rendererGO.SetActive(true);
+        }
+
+        /// <summary>Play a reaction transformation animation.</summary>
+        public void DisplayReaction(
+            List<string> reactantFormulas,
+            List<string> productFormulas,
+            float temperatureC)
+        {
+            _renderer?.DisplayReaction(reactantFormulas, productFormulas, temperatureC);
+            if (_rendererGO != null)
+                _rendererGO.SetActive(true);
+        }
 
         private void Awake()
         {
@@ -122,24 +140,7 @@ namespace ChemLabSimV3.Views
             if (!_initialized) Initialize();
             if (_renderer == null || reagentFormulas == null) return;
 
-            var molecules = new List<Molecule>();
-            float xPos = -(reagentFormulas.Count - 1) * 0.8f;
-
-            foreach (var formula in reagentFormulas)
-            {
-                if (!string.IsNullOrEmpty(formula))
-                {
-                    var mol = MolecularSimulator.BuildFromFormula(formula, xPos, 0f, 0f);
-                    if (mol != null) molecules.Add(mol);
-                    xPos += 1.6f;
-                }
-            }
-
-            // Access the simulator through reflection or add a public method
-            if (molecules.Count > 0)
-            {
-                _rendererGO.SetActive(true);
-            }
+            DisplayReagents(reagentFormulas);
         }
 
         /// <summary>
@@ -153,40 +154,7 @@ namespace ChemLabSimV3.Views
             if (!_initialized) Initialize();
             if (_renderer == null) return;
 
-            var transform = new ReactionTransformation
-            {
-                Reactants = new List<Molecule>(),
-                Products = new List<Molecule>(),
-                TemperatureC = temperatureC,
-                AnimationDurationSeconds = 3f
-            };
-
-            float xPos = -2f;
-            foreach (var formula in reactantFormulas)
-            {
-                if (!string.IsNullOrEmpty(formula))
-                {
-                    var mol = MolecularSimulator.BuildFromFormula(formula, xPos, 0f, 0f);
-                    if (mol != null) transform.Reactants.Add(mol);
-                    xPos += 1.5f;
-                }
-            }
-
-            xPos = 2f;
-            foreach (var formula in productFormulas)
-            {
-                if (!string.IsNullOrEmpty(formula))
-                {
-                    var mol = MolecularSimulator.BuildFromFormula(formula, xPos, 0f, 0f);
-                    if (mol != null) transform.Products.Add(mol);
-                    xPos += 1.5f;
-                }
-            }
-
-            if (transform.Reactants.Count > 0 || transform.Products.Count > 0)
-            {
-                _rendererGO.SetActive(true);
-            }
+            DisplayReaction(reactantFormulas, productFormulas, temperatureC);
         }
 
         /// <summary>

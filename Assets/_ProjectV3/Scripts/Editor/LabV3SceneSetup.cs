@@ -17,6 +17,9 @@ using UnityEditor.SceneManagement;
 using TMPro;
 using ChemLabSimV3.Core;
 using ChemLabSimV3.Controllers;
+using ChemLabSimV3.Engine.Chemistry;
+using ChemLabSimV3.Infrastructure.Bootstrapping;
+using ChemLabSimV3.Presentation.Presenters;
 using ChemLabSimV3.Views;
 
 namespace ChemLabSimV3.Editor
@@ -46,6 +49,14 @@ namespace ChemLabSimV3.Editor
             controllersGo.AddComponent<QuizController>();
             controllersGo.AddComponent<FXController>();
             controllersGo.AddComponent<GuidanceController>();
+
+            // Simulation runtime — drives live reaction playback
+            var simulationGo = new GameObject("SimulationRuntime");
+            simulationGo.transform.SetParent(controllersGo.transform, false);
+            simulationGo.AddComponent<SimulationStepper>();
+            simulationGo.AddComponent<SimulationBridge>();
+            controllersGo.AddComponent<HeatingController>();
+            controllersGo.AddComponent<StirringController>();
 
             // 3b) ReactionFxView — non-UI particle view, lives outside Canvas
             var fxViewGo = new GameObject("ReactionFxView");

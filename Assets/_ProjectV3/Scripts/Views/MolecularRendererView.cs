@@ -416,6 +416,90 @@ namespace ChemLabSimV3.Views
             _simulator.LoadMolecules(molecules);
         }
 
+        /// <summary>Display static molecules for the given reagent formulas.</summary>
+        public void DisplayReagents(List<string> reagentFormulas)
+        {
+            if (reagentFormulas == null || reagentFormulas.Count == 0 || _simulator == null) return;
+
+            var molecules = new List<Molecule>();
+            float xPos = -(reagentFormulas.Count - 1) * 0.8f;
+
+            for (int i = 0; i < reagentFormulas.Count; i++)
+            {
+                string formula = reagentFormulas[i];
+                if (string.IsNullOrEmpty(formula)) continue;
+
+                var mol = MolecularSimulator.BuildFromFormula(formula, xPos, 0f, 0f);
+                if (mol != null) molecules.Add(mol);
+                xPos += 1.6f;
+            }
+
+            if (molecules.Count == 0) return;
+
+            _simulator.LoadMolecules(molecules);
+            ClearVisuals();
+        }
+
+        /// <summary>Play a reaction animation between reactants and products.</summary>
+        public void DisplayReaction(
+            List<string> reactantFormulas,
+            List<string> productFormulas,
+            float temperatureC)
+        {
+            var transform = BuildTransformationFromFormulas(reactantFormulas, productFormulas, temperatureC);
+            if (transform == null || _simulator == null) return;
+
+            _simulator.StartTransformation(transform);
+            ClearVisuals();
+        }
+
+        private static ReactionTransformation BuildTransformationFromFormulas(
+            List<string> reactantFormulas,
+            List<string> productFormulas,
+            float temperatureC)
+        {
+            var transform = new ReactionTransformation
+            {
+                Reactants = new List<Molecule>(),
+                Products = new List<Molecule>(),
+                TemperatureC = temperatureC,
+                AnimationDurationSeconds = 3f
+            };
+
+            float xPos = -2f;
+            if (reactantFormulas != null)
+            {
+                for (int i = 0; i < reactantFormulas.Count; i++)
+                {
+                    string formula = reactantFormulas[i];
+                    if (string.IsNullOrEmpty(formula)) continue;
+
+                    var mol = MolecularSimulator.BuildFromFormula(formula, xPos, 0f, 0f);
+                    if (mol != null) transform.Reactants.Add(mol);
+                    xPos += 1.5f;
+                }
+            }
+
+            xPos = 2f;
+            if (productFormulas != null)
+            {
+                for (int i = 0; i < productFormulas.Count; i++)
+                {
+                    string formula = productFormulas[i];
+                    if (string.IsNullOrEmpty(formula)) continue;
+
+                    var mol = MolecularSimulator.BuildFromFormula(formula, xPos, 0f, 0f);
+                    if (mol != null) transform.Products.Add(mol);
+                    xPos += 1.5f;
+                }
+            }
+
+            if (transform.Reactants.Count == 0 && transform.Products.Count == 0)
+                return null;
+
+            return transform;
+        }
+
         /// <summary>
         /// Build a reaction transformation from a ReactionEntry.
         /// Parses reactant and product formulas into molecular structures.

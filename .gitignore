@@ -30,6 +30,14 @@
 # Crash / diagnostic dumps
 mono_crash.*
 
+# Local Azurite storage emulator data
+__blobstorage__/
+__azurite_db_blob__.json
+__azurite_db_blob_extent__.json
+
+# Local data-file backups created during editing sessions
+/Backups/
+
 # Default sample scene
 Assets/Scenes/SampleScene.unity
 Assets/Scenes/SampleScene.unity.meta

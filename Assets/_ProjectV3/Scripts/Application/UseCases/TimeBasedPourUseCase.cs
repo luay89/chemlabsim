@@ -145,15 +145,33 @@ namespace ChemLabSimV3.Application.UseCases
                 targetCopy = target;
             }
 
-            // Always create a MixRequest and process chemistry if engine is available
+            // Always create a MixRequest and process chemistry if engine is available.
+            // Input is rebuilt from the live transfer state (source reagent +
+            // accumulated target reagents for this target vessel and delta tick).
             ChemLabSimV3.Engine.Chemistry.ChemistryOutput? chemistryOutput = null;
             if (_chemistryEngine != null)
             {
                 try
                 {
-                    var reagents = targetCopy.AccumulatedReagents != null
-                        ? new List<string>(targetCopy.AccumulatedReagents.Keys)
-                        : new List<string>();
+                    var reagents = new List<string>();
+
+                    if (!string.IsNullOrWhiteSpace(sourceCopy.ReagentId))
+                        reagents.Add(sourceCopy.ReagentId);
+
+                    if (targetCopy.AccumulatedReagents != null)
+                    {
+                        foreach (var pair in targetCopy.AccumulatedReagents)
+                        {
+                            if (pair.Value <= 0f) continue;
+                            if (string.IsNullOrWhiteSpace(pair.Key)) continue;
+                            if (reagents.Contains(pair.Key)) continue;
+                            reagents.Add(pair.Key);
+                        }
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(targetCopy.ReagentId) && !reagents.Contains(targetCopy.ReagentId))
+                        reagents.Add(targetCopy.ReagentId);
+
                     var mixRequest = new ChemLabSimV3.Data.MixRequest(
                         reagentNames: reagents,
                         medium: ReactionMedium.Neutral,
@@ -163,7 +181,7 @@ namespace ChemLabSimV3.Application.UseCases
                         hasCatalyst: false);
                     chemistryOutput = _chemistryEngine.Process(mixRequest);
                 }
-                catch (Exception)
+                catch (System.Exception)
                 {
                     // Swallow engine errors — a corrupt mixture must never break the pour loop.
                     chemistryOutput = null;

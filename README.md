@@ -1,6 +1,6 @@
 # ChemLabSim
 
-![Unity](https://img.shields.io/badge/Unity-2023_LTS-000000?logo=unity&logoColor=white)
+![Unity](https://img.shields.io/badge/Unity-2022.3.62f3-000000?logo=unity&logoColor=white)
 ![C#](https://img.shields.io/badge/C%23-10-239120?logo=csharp&logoColor=white)
 ![URP](https://img.shields.io/badge/URP-14.0.12-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
@@ -30,15 +30,25 @@ ChemLabSim is an educational chemistry simulation built with Unity. It allows st
 
 ## Project Structure
 
+The repository contains two coexisting code paths:
+
+- `Assets/_Project` — legacy lab (assembly `ChemLabSim.Core`)
+- `Assets/_ProjectV3` — V3 lab (assembly `ChemLabSimV3`, depends on `ChemLabSim.Core`; plus `ChemLabSimV3.Editor` and `ChemLabSimV3.EditModeTests`)
+
 | Component | Description |
 | --------- | ----------- |
 | `Boot.unity` | Entry scene — initializes AppManager and loads encrypted data |
-| `Lab Scene.unity` | Main lab UI — reagent selection, controls, and result display |
-| `AppManager` | Singleton lifecycle manager, persists across scenes |
+| `_ProjectV3/Scenes/LabV3.unity` | V3 lab scene — contains its own `AppRoot` (AppManager + SecureReactionLoader) so it can be opened directly |
+| `Lab Scene.unity` | Legacy lab UI |
+| `AppManager` | Singleton lifecycle manager and owner of the reaction database; persists across scenes |
 | `SecureReactionLoader` | Decrypts and validates `reactions.bytes` at runtime |
-| `ReactionEvaluator` | Static evaluation engine — medium, temperature, contact, catalyst |
-| `LabController` | Lab UI orchestration, result formatting, and educational layers |
-| `reactions.bytes` | AES-256-CBC encrypted reaction database with HMAC integrity |
+| `V3Bootstrap` | V3 composition root — registers services and initializes V3 controllers |
+| `LabInputController` → `ReactionController` | V3 input (`MixRequest`) and mix orchestration |
+| `ReactionEngine` / `ReactionRegistry` | V3 reaction lookup and evaluation driven by the reaction database |
+| `SimulationStepper` | V3 live reaction simulation playback |
+| `ReactionEvaluator` / `LabController` | Legacy evaluation engine and legacy lab UI orchestration |
+| `reactions.json` | Authored reaction source (`Assets/_Project/DataSrc`) |
+| `reactions.bytes` | AES-256-CBC encrypted reaction database with HMAC integrity — the file actually loaded at runtime; regenerate it (`Tools/Security/Encrypt Reactions JSON -> bytes`) after editing `reactions.json` |
 
 ---
 
@@ -53,11 +63,13 @@ ChemLabSim is an educational chemistry simulation built with Unity. It allows st
 
 ## Current Status
 
-- **Strong Educational MVP+** — full reaction evaluation with scientific explanations
-- **Gamified learning loop** — score, lessons, challenges, and achievements are active in the lab flow
+- **Unity compilation** — previously verified clean on Unity 2022.3.62f3
+- **LabV3 runtime** — reaction database wiring added to `LabV3.unity`; Play Mode verification is in progress
+- **Gamified learning loop** — score, lessons, challenges, and achievements exist in the lab flow
 - **Persistent local progress** — language and student progress are saved between sessions
-- **Production-safe** — encrypted data, null guards, safe fallbacks throughout
-- **Ready for further expansion** — modular design allows adding reactions and features incrementally
+- **Encrypted data** — reaction data is shipped as an encrypted, HMAC-checked blob
+
+Developer and AI-agent documentation: [`docs/ai/README.md`](docs/ai/README.md) and [`docs/ai/constitution-v3.md`](docs/ai/constitution-v3.md).
 
 ---
 

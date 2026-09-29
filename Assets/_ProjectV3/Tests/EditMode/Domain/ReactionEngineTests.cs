@@ -10,35 +10,34 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
     /// </summary>
     public class ReactionEngineTests
     {
-        private ReactionEngine CreateEngineWithSingleReaction()
+        private ReactionEntry CreateSampleReaction()
         {
-            var db = new ReactionDB
+            return new ReactionEntry
+            {
+                id = "rxn_test_001",
+                reactantA = "HCl",
+                reactantB = "NaOH",
+                product = "NaCl",
+                requiredMedium = "Neutral",
+                activationTempC = 25f,
+                catalystAllowed = true,
+                catalystDeltaTempC = 10f,
+                reactionType = "Acid-Base Neutralization",
+                observation_en = "Salt and water form as the acid and base neutralize.",
+                explanation_en = "Hydrochloric acid and sodium hydroxide react to form salt and water.",
+                condition_notes = "Use equal molar amounts for complete neutralization."
+            };
+        }
+
+        private ReactionDB CreateSingleReactionDb()
+        {
+            return new ReactionDB
             {
                 reactions = new System.Collections.Generic.List<ReactionEntry>
                 {
-                    new ReactionEntry
-                    {
-                        id = "rxn_test_001",
-                        reactantA = "HCl",
-                        reactantB = "NaOH",
-                        product = "NaCl",
-                        medium = "Neutral",
-                        activationTempC = 25f,
-                        catalystAllowed = true,
-                        catalystDeltaTempC = 10f,
-                        balancedEquation = "HCl + NaOH → NaCl + H₂O",
-                        reactionIdentity = "Acid-Base Neutralization",
-                        summary = "Hydrochloric acid and sodium hydroxide react to form salt and water.",
-                        successMessage = "The reaction produced salt water!",
-                        partialMessage = "The reaction is incomplete.",
-                        failMessage = "No reaction occurred.",
-                        safetyNote = "Wear gloves when handling acids.",
-                        quizHint = "This is a neutralization reaction.",
-        skillPoints = 100
-                    }
+                    CreateSampleReaction()
                 }
             };
-            return new ReactionEngine(db);
         }
 
         [Test]
@@ -49,93 +48,106 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
         }
 
         [Test]
-        public void Constructor_WithNullDb_ThrowsArgumentNullException()
+        public void Constructor_WithNullDb_DoesNotThrow()
         {
-            Assert.That(() => new ReactionEngine(null),
-                Throws.ArgumentNullException);
+            // ReactionEngine handles null db gracefully (creates empty registry)
+            Assert.DoesNotThrow(() => new ReactionEngine((ReactionDB)null));
         }
 
         [Test]
-        public void Constructor_WithNullReactionsList_Throws()
-        {
-            var db = new ReactionDB { reactions = null };
-            Assert.That(() => new ReactionEngine(db),
-                Throws.ArgumentException);
-        }
-
-        [Test]
-        public void Evaluate_WithMatchingReaction_ReturnsSuccess()
+        public void Process_WithMatchingReaction_ReturnsSuccess()
         {
             // Arrange
-            var engine = CreateEngineWithSingleReaction();
-            var input = new ReactionEvaluationInput(
-                engine.FindReaction(new[] { "HCl", "NaOH" }),
+            var engine = new ReactionEngine(CreateSingleReactionDb());
+            var request = new MixRequest(
+                reagentNames: new System.Collections.Generic.List<string> { "HCl", "NaOH" },
+                medium: ReactionMedium.Neutral,
+                temperature: 30f,
                 stirring: 0.5f,
                 grinding: 0.5f,
-                temperature: 30f,
-                medium: "Neutral",
                 hasCatalyst: false
             );
 
             // Act
-            var result = ReactionEvaluator.Evaluate(input);
+            var result = engine.Process(request);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.That(result.Status, Is.EqualTo("COMPLETE"));
+            Assert.That(result.Found, Is.True);
+            Assert.That(result.ReactionId, Is.EqualTo("rxn_test_001"));
         }
 
         [Test]
-        public void Evaluate_WithLowTemperature_ReturnsPartial()
+        public void Process_WithLowTemperature_ReturnsFail()
         {
-            var engine = CreateEngineWithSingleReaction();
-            var input = new ReactionEvaluationInput(
-                engine.FindReaction(new[] { "HCl", "NaOH" }),
+            // Arrange
+            var engine = new ReactionEngine(CreateSingleReactionDb());
+            var request = new MixRequest(
+                reagentNames: new System.Collections.Generic.List<string> { "HCl", "NaOH" },
+                medium: ReactionMedium.Neutral,
+                temperature: 10f,  // below activationTempC
                 stirring: 0.5f,
                 grinding: 0.5f,
-                temperature: 10f,  // below activationTempC
-                medium: "Neutral",
                 hasCatalyst: false
             );
 
-            var result = ReactionEvaluator.Evaluate(input);
+            // Act
+            var result = engine.Process(request);
+
+            // Assert
             Assert.IsNotNull(result);
-            Assert.That(result.Status, Is.EqualTo("INCOMPLETE"));
+            Assert.That(result.Found, Is.True);
+            Assert.That(result.Status, Is.EqualTo(ReactionStatus.Fail));
         }
 
         [Test]
-        public void Evaluate_WithCatalyst_LowersActivationTemp()
+        public void Process_WithCatalyst_LowersActivationTemp()
         {
-            var engine = CreateEngineWithSingleReaction();
-            var input = new ReactionEvaluationInput(
-                engine.FindReaction(new[] { "HCl", "NaOH" }),
+            // Arrange
+            var engine = new ReactionEngine(CreateSingleReactionDb());
+            var request = new MixRequest(
+                reagentNames: new System.Collections.Generic.List<string> { "HCl", "NaOH" },
+                medium: ReactionMedium.Neutral,
+                temperature: 18f,  // below 25 but above 25-10=15
                 stirring: 0.5f,
                 grinding: 0.5f,
-                temperature: 18f,  // below 25 but above 25-10=15
-                medium: "Neutral",
                 hasCatalyst: true   // catalyst lowers activation by 10°C
             );
 
-            var result = ReactionEvaluator.Evaluate(input);
+            // Act
+            var result = engine.Process(request);
+
+            // Assert
             Assert.IsNotNull(result);
-            // With catalyst, 18°C > 15°C effective activation → should be COMPLETE or PARTIAL
-            Assert.That(result.Status, Is.EqualTo("COMPLETE").Or.EqualTo("INCOMPLETE"));
+            Assert.That(result.Found, Is.True);
+            // With catalyst, 18°C is above effective activation (15°C)
+            Assert.That(result.Status, Is.Not.EqualTo(ReactionStatus.Fail));
         }
 
         [Test]
-        public void FindReaction_WithUnknownReagents_ReturnsNull()
+        public void Process_WithUnknownReagents_ReturnsNotFound()
         {
-            var engine = CreateEngineWithSingleReaction();
-            var result = engine.FindReaction(new[] { "Unknown", "Reagent" });
-            Assert.IsNull(result);
+            var engine = new ReactionEngine(CreateSingleReactionDb());
+            var request = new MixRequest(
+                reagentNames: new System.Collections.Generic.List<string> { "Unknown", "Reagent" },
+                medium: ReactionMedium.Neutral,
+                temperature: 25f,
+                stirring: 0.5f,
+                grinding: 0.5f,
+                hasCatalyst: false
+            );
+
+            var result = engine.Process(request);
+            Assert.IsNotNull(result);
+            Assert.That(result.Found, Is.False);
         }
 
         [Test]
-        public void FindReaction_ReagentOrderDoesNotMatter()
+        public void Registry_Find_ReagentOrderDoesNotMatter()
         {
-            var engine = CreateEngineWithSingleReaction();
-            var result1 = engine.FindReaction(new[] { "HCl", "NaOH" });
-            var result2 = engine.FindReaction(new[] { "NaOH", "HCl" });
+            var engine = new ReactionEngine(CreateSingleReactionDb());
+            var result1 = engine.Registry.Find(new[] { "HCl", "NaOH" });
+            var result2 = engine.Registry.Find(new[] { "NaOH", "HCl" });
             Assert.IsNotNull(result1);
             Assert.IsNotNull(result2);
             Assert.That(result1.id, Is.EqualTo(result2.id));

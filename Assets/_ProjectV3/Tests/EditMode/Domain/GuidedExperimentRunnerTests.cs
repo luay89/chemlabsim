@@ -215,7 +215,7 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
             var session = runner.StartSession("exp_test_001");
             var mixRequest = new MixRequest(
                 new List<string> { "HCl", "NaOH" },
-                "Neutral", 25f, 0.5f, 0.5f, false);
+                ReactionMedium.Neutral, 25f, 0.5f, 0.5f, false);
 
             var result = runner.ValidateStep(session, mixRequest, null);
             Assert.IsNotNull(result);
@@ -229,7 +229,7 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
             var session = runner.StartSession("exp_test_001");
             var mixRequest = new MixRequest(
                 new List<string> { "Wrong", "Reagent" },
-                "Neutral", 25f, 0.5f, 0.5f, false);
+                ReactionMedium.Neutral, 25f, 0.5f, 0.5f, false);
 
             var result = runner.ValidateStep(session, mixRequest, null);
             Assert.IsNotNull(result);
