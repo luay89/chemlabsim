@@ -9525,6 +9525,77 @@
     "requiresHeating": false,
     "requiresCatalyst": false,
     "safety_notes": ""
+  },
+  {
+    "id": "rxn_139",
+    "name_en": "Sodium Hydroxide Dissolution (Exothermic)",
+    "name_ar": "",
+    "reactionType": "Thermal",
+    "reactants": [
+      {
+        "formula": "NaOH",
+        "state": "s",
+        "stoich": 1
+      },
+      {
+        "formula": "H2O",
+        "state": "l",
+        "stoich": 1
+      }
+    ],
+    "products": [
+      {
+        "formula": "NaOH",
+        "state": "aq",
+        "stoich": 1
+      },
+      {
+        "formula": "H2O",
+        "state": "l",
+        "stoich": 1
+      }
+    ],
+    "producesGas": false,
+    "activationTempC": 20,
+    "requiredMedium": "Neutral",
+    "catalystAllowed": false,
+    "catalystDeltaTempC": 0,
+    "visual_effects": {
+      "color_change": "",
+      "precipitate": false,
+      "gas": false,
+      "temperature_delta": 25,
+      "sound_id": "",
+      "dissolution": true,
+      "crystallization": false,
+      "effervescence": "none",
+      "vortex": false,
+      "vapor": false,
+      "turbidity": false,
+      "precipitate_color": "",
+      "electrical": false
+    },
+    "safety": {
+      "ghs_icons": [
+        "GHS05"
+      ],
+      "warnings_en": [
+        "NaOH is corrosive.",
+        "Solution becomes hot.",
+        "Add the solid to water slowly."
+      ],
+      "warnings_ar": []
+    },
+    "validation": {
+      "require_acid_into_water_rule": false,
+      "min_moles_threshold": 0.001
+    },
+    "observation_en": "The white NaOH pellets dissolve quickly and the beaker becomes hot. The clear, colorless solution is strongly basic and feels slippery.",
+    "explanation_en": "Dissolving NaOH in water is strongly exothermic (\u0394H \u2248 \u221244.5 kJ/mol). NaOH separates into Na\u207a and OH\u207b ions, and the energy released when water molecules surround these ions is greater than the energy needed to break the crystal lattice.",
+    "condition_notes": "Room temperature. Exothermic \u2014 temperature rises significantly. This is a physical dissolution (NaOH(s) \u2192 Na\u207a(aq) + OH\u207b(aq)), not a chemical reaction per se, but demonstrates energy changes.",
+    "requiresHeating": false,
+    "requiresCatalyst": false,
+    "safety_notes": "Corrosive \u2014 wear gloves and eye protection. Add NaOH to water slowly; the solution gets hot and can spatter."
   }
 ]
 }
