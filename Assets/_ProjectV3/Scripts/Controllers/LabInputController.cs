@@ -233,7 +233,7 @@ namespace ChemLabSimV3.Controllers
             {
                 string name = mat.GetDisplayName(0); // English only
                 if (!string.IsNullOrEmpty(name) && name != formula)
-                    return $"{name}  ({formula})";
+                    return $"{formula}  -  {name}";   // formula first: the list sorts by formula (NaOH under N)
             }
             return formula;
         }
@@ -267,7 +267,7 @@ namespace ChemLabSimV3.Controllers
                     .ToList();
             }
 
-            // Sort by display name in current language
+            // Sort by display label (formula first)
             availableReagents.Sort((a, b) =>
                 string.Compare(GetDisplayLabel(a), GetDisplayLabel(b), StringComparison.CurrentCultureIgnoreCase));
 
