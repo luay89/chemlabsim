@@ -47,7 +47,7 @@ namespace ChemLabSimV3.Data
             // -- Guidance --
             { "selectAndMix",          "Select two reactants and press Mix." },
             { "guidedMode",            "Guided Mode" },
-            { "readyMix",              "\u2713 Ready \u2014 press Mix to evaluate the reaction." },
+            { "readyMix",              "Ready \u2014 press Mix to evaluate the reaction." },
             { "hintExtraReactant",     "\u25b8 Hint: This selection may need an extra reactant in slot 3 or 4." },
             { "tipLowStirGrind",       "\u25b8 Tip: Very low stirring and grinding may reduce contact quality." },
             { "tipLowStirring",        "\u25b8 Tip: Consider increasing stirring for better reagent contact." },

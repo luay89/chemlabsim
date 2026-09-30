@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ChemLabSimV3.Views
 {
@@ -23,10 +24,20 @@ namespace ChemLabSimV3.Views
         private List<string> formulaValues  = new List<string>();
         private bool hasEmptyOption;
 
+        // The reagent list holds ~90 entries. The scene template's ScrollRect used
+        // Unity defaults (scroll sensitivity 1, no scrollbar), so the mouse wheel
+        // moved the list ~1px per notch and most reagents (e.g. NaOH) were unreachable.
+        private const float ListHeight        = 280f;
+        private const float ScrollSensitivity = 30f;
+        private const float ScrollbarWidth    = 10f;
+
         private void Awake()
         {
             if (dropdown != null)
+            {
                 dropdown.onValueChanged.AddListener(HandleDropdownChanged);
+                ConfigureListScrolling();
+            }
         }
 
         private void OnDestroy()
@@ -101,6 +112,65 @@ namespace ChemLabSimV3.Views
                 dropdown.value = idx;
                 dropdown.RefreshShownValue();
             }
+        }
+
+        /// <summary>Make the dropdown list scrollable: vertical only, usable wheel speed, visible scrollbar.</summary>
+        private void ConfigureListScrolling()
+        {
+            RectTransform template = dropdown.template;
+            if (template == null) return;
+
+            var scroll = template.GetComponent<ScrollRect>();
+            if (scroll == null) return;
+
+            scroll.horizontal        = false;
+            scroll.vertical          = true;
+            scroll.movementType      = ScrollRect.MovementType.Clamped;
+            scroll.scrollSensitivity = ScrollSensitivity;
+
+            if (template.sizeDelta.y < ListHeight)
+                template.sizeDelta = new Vector2(template.sizeDelta.x, ListHeight);
+
+            if (scroll.verticalScrollbar == null)
+            {
+                scroll.verticalScrollbar = CreateVerticalScrollbar(template);
+                scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHideAndExpandViewport;
+                scroll.verticalScrollbarSpacing = 0f;
+            }
+        }
+
+        private static Scrollbar CreateVerticalScrollbar(RectTransform template)
+        {
+            var barGo = new GameObject("Scrollbar", typeof(RectTransform), typeof(Image), typeof(Scrollbar));
+            var barRect = (RectTransform)barGo.transform;
+            barRect.SetParent(template, false);
+            barRect.anchorMin = new Vector2(1, 0);
+            barRect.anchorMax = new Vector2(1, 1);
+            barRect.pivot = new Vector2(1, 1);
+            barRect.sizeDelta = new Vector2(ScrollbarWidth, 0);
+            barGo.GetComponent<Image>().color = new Color(0.1f, 0.1f, 0.14f);
+
+            var areaGo = new GameObject("Sliding Area", typeof(RectTransform));
+            var areaRect = (RectTransform)areaGo.transform;
+            areaRect.SetParent(barRect, false);
+            areaRect.anchorMin = Vector2.zero;
+            areaRect.anchorMax = Vector2.one;
+            areaRect.offsetMin = Vector2.zero;
+            areaRect.offsetMax = Vector2.zero;
+
+            var handleGo = new GameObject("Handle", typeof(RectTransform), typeof(Image));
+            var handleRect = (RectTransform)handleGo.transform;
+            handleRect.SetParent(areaRect, false);
+            handleRect.offsetMin = Vector2.zero;
+            handleRect.offsetMax = Vector2.zero;
+            var handleImg = handleGo.GetComponent<Image>();
+            handleImg.color = new Color(0.45f, 0.6f, 0.85f);
+
+            var bar = barGo.GetComponent<Scrollbar>();
+            bar.handleRect = handleRect;
+            bar.targetGraphic = handleImg;
+            bar.direction = Scrollbar.Direction.BottomToTop;
+            return bar;
         }
 
         private void HandleDropdownChanged(int index)

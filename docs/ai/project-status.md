@@ -102,6 +102,8 @@ Full report: [reports/2026-09-27-v3-understanding-report.md](reports/2026-09-27-
 - Stage 2 data corrections applied: 16 equations fixed, 10 duplicate records removed (147 -> 137), `reactions.bytes` regenerated and verified; details and deferred items in [reports/2026-09-27-reaction-data-stage2.md](reports/2026-09-27-reaction-data-stage2.md). Compile 0 errors; EditMode unchanged (156/160).
 - Decomposition-mode plan: (1) slider range, done; (2) data corrections + dedupe, done; (3) single-reactant thermal/catalytic mode; (4) electric-current condition for electrolysis.
 - A second DB load exists in `V3Bootstrap` (for `ChemistryEngine`); `ProductionBootstrapper` has no callers.
+- 2026-09-29 (PR #1): LabV3 reagent dropdowns looked truncated (NaOH unreachable). Cause: the dropdown template `ScrollRect` had scroll sensitivity 1, no scrollbar. `ReagentDropdownView` now sets vertical-only, clamped, sensitivity 30, 280px height and adds a scrollbar at runtime. `readyMix` hint no longer uses U+2713 (missing from LiberationSans SDF). Other labels still use ✓/✗/⚠ and may log the same warning. Verified in cloud: `reactions.bytes` decrypts to exactly `reactions.json` (137 reactions, 90 reactants incl. NaOH); changed C# compiles against API stubs. Play Mode check pending.
+- 2026-09-29: CI Documentation Check no longer requires `AGENTS.md`; that file is local-only by design (`.gitignore`), so the check failed on every run.
 
 ## Factual Constraints For Future Tasks
 
