@@ -134,14 +134,20 @@ def check(reactions, strict_from=None):
             errors.append("%s: reactants/products missing" % rid)
             continue
         key = reactant_key(r)
-        if key in seen_keys:
+        if key in seen_keys and not r.get("debug_only"):   # debug_only: reached by id, not by the UI
             (errors if strict else warnings).append(
                 "%s: same reactant set as %s (unreachable, first entry wins)" % (rid, seen_keys[key]))
         else:
             seen_keys[key] = rid
 
         left, right = side_atoms(r["reactants"]), side_atoms(r["products"])
-        if left is None or right is None:
+        # Water of an aqueous solution can take part without being a selectable reagent
+        # ("solvent_water": n adds n H2O to the left side).
+        if left is not None and r.get("solvent_water"):
+            left = left + Counter({"H": 2 * r["solvent_water"], "O": r["solvent_water"]})
+        if r.get("skip_balance"):
+            pass   # documented exception, e.g. a polymer with no fixed formula
+        elif left is None or right is None:
             (errors if strict else warnings).append("%s: formula could not be parsed" % rid)
         elif left != right:
             (errors if strict else warnings).append("%s: equation is not balanced" % rid)

@@ -240,7 +240,7 @@ namespace ChemLabSimV3.Views
             areaRect.offsetMax = new Vector2(-6f, 0f);
 
             var placeholder = CreateSearchText(areaRect, "Placeholder", rowLabel.font);
-            placeholder.text = "Type here: NaOH";
+            placeholder.text = "Search name or formula";
             placeholder.fontStyle = FontStyles.Italic;
             placeholder.color = new Color(0.55f, 0.6f, 0.7f);
 

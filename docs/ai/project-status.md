@@ -119,6 +119,16 @@ Full report: [reports/2026-09-27-v3-understanding-report.md](reports/2026-09-27-
   - `Editor/AndroidBuild.cs` (menu ChemLabSim V3 > Build Android APK, or batch `-buildTarget Android -executeMethod ChemLabSimV3.Editor.AndroidBuild.BuildApk`): LabV3 only, `com.chemlabsim.app`, IL2CPP ARM64, API 24-34, landscape. Writes `Resources/RuntimeShaders/*.mat` so the shaders the bench creates in code survive the player build. Output `Builds/Android/ChemLabSim.apk` (debug-signed, git-ignored).
   - Not changed (known): HCl + H2O dilution is Partial because of the generic contact factor; liquid-only mixes probably should not need stirring/grinding (engine/data decision, deferred).
 
+- 2026-10-14 slice 2 (branch `android/slice-2-polish`), verified with screenshots of a real player build:
+  - Chemistry data (`tools/reactions/curate_002.py`, re-runnable): precipitate colours come from the solid product (AgCl white, PbI2 yellow, Cu(OH)2 blue, Fe(OH)3 rust …); the liquid keeps the colour of the ion left in solution (Fe2+ pale green, Cu2+ blue) instead of the precipitate's; metals plating out of a salt solution are shown as a solid; 6 equations balanced (`solvent_water` marks water of an aqueous solution, `skip_balance` the polymer); 8 unreachable duplicates removed (rxn_121 now needs H2SO4, as rxn_042). `reactions_tool.py check`: 422 reactions, 0 errors, 0 warnings.
+  - `Engine/ContactModel.cs`: grinding only matters with a solid reactant; solutions/gases are never "weak contact" (HCl + H2O is now a full reaction).
+  - `LabBench3D`: contents follow the reaction phases (solution / dry / molten); dry reactions burn with a flame in the element's flame-test colour (Mg white, Na yellow, K lilac, Cu green …); glow only for ΔT ≥ 15 °C; round bubbles and foam in `ChemLiquid.shader`.
+  - UI: `ChemText` (H₂SO₄-style formulas, balanced equations with coefficients), `ReactionHeadline` (name + equation above the beaker, status colour), `LabTheme` (rounded panels/controls from a generated sprite), tabs Result / Progress / Assistant, `SimulationSpeedBar` (Pause, 0.25×, 1×, 3×), empty required medium shown as "Any".
+  - `Engine/Assistant/LabAssistant.cs` + `Views/Layout/LabAssistantView.cs`: offline lab assistant (What happened / Why / What to change / Is it safe / Try next) built from the evaluated reaction; `ILabAssistant` is the seam for an online model later.
+  - App icon `Branding/AppIcon.png` (drawn by `tools/branding/make_icon.py`), dark splash background.
+  - Verification tooling: `Editor/LinuxPreviewBuild.cs` and `Debug/ScreenshotTour.cs` (runs only with `-chemlab-tour <dir>`; drives the real UI through 11 experiments and saves screenshots).
+  - EditMode 173/173.
+
 ## Factual Constraints For Future Tasks
 
 - the worktree may be dirty; unrelated edits already exist

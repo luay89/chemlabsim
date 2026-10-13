@@ -6,8 +6,14 @@
 //   • steam             ← bench temperature (slider + reaction ΔT) and vapor
 //   • heat glow / frost ← reaction temperature_delta
 //   • smoke / sparks    ← smoke / sparks flags
-// It only listens to existing events (FxTriggeredEvent, EnvironmentChangedEvent,
-// EnvironmentFxChangedEvent, MaterialPreviewChangedEvent), so no controller changes.
+//   • flame             ← dry/molten reactions that burn; colour from the burning element
+// The beaker's contents follow the phases of the reaction (ReactionEvaluatedEvent):
+//   solution (aq / liquid present) → liquid column, precipitate, bubbles
+//   dry (solids + gases only)      → solid layer that turns into the solid product, no liquid
+//   molten (liquid product, ≥ 300 °C) → thin glowing melt (thermite)
+// It only listens to existing events (FxTriggeredEvent, ReactionEvaluatedEvent,
+// EnvironmentChangedEvent, EnvironmentFxChangedEvent, MaterialPreviewChangedEvent),
+// so no controller changes.
 // Created automatically when LabV3 loads; the UI canvas keeps drawing on top.
 
 using UnityEngine;
@@ -40,11 +46,15 @@ namespace ChemLabSimV3.Views.Bench3D
         private static readonly Color GlassTint    = new Color(0.10f, 0.12f, 0.14f, 0.10f);
         private static readonly Color FrostTint    = new Color(0.55f, 0.65f, 0.75f, 0.45f);
         private static readonly Color HeatColor    = new Color(1.00f, 0.45f, 0.12f);
+        private static readonly Color MoltenColor  = new Color(1.00f, 0.55f, 0.15f, 0.95f);
+        private static readonly Color DefaultFlame = new Color(1.00f, 0.62f, 0.22f);
+        private const float GlowStartC = 15f;    // reaction ΔT below this gives no visible glow
+        private const float GlowFullC  = 80f;
 
         // ── Runtime objects ─────────────────────────────────────────────
         private Transform liquid;
         private Material liquidMat, glassBackMat, glassFrontMat;
-        private ParticleSystem bubbles, steam, smoke, sparks;
+        private ParticleSystem bubbles, steam, smoke, sparks, flame;
         private Light glowLight;
         private bool liquidShaderOk;
 
@@ -64,6 +74,15 @@ namespace ChemLabSimV3.Views.Bench3D
         private bool  vapor, smokeOn, glowOn, foamOn, precipitateOn;
         private float envSteamRate, envHeat, stirSpin;
         private float frost;
+        private bool  flameOn;
+        private Color flameColor = DefaultFlame;
+
+        // FxTriggeredEvent and ReactionEvaluatedEvent arrive in the same frame in either
+        // order; the effect is applied on the next Update when both are known.
+        private enum Phase { Solution, Dry, Molten }
+        private ReactionEntry lastReaction;
+        private FxState pendingFx;
+        private bool fxPending;
 
         // ── Bootstrap ───────────────────────────────────────────────────
 
@@ -104,6 +123,8 @@ namespace ChemLabSimV3.Views.Bench3D
         private void OnEnable()
         {
             EventBus.Subscribe<FxTriggeredEvent>(OnFx);
+            EventBus.Subscribe<ReactionEvaluatedEvent>(OnReactionEvaluated);
+            EventBus.Subscribe<ReactionNotFoundEvent>(OnReactionNotFound);
             EventBus.Subscribe<MaterialPreviewChangedEvent>(OnMaterialPreview);
             EventBus.Subscribe<EnvironmentChangedEvent>(OnEnvironment);
             EventBus.Subscribe<EnvironmentFxChangedEvent>(OnEnvironmentFx);
@@ -112,6 +133,8 @@ namespace ChemLabSimV3.Views.Bench3D
         private void OnDisable()
         {
             EventBus.Unsubscribe<FxTriggeredEvent>(OnFx);
+            EventBus.Unsubscribe<ReactionEvaluatedEvent>(OnReactionEvaluated);
+            EventBus.Unsubscribe<ReactionNotFoundEvent>(OnReactionNotFound);
             EventBus.Unsubscribe<MaterialPreviewChangedEvent>(OnMaterialPreview);
             EventBus.Unsubscribe<EnvironmentChangedEvent>(OnEnvironment);
             EventBus.Unsubscribe<EnvironmentFxChangedEvent>(OnEnvironmentFx);
@@ -156,7 +179,7 @@ namespace ChemLabSimV3.Views.Bench3D
             var rim = CreateLight("RimLight", LightType.Point, new Vector3(0.9f, 1.4f, 1.3f), new Color(0.45f, 0.65f, 1f), 2.2f, 4f);
             rim.shadows = LightShadows.None;
 
-            glowLight = CreateLight("HeatGlow", LightType.Point, new Vector3(0f, 0.25f, 0f), HeatColor, 0f, 2.2f);
+            glowLight = CreateLight("HeatGlow", LightType.Point, new Vector3(0f, 0.40f, 0f), HeatColor, 0f, 1.6f);
         }
 
         private Light CreateLight(string name, LightType type, Vector3 position, Color color, float intensity, float range)
@@ -264,8 +287,8 @@ namespace ChemLabSimV3.Views.Bench3D
                                     Bench3DMeshes.Particle(bead, false, 3005));
             var main = bubbles.main;
             main.startSpeed = new ParticleSystem.MinMaxCurve(0.25f, 0.55f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.015f, 0.045f);
-            main.startColor = new Color(1f, 1f, 1f, 0.55f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.012f, 0.032f);
+            main.startColor = new Color(0.92f, 0.97f, 1f, 0.42f);
             main.maxParticles = 600;
             var noise = bubbles.noise;
             noise.enabled = true;
@@ -311,6 +334,38 @@ namespace ChemLabSimV3.Views.Bench3D
             main.maxParticles = 400;
             var shape = sparks.shape;
             shape.angle = 40f;
+
+            flame = CreateEmitter("Flame", new Vector3(0f, LiquidBottom + 0.06f, 0f), InnerRadius * 0.45f,
+                                  Bench3DMeshes.Particle(soft, true, 3023));
+            main = flame.main;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.45f, 0.8f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(0.5f, 0.9f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.16f, 0.3f);
+            main.maxParticles = 500;
+            shape = flame.shape;
+            shape.angle = 10f;
+            var flameSize = flame.sizeOverLifetime;
+            flameSize.enabled = true;
+            flameSize.size = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 1f, 1f, 0.25f));
+            noise = flame.noise;
+            noise.enabled = true;
+            noise.strength = 0.18f;
+            noise.frequency = 2.2f;
+            SetFlameColor(DefaultFlame);
+        }
+
+        private void SetFlameColor(Color c)
+        {
+            flameColor = c;
+            var col = flame.colorOverLifetime;
+            col.enabled = true;
+            var g = new Gradient();
+            g.SetKeys(new[] { new GradientColorKey(Color.Lerp(c, Color.white, 0.6f), 0f),
+                              new GradientColorKey(c, 0.35f),
+                              new GradientColorKey(Color.Lerp(c, new Color(0.6f, 0.15f, 0.05f), 0.5f), 1f) },
+                      new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(0.9f, 0.1f),
+                              new GradientAlphaKey(0.5f, 0.6f), new GradientAlphaKey(0f, 1f) });
+            col.color = g;
         }
 
         private ParticleSystem CreateEmitter(string name, Vector3 position, float radius, Material mat)
@@ -399,13 +454,21 @@ namespace ChemLabSimV3.Views.Bench3D
             stirSpin = e.ShowVortex ? e.VortexSpinSpeed : 0f;
         }
 
+        private void OnReactionEvaluated(ReactionEvaluatedEvent e) => lastReaction = e.Input.reaction;
+        private void OnReactionNotFound(ReactionNotFoundEvent e) => lastReaction = null;
+
         private void OnFx(FxTriggeredEvent e)
         {
-            var fx = e.State;
+            pendingFx = e.State;
+            fxPending = true;
+        }
+
+        private void ApplyFx(FxState fx, ReactionEntry reaction)
+        {
             if (fx.StopAll)
             {
                 effervescence = 0;
-                vapor = smokeOn = glowOn = foamOn = precipitateOn = false;
+                vapor = smokeOn = glowOn = foamOn = precipitateOn = flameOn = false;
                 reactionDeltaC = 0f;
                 foamTarget = 0f;
                 turbidityTarget = 0f;
@@ -419,14 +482,38 @@ namespace ChemLabSimV3.Views.Bench3D
             reacting = true;
             reactionTime = 0f;
 
-            // The products end up as a solution in the beaker.
-            liquidTarget = Mathf.Max(liquidLevel, 0.6f);
-            solidTarget = 0f;
-            liquidTargetColor = fx.PlayColorChange && TryParseHex(fx.ColorChangeHex, out var target)
-                ? new Color(target.r, target.g, target.b, 0.6f)
-                : WaterColor;
+            Phase phase = PhaseOf(reaction);
+            Color target = Color.clear;
+            bool hasColour = fx.PlayColorChange && TryParseHex(fx.ColorChangeHex, out target);
 
-            precipitateOn = fx.PlayPrecipitate;
+            if (phase == Phase.Solution)
+            {
+                // The products end up as a solution in the beaker.
+                liquidTarget = Mathf.Max(liquidLevel, 0.6f);
+                solidTarget = 0f;
+                liquidTargetColor = hasColour ? new Color(target.r, target.g, target.b, 0.6f) : WaterColor;
+            }
+            else
+            {
+                // Solids and gases only: no liquid. A solid product replaces the solid reactant
+                // (grey Mg → white MgO); with gaseous products only, the solid is used up.
+                // A dry reaction starts in a clean, dry vessel.
+                liquidTarget = phase == Phase.Molten ? 0.16f : 0f;
+                foamLevel = turbidity = turbidityTarget = 0f;
+                if (phase == Phase.Molten) liquidTargetColor = liquidColor = MoltenColor;
+                else liquidLevel = 0f;
+                bool solidProduct = HasProduct(reaction, "s");
+                solidTarget = solidProduct ? Mathf.Max(solidLevel, 0.08f) : 0f;
+                if (solidProduct)
+                    solidTargetColor = TryParseHex(fx.PrecipitateColorHex, out var p0) ? new Color(p0.r, p0.g, p0.b, 1f)
+                                     : hasColour ? new Color(target.r, target.g, target.b, 1f)
+                                     : PowderColor;
+            }
+
+            flameOn = phase != Phase.Solution && Burns(reaction, fx);
+            if (flameOn) SetFlameColor(FlameColour(reaction));
+
+            precipitateOn = fx.PlayPrecipitate && phase == Phase.Solution;
             if (precipitateOn)
             {
                 solidTargetColor = TryParseHex(fx.PrecipitateColorHex, out var p) ? new Color(p.r, p.g, p.b, 1f) : PowderColor;
@@ -437,10 +524,10 @@ namespace ChemLabSimV3.Views.Bench3D
 
             effervescence = fx.EffervescenceLevel > 0 ? fx.EffervescenceLevel : (fx.PlayGas ? 1 : 0);
             foamOn = fx.PlayFoam;
-            foamTarget = foamOn ? 0.35f : 0f;
+            foamTarget = foamOn ? 0.25f : 0f;
             vapor = fx.PlayVapor;
             smokeOn = fx.PlaySmoke;
-            glowOn = fx.PlayGlow;
+            glowOn = fx.PlayGlow || phase == Phase.Molten;
             reactionDeltaC = fx.TemperatureDelta;
             if (reactionDeltaC <= -8f) frost = 1f;
 
@@ -452,6 +539,12 @@ namespace ChemLabSimV3.Views.Bench3D
 
         private void Update()
         {
+            if (fxPending)
+            {
+                fxPending = false;
+                ApplyFx(pendingFx, lastReaction);
+            }
+
             float dt = Time.deltaTime;
             if (reacting) reactionTime += dt;
 
@@ -506,7 +599,7 @@ namespace ChemLabSimV3.Views.Bench3D
             liquidMat.SetColor("_LiquidColor", shownLiquid);
             liquidMat.SetColor("_TopColor", Color.Lerp(shownLiquid, Color.white, 0.25f));
             liquidMat.SetColor("_SolidColor", solidColor);
-            liquidMat.SetColor("_FoamColor", foamLevel > 0.01f ? new Color(1f, 1f, 1f, 0.9f) : shownLiquid);
+            liquidMat.SetColor("_FoamColor", foamLevel > 0.01f ? new Color(0.86f, 0.9f, 0.95f, 0.7f) : shownLiquid);
             liquidMat.SetFloat("_FoamAmount", Mathf.Clamp01(foamLevel / 0.05f));   // no foam grain on a calm surface
             liquidMat.SetFloat("_SolidSettle", precipitateOn && reactionTime < 4f ? 0.2f : 0.9f);
 
@@ -543,6 +636,11 @@ namespace ChemLabSimV3.Views.Bench3D
             SetRate(steam, steamRate);
 
             SetRate(smoke, smokeOn ? 30f * Mathf.Clamp01(1f - reactionTime / 6f) : 0f);
+
+            // A burning solid flares up, then dies down over ~8 s.
+            float burn = flameOn ? Mathf.Clamp01(reactionTime / 0.4f) * Mathf.Clamp01(1f - (reactionTime - 4f) / 4f) : 0f;
+            flame.transform.position = liquid.position + Vector3.up * ((solidLevel + liquidLevel) * MaxFill + 0.03f);
+            SetRate(flame, 160f * burn);
         }
 
         private void UpdateGlassAndGlow(float temperatureC, float heatFade)
@@ -551,16 +649,58 @@ namespace ChemLabSimV3.Views.Bench3D
             glassFrontMat.SetColor("_BaseColor", tint);
             glassBackMat.SetColor("_BaseColor", tint);
 
-            float reactionGlow = reactionDeltaC > 0f ? Mathf.Clamp01(reactionDeltaC / 60f) * heatFade : 0f;
+            // Only a clearly hot reaction glows; a few degrees of warming is felt, not seen.
+            float reactionGlow = Mathf.InverseLerp(GlowStartC, GlowFullC, reactionDeltaC) * heatFade;
             if (glowOn) reactionGlow = Mathf.Max(reactionGlow, Mathf.Clamp01(1f - reactionTime / 6f));
             float glow = Mathf.Max(reactionGlow, envHeat * 0.6f);
 
-            glowLight.intensity = glow * 4f;
+            float burn = flameOn ? Mathf.Clamp01(1f - (reactionTime - 4f) / 4f) : 0f;
+            glowLight.color = burn > 0f ? flameColor : HeatColor;
+            glowLight.intensity = Mathf.Max(glow * 4f, burn * (flameColor.b > 0.85f && flameColor.r > 0.95f ? 9f : 5f));
             if (liquidShaderOk)
             {
                 liquidMat.SetFloat("_GlowIntensity", glow);
                 liquidMat.SetColor("_GlowColor", HeatColor);
             }
+        }
+
+        // ── Chemistry → look ────────────────────────────────────────────
+
+        private const float MoltenMinC = 300f;
+
+        private static Phase PhaseOf(ReactionEntry r)
+        {
+            if (r == null) return Phase.Solution;
+            bool any(List<ReactionChemical> list, string state) => list != null && list.Exists(c => c.state == state);
+            if (any(r.reactants, "aq") || any(r.products, "aq") || any(r.reactants, "l")) return Phase.Solution;
+            if (any(r.products, "l") && r.activationTempC >= MoltenMinC) return Phase.Molten;
+            if (any(r.products, "l")) return Phase.Solution;
+            return Phase.Dry;
+        }
+
+        private static bool HasProduct(ReactionEntry r, string state)
+            => r?.products != null && r.products.Exists(c => c.state == state);
+
+        private static bool Burns(ReactionEntry r, FxState fx)
+            => fx.PlayGlow || fx.PlaySparks || (r != null && r.reactionType == "Combustion");
+
+        private static bool HasReactant(ReactionEntry r, params string[] formulas)
+            => r?.reactants != null && r.reactants.Exists(c => System.Array.IndexOf(formulas, c.formula) >= 0);
+
+        /// <summary>Flame colour of the burning element (flame-test colours).</summary>
+        private static Color FlameColour(ReactionEntry r)
+        {
+            if (HasReactant(r, "Mg", "Al"))  return new Color(1.00f, 1.00f, 0.96f);   // blinding white
+            if (HasReactant(r, "Na"))        return new Color(1.00f, 0.80f, 0.20f);   // yellow-orange
+            if (HasReactant(r, "K"))         return new Color(0.78f, 0.55f, 1.00f);   // lilac
+            if (HasReactant(r, "Li"))        return new Color(1.00f, 0.18f, 0.30f);   // crimson
+            if (HasReactant(r, "Ca"))        return new Color(1.00f, 0.42f, 0.18f);   // orange-red
+            if (HasReactant(r, "Cu"))        return new Color(0.30f, 1.00f, 0.50f);   // green
+            if (HasReactant(r, "Ba"))        return new Color(0.70f, 1.00f, 0.40f);   // pale green
+            if (HasReactant(r, "Sr"))        return new Color(1.00f, 0.10f, 0.10f);   // red
+            if (HasReactant(r, "S", "H2", "CH4", "C2H6", "C3H8", "C4H10", "CO"))
+                                             return new Color(0.40f, 0.58f, 1.00f);   // blue
+            return DefaultFlame;
         }
 
         // ── Helpers ────────────────────────────────────────────────────

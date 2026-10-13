@@ -72,6 +72,8 @@ namespace ChemLabSimV3.Views
             }
 
             Color statusColor = GetStatusColor(vm.StatusKey);
+            if (headlineText != null)
+                headlineText.color = Color.Lerp(statusColor, Color.white, 0.2f);
             if (statusIcon != null)
                 statusIcon.color = statusColor;
             if (statusBanner != null)
@@ -85,7 +87,7 @@ namespace ChemLabSimV3.Views
             if (reactantsText != null)
             {
                 reactantsText.text = vm.Reactants != null && vm.Reactants.Count > 0
-                    ? string.Join(" + ", vm.Reactants)
+                    ? string.Join(" + ", vm.Reactants.ConvertAll(ChemText.Formula))
                     : string.Empty;
             }
 

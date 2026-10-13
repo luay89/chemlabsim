@@ -90,9 +90,7 @@ namespace ChemLabSimV3.Engine
             // 3. Pre-compute derived values
             float stirring = Mathf.Clamp01(request.Stirring);
             float grinding = Mathf.Clamp01(request.Grinding);
-            float contactFactor =
-                Mathf.Lerp(0.6f, 1.6f, stirring) *
-                Mathf.Lerp(0.6f, 1.6f, grinding);
+            float contactFactor = ContactModel.Compute(reaction, stirring, grinding);
 
             float effectiveActivation = reaction.activationTempC;
             if (request.HasCatalyst && reaction.catalystAllowed)

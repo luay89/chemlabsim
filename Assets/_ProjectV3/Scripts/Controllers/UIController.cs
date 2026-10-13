@@ -476,15 +476,15 @@ namespace ChemLabSimV3.Controllers
 
             var reactants = rxn.GetReactantFormulas();
             var products = rxn.GetProductFormulas();
-            string equation = reactants.Count > 0
-                ? string.Join(" + ", reactants) + " -> " + string.Join(" + ", products)
-                : string.Empty;
+            string equation = ChemText.Equation(rxn);
+            if (string.IsNullOrEmpty(equation) && reactants.Count > 0)
+                equation = string.Join(" + ", reactants) + ChemText.Arrow + string.Join(" + ", products);
 
             return new ReactionIdentityViewModel
             {
                 ReactionName = name,
                 Equation = equation,
-                RequiredMedium = rxn.requiredMedium ?? "Neutral",
+                RequiredMedium = string.IsNullOrEmpty(rxn.requiredMedium) ? "Any" : rxn.requiredMedium,
                 ActivationTempC = rxn.activationTempC,
                 CatalystAllowed = rxn.catalystAllowed,
                 ProducesGas = rxn.GetProducesGas(),
@@ -699,7 +699,7 @@ namespace ChemLabSimV3.Controllers
 
             if (rxn != null)
             {
-                notes.Add($"Medium: {rxn.requiredMedium ?? "Neutral"}");
+                notes.Add($"Medium: {(string.IsNullOrEmpty(rxn.requiredMedium) ? "Any" : rxn.requiredMedium)}");
                 notes.Add($"Activation: {rxn.activationTempC:F0}\u00b0C");
 
                 if (rxn.catalystAllowed)
@@ -787,52 +787,10 @@ namespace ChemLabSimV3.Controllers
         // -- Equation Formatting Helpers -----------------------
 
         /// <summary>
-        /// Builds a balanced equation with stoichiometric coefficients and state labels.
-        /// Example: 2 Al(s) + Fe₂O₃(s) → Al₂O₃(s) + 2 Fe(l)
+        /// Balanced equation with coefficients, sub/superscripts and state labels (TMP rich text).
+        /// Example: 2Al(s) + Fe₂O₃(s) → Al₂O₃(s) + 2Fe(l)
         /// </summary>
-        private static string BuildBalancedEquation(ReactionEntry rxn)
-        {
-            if (rxn == null) return string.Empty;
-
-            var lhs = FormatChemicalList(rxn.reactants);
-            var rhs = FormatChemicalList(rxn.products);
-
-            if (string.IsNullOrEmpty(lhs) && string.IsNullOrEmpty(rhs))
-                return string.Empty;
-
-            return lhs + " \u2192 " + rhs;
-        }
-
-        private static string FormatChemicalList(List<ReactionChemical> chemicals)
-        {
-            if (chemicals == null || chemicals.Count == 0)
-                return string.Empty;
-
-            var parts = new List<string>();
-            for (int i = 0; i < chemicals.Count; i++)
-            {
-                var chem = chemicals[i];
-                if (chem == null || string.IsNullOrEmpty(chem.formula))
-                    continue;
-
-                string term = string.Empty;
-
-                // Add stoichiometric coefficient (omit 1)
-                int coeff = Mathf.RoundToInt(chem.stoich);
-                if (coeff > 1)
-                    term = coeff + " ";
-
-                term += chem.formula;
-
-                // Add state label
-                if (!string.IsNullOrEmpty(chem.state))
-                    term += "(" + chem.state + ")";
-
-                parts.Add(term);
-            }
-
-            return string.Join(" + ", parts);
-        }
+        private static string BuildBalancedEquation(ReactionEntry rxn) => ChemText.Equation(rxn);
 
         /// <summary>
         /// Formats products as "Formula(state)" for the product list display.
@@ -848,7 +806,7 @@ namespace ChemLabSimV3.Controllers
                 if (chem == null || string.IsNullOrEmpty(chem.formula))
                     continue;
 
-                string entry = chem.formula;
+                string entry = ChemText.Formula(chem.formula);
                 if (!string.IsNullOrEmpty(chem.state))
                     entry += "(" + chem.state + ")";
                 result.Add(entry);

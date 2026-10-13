@@ -66,13 +66,29 @@ namespace ChemLabSimV3.Editor
             PlayerSettings.allowedAutorotateToPortrait = false;
             PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
             PlayerSettings.Android.renderOutsideSafeArea = true;   // LabScreenLayout keeps the UI inside the safe area
+            ApplyBranding();
+        }
+
+        private const string IconPath = "Assets/_ProjectV3/Branding/AppIcon.png";   // drawn by tools/branding/make_icon.py
+
+        /// <summary>App icon (all platforms) and a splash screen in the app's colours.</summary>
+        internal static void ApplyBranding()
+        {
+            var icon = AssetDatabase.LoadAssetAtPath<Texture2D>(IconPath);
+            if (icon != null)
+                PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, new[] { icon });
+            else
+                Debug.LogWarning($"[AndroidBuild] {IconPath} not found; keeping the default icon.");
+
+            PlayerSettings.SplashScreen.backgroundColor = new Color(0.03f, 0.06f, 0.12f);
+            PlayerSettings.SplashScreen.unityLogoStyle = PlayerSettings.SplashScreen.UnityLogoStyle.LightOnDark;
         }
 
         /// <summary>
         /// The 3D bench creates its materials in code (Shader.Find), which a player build strips.
         /// One material per shader + keyword set under Resources keeps those shaders and variants.
         /// </summary>
-        private static void EnsureRuntimeShaderMaterials()
+        internal static void EnsureRuntimeShaderMaterials()
         {
             Directory.CreateDirectory(ShaderMatFolder);
             var soft = Texture2D.whiteTexture;

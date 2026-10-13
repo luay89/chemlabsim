@@ -89,6 +89,21 @@ Implications:
 - Shaders that are only reached through `Shader.Find` need a material under `Resources/RuntimeShaders`.
 - The AI assistant (planned) talks to a backend proxy; no API keys in the app.
 
+### 2026-10-14: Visual verification with a player build, and chemistry-derived colours
+
+Status: accepted
+
+Reason:
+
+- Visual bugs (white disk, false heat glow, liquid in dry reactions, blocky foam) were invisible to EditMode tests.
+- Hand-picked colours per reaction were often chemically wrong (precipitate colour painted on the whole liquid).
+
+Implications:
+
+- UI/visual changes are checked by building `LinuxPreviewBuild` and running `ScreenshotTour` (`-chemlab-tour <dir>`), then reviewing the screenshots. Build and run in a separate git worktree when the user has the project open in Unity.
+- Colours in `reactions.json` follow the rules in `tools/reactions/curate_002.py`; new batches should go through it.
+- Contact factor has one definition: `ContactModel`.
+
 ## Decision Update Rules
 
 - Add a new dated entry when a meaningful architectural or process choice changes.

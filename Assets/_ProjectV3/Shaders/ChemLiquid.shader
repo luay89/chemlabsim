@@ -175,7 +175,7 @@ Shader "ChemLabSim/Liquid"
 
                 // No solid band at all when there is no solid; otherwise the bottom cap
                 // (yNorm = 0) would always draw as powder.
-                half solidMask = saturate(1.0h - solidAccum) * step(0.001h, solidTop);
+                half solidMask = saturate(1.0h - solidAccum) * step(0.002h, _SolidHeight);
                 half liquidMask = saturate(1.0h - liquidAccum - solidMask);
                 half foamMask = saturate(liquidAccum - foamAccum);
 
@@ -202,8 +202,10 @@ Shader "ChemLabSim/Liquid"
                 half4 foamCol = _FoamColor;
                 float2 foamUV = IN.uv * 28.0;
                 foamUV.y -= time * _FoamAnimSpeed * 1.5;
+                // Foam = packed round bubbles: one bubble per cell, random size per cell.
                 half foamNoise = SimpleNoise(floor(foamUV));
-                half foamGrain = step(0.42h, foamNoise);
+                half foamDist = length(frac(foamUV) - 0.5);
+                half foamGrain = smoothstep(0.30h + foamNoise * 0.18h, 0.16h, foamDist);
                 half foamFade = saturate(1.0h - (yNorm - liquidTop) / max(_FoamHeight, 0.001h));
                 foamCol.a *= foamFade * lerp(1.0h, lerp(0.45h, 1.0h, foamGrain), _FoamAmount);
                 foamCol.rgb += foamGrain * _BubbleIntensity * 0.20h * _FoamAmount;
@@ -222,7 +224,10 @@ Shader "ChemLabSim/Liquid"
                     float2 bubbleUV = IN.uv * 8.0;
                     bubbleUV.y -= time * (_FoamAnimSpeed + 0.5h);
                     half bubbleNoise = SimpleNoise(floor(bubbleUV));
-                    half bubbleMask = step(0.90h, bubbleNoise);
+                    // round bubble in ~10% of the cells, bright rim and darker centre
+                    half bubbleDist = length(frac(bubbleUV) - 0.5);
+                    half bubbleRing = smoothstep(0.30h, 0.24h, bubbleDist) - 0.6h * smoothstep(0.22h, 0.12h, bubbleDist);
+                    half bubbleMask = step(0.90h, bubbleNoise) * saturate(bubbleRing);
                     half bubbleFade = frac(bubbleUV.y) * (1.0h - frac(bubbleUV.y)) * 4.0h;
                     half bubbleLayerMask = saturate(liquidMask + foamMask);
                     col.rgb += bubbleMask * bubbleFade * _BubbleIntensity * 0.35h * bubbleLayerMask;

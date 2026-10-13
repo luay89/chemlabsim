@@ -1,6 +1,6 @@
 // ChemLabSim v3 — Surface Area Condition
 // Evaluates effective contact quality from stirring + grinding.
-// Contact factor = Lerp(0.6, 1.6, stirring) * Lerp(0.6, 1.6, grinding).
+// The contact factor itself comes from ContactModel (solids vs. fluids).
 
 using UnityEngine;
 
