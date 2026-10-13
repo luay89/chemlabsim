@@ -24,6 +24,7 @@ namespace ChemLabSimV3.Engine.Assistant
         public ReactionEvaluationInput Input;
         public ReactionEvaluationResult Result;
         public IReadOnlyList<ReactionEntry> Database;   // for suggestions; may be null
+        public bool HasElectricCurrent;
     }
 
     public interface ILabAssistant
@@ -63,7 +64,9 @@ namespace ChemLabSimV3.Engine.Assistant
         private static string WhatHappened(LabContext c)
         {
             if (!c.Found)
-                return $"{Reagents(c)} do not react with each other in this lab. {c.NotFoundMessage}".Trim();
+                return c.Reagents != null && c.Reagents.Count == 1
+                    ? $"{Reagents(c)} on its own does not decompose in this lab. Add a second reagent to react it with something."
+                    : $"{Reagents(c)} do not react with each other in this lab. {c.NotFoundMessage}".Trim();
 
             var r = c.Input.reaction;
             var sb = new StringBuilder();
@@ -103,6 +106,11 @@ namespace ChemLabSimV3.Engine.Assistant
                 (res.CatalystApplied ? " (lowered by the catalyst)" : string.Empty)));
             sb.Append(Check(!res.LowContactQuality, "Contact",
                 $"factor {res.ContactFactor:0.00}" + (ContactModel.HasSolidReactant(r) ? " (a solid reacts only at its surface)" : " (solutions mix by themselves)")));
+            if (ElectricityCondition.IsElectrolysis(r))
+                sb.Append(Check(c.HasElectricCurrent, "Electric current",
+                    c.HasElectricCurrent ? "on — ions are discharged at the electrodes" : "off — electrolysis needs DC power"));
+            if (r.requiresCatalyst)
+                sb.Append(Check(c.Input.hasCatalyst, "Catalyst", c.Input.hasCatalyst ? "added" : "this reaction needs one"));
 
             if (!string.IsNullOrEmpty(r.explanation_en))
                 sb.Append('\n').Append(r.explanation_en);
@@ -117,6 +125,10 @@ namespace ChemLabSimV3.Engine.Assistant
             var r = c.Input.reaction;
             var res = c.Result;
             var tips = new List<string>();
+            if (ElectricityCondition.IsElectrolysis(r) && !c.HasElectricCurrent)
+                tips.Add("Switch on <b>Electric current (DC)</b> — this is electrolysis.");
+            if (r.requiresCatalyst && !c.Input.hasCatalyst)
+                tips.Add("Turn on the <b>catalyst</b> — this reaction needs one.");
             if (res.MediumMismatch && MediumRequired(r))
                 tips.Add($"Set <b>Medium</b> to <b>{r.requiredMedium}</b>.");
             if (res.ActivationNotReached || res.LowTemperature)

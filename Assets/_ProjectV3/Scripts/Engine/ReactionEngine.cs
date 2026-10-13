@@ -60,7 +60,7 @@ namespace ChemLabSimV3.Engine
         public ReactionEngineResult ProcessDetailed(MixRequest request)
         {
             // 1. Input validation
-            if (request.ReagentNames == null || request.ReagentNames.Count < 2)
+            if (request.ReagentNames == null || request.ReagentNames.Count < 1)
             {
                 return new ReactionEngineResult
                 {
@@ -103,6 +103,7 @@ namespace ChemLabSimV3.Engine
                 Grinding             = grinding,
                 Medium               = request.Medium,
                 HasCatalyst          = request.HasCatalyst,
+                HasElectricCurrent   = request.HasElectricCurrent,
                 EffectiveActivationC = effectiveActivation,
                 ContactFactor        = contactFactor,
                 PressureAtm          = request.PressureAtm > 0f ? request.PressureAtm : 1f

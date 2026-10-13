@@ -185,6 +185,8 @@ namespace ChemLabSimV3.Views.Layout
 
         private static bool IsPhone()
         {
+            // "-chemlab-phone" previews the phone layout on a desktop build (screenshot checks).
+            if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-chemlab-phone") >= 0) return true;
             if (!UnityEngine.Application.isMobilePlatform) return false;
             if (Screen.dpi <= 0f) return true;
             float w = Screen.width / Screen.dpi, h = Screen.height / Screen.dpi;
