@@ -93,17 +93,11 @@ namespace ChemLabSimV3.Editor
         {
             material.SetTexture("_BaseMap", null);   // keep the assets free of runtime textures
             material.SetTexture("_MainTex", null);
+            // Create once only: URP re-validates the asset on import, so rewriting it on
+            // every build would keep changing the committed file.
             string path = $"{ShaderMatFolder}/{name}.mat";
-            var existing = AssetDatabase.LoadAssetAtPath<Material>(path);
-            if (existing != null)
-            {
-                EditorUtility.CopySerialized(material, existing);
-                EditorUtility.SetDirty(existing);
-            }
-            else
-            {
+            if (AssetDatabase.LoadAssetAtPath<Material>(path) == null)
                 AssetDatabase.CreateAsset(material, path);
-            }
         }
     }
 }
