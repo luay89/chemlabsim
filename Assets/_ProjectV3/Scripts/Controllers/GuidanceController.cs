@@ -114,7 +114,7 @@ namespace ChemLabSimV3.Controllers
             if (!string.IsNullOrWhiteSpace(input.ReagentC)) reagents.Add(input.ReagentC.Trim());
             if (!string.IsNullOrWhiteSpace(input.ReagentD)) reagents.Add(input.ReagentD.Trim());
 
-            if (reagents.Count < 2)
+            if (reagents.Count < 1)
                 return new GuidanceState
                 {
                     Step = GuidanceStep.SelectReagents,

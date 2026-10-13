@@ -14,6 +14,7 @@ namespace ChemLabSimV3.Data
         public float Stirring;
         public float Grinding;
         public bool HasCatalyst;
+        public bool HasElectricCurrent;
         public float PressureAtm;
         public bool IsClosedContainer;
         public float HeadspaceVolumeLiters;
@@ -36,6 +37,7 @@ namespace ChemLabSimV3.Data
             Stirring = stirring;
             Grinding = grinding;
             HasCatalyst = hasCatalyst;
+            HasElectricCurrent = false;
             PressureAtm = 1f;
             IsClosedContainer = false;
             HeadspaceVolumeLiters = 1f;

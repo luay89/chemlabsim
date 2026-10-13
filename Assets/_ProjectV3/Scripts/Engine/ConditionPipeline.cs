@@ -67,6 +67,7 @@ namespace ChemLabSimV3.Engine
             pipeline.Add(new CatalystCondition());
             pipeline.Add(new SurfaceAreaCondition());
             pipeline.Add(new PressureCondition());
+            pipeline.Add(new ElectricityCondition());
             return pipeline;
         }
 
@@ -77,8 +78,12 @@ namespace ChemLabSimV3.Engine
             bool anyPartial = false;
             float factorSum = 0f;
 
+            int count = 0;
             for (int i = 0; i < _conditions.Count; i++)
             {
+                if (_conditions[i] is IApplicableCondition scoped && !scoped.AppliesTo(reaction))
+                    continue;
+                count++;
                 var cr = _conditions[i].Evaluate(reaction, input);
                 results.Add(cr);
 
@@ -87,7 +92,6 @@ namespace ChemLabSimV3.Engine
                 factorSum += cr.Factor;
             }
 
-            int count = _conditions.Count;
             float avgFactor = count > 0 ? factorSum / count : 0f;
 
             ReactionStatus status;
