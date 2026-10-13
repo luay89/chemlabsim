@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 
 namespace ChemLabSimV3.Views.Bench3D
 {
-    internal static class Bench3DMeshes
+    public static class Bench3DMeshes
     {
         /// <summary>Open cylinder wall between y0 and y1. Normals point outward, or inward when <paramref name="inward"/>.</summary>
         public static void AddWall(List<Vector3> v, List<Vector3> n, List<Vector2> uv, List<int> t,

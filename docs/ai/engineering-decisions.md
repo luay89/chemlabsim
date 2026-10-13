@@ -73,6 +73,22 @@ Implications:
 - `project-status.md` records current observed state.
 - `roadmap.md` records planned or likely next areas, not guaranteed implementation state.
 
+### 2026-10-13: Android first; LabV3 is the shipped scene
+
+Status: accepted
+
+Reason:
+
+- Most target students use Android phones; the 3D bench and particles run better as a native app than in mobile browsers.
+- `LabV3.unity` carries its own `AppRoot`, so it can be the only scene in the mobile build.
+
+Implications:
+
+- Android build: `ChemLabSimV3.Editor.AndroidBuild` (IL2CPP, ARM64, landscape, application id `com.chemlabsim.app`). WebGL stays in CI as the secondary target; iOS later.
+- UI must work on a ~6 inch landscape phone: the beaker stays in the centre, info goes in the right tab column (`LabScreenLayout`), and the UI respects the safe area.
+- Shaders that are only reached through `Shader.Find` need a material under `Resources/RuntimeShaders`.
+- The AI assistant (planned) talks to a backend proxy; no API keys in the app.
+
 ## Decision Update Rules
 
 - Add a new dated entry when a meaningful architectural or process choice changes.

@@ -228,21 +228,21 @@ namespace ChemLabSimV3.Data
             { "guidedExp_hint6_temp",           "Hint: Think about molecular kinetic energy and collision theory." },
 
             // Guided experiment feedback
-            { "guidedExp_stepPerfect",          "🌟 Perfect! Excellent technique!" },
-            { "guidedExp_stepPassed",           "✅ Step passed. Good work!" },
-            { "guidedExp_stepFailed",           "❌ Not quite. Try adjusting your conditions." },
+            { "guidedExp_stepPerfect",          "Perfect! Excellent technique!" },
+            { "guidedExp_stepPassed",           "Step passed. Good work!" },
+            { "guidedExp_stepFailed",           "Not quite. Try adjusting your conditions." },
             { "guidedExp_error_stepNotFound",   "Error: Step not found. Please restart the experiment." },
-            { "guidedExp_completed",            "🎉 Experiment Complete!" },
-            { "guidedExp_perfectScore",         "🏆 Perfect Score! You are a true chemist!" },
+            { "guidedExp_completed",            "Experiment Complete!" },
+            { "guidedExp_perfectScore",         "Perfect Score! You are a true chemist!" },
             { "guidedExp_passingScore",         "Good effort! Try again for a perfect score." },
             { "guidedExp_failingScore",         "Keep practicing! Review the instructions and try again." },
-            { "guidedExp_hint",                 "💡 Hint" },
+            { "guidedExp_hint",                 "Hint" },
             { "guidedExp_skipStep",             "Skip Step" },
             { "guidedExp_restart",              "Restart Experiment" },
             { "guidedExp_backToList",           "Back to Experiments" },
             { "guidedExp_selectExperiment",     "Select an Experiment" },
             { "guidedExp_noExperiments",        "No experiments available yet." },
-            { "guidedExp_locked",               "🔒 Locked" },
+            { "guidedExp_locked",               "Locked" },
             { "guidedExp_timeRemaining",        "Time remaining:" },
 
             // Evaluation criteria
