@@ -1,4 +1,6 @@
 using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.TestTools;
 using ChemLabSimV3.Core;
 
 namespace ChemLabSimV3.Tests.EditMode.Core
@@ -53,6 +55,7 @@ namespace ChemLabSimV3.Tests.EditMode.Core
         [Test]
         public void Get_UnregisteredService_ReturnsNull()
         {
+            LogAssert.Expect(LogType.Error, new System.Text.RegularExpressions.Regex("Service not found: ITestService"));
             var resolved = ServiceLocator.Get<ITestService>();
             Assert.IsNull(resolved);
         }

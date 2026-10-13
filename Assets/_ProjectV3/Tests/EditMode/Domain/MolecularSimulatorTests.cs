@@ -125,6 +125,8 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
             Assert.IsNotNull(mol);
             Assert.That(mol.Formula, Is.EqualTo("H2O"));
             Assert.That(mol.Atoms.Count, Is.EqualTo(3)); // H, H, O
+            Assert.That(mol.Bonds.Count, Is.EqualTo(2)); // O-H, O-H
+            Assert.That(mol.Atoms[0].ElementSymbol, Is.EqualTo("O")); // O is the central atom
         }
 
         [Test]

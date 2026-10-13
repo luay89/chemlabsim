@@ -58,7 +58,7 @@ namespace ChemLabSimV3.Views
         private void UpdateLabel(float value)
         {
             if (valueLabel != null)
-                valueLabel.text = $"Stirring: {value:P0}";
+                valueLabel.text = $"{value * 100f:0}%";
         }
     }
 }

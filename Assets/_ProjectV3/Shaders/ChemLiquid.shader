@@ -46,6 +46,7 @@ Shader "ChemLabSim/Liquid"
         _FresnelPower ("Fresnel Power", Range(0.5, 5)) = 2.5
         _TopColor ("Liquid Top Tint", Color) = (0.45, 0.65, 0.85, 0.9)
         _FoamWidth ("Foam Line Width", Range(0, 0.05)) = 0.015
+        _FoamAmount ("Foam Amount (grain strength)", Range(0, 1)) = 1
     }
 
     SubShader
@@ -118,6 +119,7 @@ Shader "ChemLabSim/Liquid"
                 half   _FresnelPower;
                 half4  _TopColor;
                 half   _FoamWidth;
+                half   _FoamAmount;
             CBUFFER_END
 
             // Simple noise for bubble pattern
@@ -171,8 +173,10 @@ Shader "ChemLabSim/Liquid"
                 half liquidAccum = smoothstep(solidTop, max(solidTop + 1e-4h, liquidTop), yNorm);
                 half foamAccum = smoothstep(liquidTop, max(liquidTop + 1e-4h, liquidTop + _FoamHeight), yNorm);
 
-                half solidMask = saturate(1.0h - solidAccum);
-                half liquidMask = saturate(solidAccum - liquidAccum);
+                // No solid band at all when there is no solid; otherwise the bottom cap
+                // (yNorm = 0) would always draw as powder.
+                half solidMask = saturate(1.0h - solidAccum) * step(0.001h, solidTop);
+                half liquidMask = saturate(1.0h - liquidAccum - solidMask);
                 half foamMask = saturate(liquidAccum - foamAccum);
 
                 // Smooth top fade instead of hard discard.
@@ -201,8 +205,8 @@ Shader "ChemLabSim/Liquid"
                 half foamNoise = SimpleNoise(floor(foamUV));
                 half foamGrain = step(0.42h, foamNoise);
                 half foamFade = saturate(1.0h - (yNorm - liquidTop) / max(_FoamHeight, 0.001h));
-                foamCol.a *= foamFade * lerp(0.45h, 1.0h, foamGrain);
-                foamCol.rgb += foamGrain * _BubbleIntensity * 0.20h;
+                foamCol.a *= foamFade * lerp(1.0h, lerp(0.45h, 1.0h, foamGrain), _FoamAmount);
+                foamCol.rgb += foamGrain * _BubbleIntensity * 0.20h * _FoamAmount;
 
                 half4 col = 0;
                 col += solidCol * solidMask;

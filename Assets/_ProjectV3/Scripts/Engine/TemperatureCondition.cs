@@ -25,7 +25,8 @@ namespace ChemLabSimV3.Engine
 
             float gap = threshold - input.TemperatureC;
 
-            if (gap <= PartialWindowC)
+            // At the window edge the partial factor is already 0, so it counts as a fail.
+            if (gap < PartialWindowC)
             {
                 float factor = Mathf.Clamp01(1f - gap / PartialWindowC) * 0.5f;
                 return ConditionResult.Partial("Temperature", factor,

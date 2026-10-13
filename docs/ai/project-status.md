@@ -1,6 +1,6 @@
 # Project Status
 
-Last reviewed: `2026-08-20`
+Last reviewed: `2026-10-13`
 
 ## High-Level Summary
 
@@ -108,6 +108,16 @@ Full report: [reports/2026-09-27-v3-understanding-report.md](reports/2026-09-27-
 - 2026-09-30: Batch 001 added 292 reactions (430 total, 114 reagents): acid-base, oxides, metals + acids, carbonates, precipitation, displacement, combustion/synthesis, high-temperature reductions, solution redox, organic, dissolution. Written with `tools/reactions/` (`reactions_tool.py add batch_001` checks atom balance, duplicates, known reagents and slider range, then re-encrypts `reactions.bytes`). New entries leave `requiredMedium` empty so no medium guessing is needed. Play Mode check pending.
 - 2026-09-30: V0 3D bench slice: `Views/Bench3D/LabBench3D.cs` auto-creates (RuntimeInitializeOnLoad, LabV3 only) a dark bench, a procedural glass beaker, a `ChemLabSim/Liquid` liquid column and particle emitters (bubbles, steam, smoke, sparks) plus heat glow/frost, all driven by existing events (FxTriggered, EnvironmentChanged/FxChanged, MaterialPreviewChanged). It moves Main Camera and disables the legacy `ReactionFxView`. Materials are created at runtime, so player builds may need these shaders marked Always Included later. Play Mode check pending.
 - 2026-09-29: CI Documentation Check no longer requires `AGENTS.md`; that file is local-only by design (`.gitignore`), so the check failed on every run.
+
+- 2026-10-13: Product direction set by the user: the goal is to make chemistry simple by letting the student see the reaction happen. Platform order: Android first, then WebGL (teachers/desktop), then iOS. An AI explain/help assistant comes last and needs a backend proxy (no API key in the client).
+- 2026-10-13 Android slice 1 (branch `android/slice-1-mobile-lab`):
+  - `Views/Layout/LabScreenLayout.cs` (runtime, LabV3 only) keeps the beaker in the centre: Lab Controls on the left (scaled down when taller than the screen), one right column with tabs Result / Progress (scroll lists that hold the existing panels, text rows grow with their text), hint at the bottom centre, everything inside `Screen.safeArea`. Phones (<7 inch) use a 1280x720 reference and match height.
+  - `Views/Shared/SymbolFontFallback.cs` registers `Resources/Fonts/DejaVuSans.ttf` as a global dynamic TMP fallback, so ✓ ✗ ⚠ ▶ ▸ ● ■ ⁺ ₂ no longer show as □. Emoji prefixes removed from guided-experiment labels.
+  - `ChemLiquid.shader`: the solid band no longer draws at the bottom cap when there is no solid (it was the white noisy disk), and foam grain is scaled by a new `_FoamAmount` (it was the blocky surface).
+  - Stirring/Grinding value labels show only "50%" (the row title already names them).
+  - Tests: 160/160 EditMode pass. Fixed `MolecularSimulator.BuildFromFormula` (2-element formulas dropped atoms of the first element and reused an atom id; H2O now O + 2 H), `TemperatureCondition` (gap exactly at the 15 °C window edge is Fail, not a 0-factor Partial), `ServiceLocatorTests` expects the intentional error log.
+  - `Editor/AndroidBuild.cs` (menu ChemLabSim V3 > Build Android APK, or batch `-buildTarget Android -executeMethod ChemLabSimV3.Editor.AndroidBuild.BuildApk`): LabV3 only, `com.chemlabsim.app`, IL2CPP ARM64, API 24-34, landscape. Writes `Resources/RuntimeShaders/*.mat` so the shaders the bench creates in code survive the player build. Output `Builds/Android/ChemLabSim.apk` (debug-signed, git-ignored).
+  - Not changed (known): HCl + H2O dilution is Partial because of the generic contact factor; liquid-only mixes probably should not need stirring/grinding (engine/data decision, deferred).
 
 ## Factual Constraints For Future Tasks
 

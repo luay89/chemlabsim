@@ -507,6 +507,7 @@ namespace ChemLabSimV3.Views.Bench3D
             liquidMat.SetColor("_TopColor", Color.Lerp(shownLiquid, Color.white, 0.25f));
             liquidMat.SetColor("_SolidColor", solidColor);
             liquidMat.SetColor("_FoamColor", foamLevel > 0.01f ? new Color(1f, 1f, 1f, 0.9f) : shownLiquid);
+            liquidMat.SetFloat("_FoamAmount", Mathf.Clamp01(foamLevel / 0.05f));   // no foam grain on a calm surface
             liquidMat.SetFloat("_SolidSettle", precipitateOn && reactionTime < 4f ? 0.2f : 0.9f);
 
             float agitation = effervescence * 0.004f + Mathf.Clamp01(stirSpin / 360f) * 0.02f;

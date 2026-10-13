@@ -410,26 +410,27 @@ namespace ChemLabSimV3.Domain.MolecularSimulation
                     atomIndex++;
                 }
             }
-            else if (elements.Count == 2)
+            else if (elements.Count == 2 && (elements[0].count == 1 || elements[1].count == 1))
             {
-                // Diatomic or simple molecule — linear or bent
-                var (symA, countA) = elements[0];
-                var (symB, countB) = elements[1];
+                // Simple molecule — one central atom bonded to every atom of the other
+                // element (NaCl, HCl, CO2, H2O, NH3, CH4). The single atom is the center.
+                bool centerIsB = elements[1].count == 1 && elements[0].count > 1;
+                var (centerSym, _) = centerIsB ? elements[1] : elements[0];
+                var (outerSym, outerCount) = centerIsB ? elements[0] : elements[1];
 
-                // Center atom A
-                string idA = $"{formula}_0";
-                mol.Atoms.Add(new Atom(idA, symA, centerX - 0.5f, centerY, centerZ));
+                string centerId = $"{formula}_{atomIndex}";
+                mol.Atoms.Add(new Atom(centerId, centerSym, centerX, centerY, centerZ));
+                atomIndex++;
 
-                // Atom B
-                for (int i = 0; i < countB; i++)
+                for (int i = 0; i < outerCount; i++)
                 {
-                    string idB = $"{formula}_{atomIndex}";
-                    float angle = (i == 0) ? 0f : MathF.PI * 2 / countB * i;
-                    mol.Atoms.Add(new Atom(idB, symB,
-                        centerX + 0.5f + MathF.Cos(angle) * 0.2f,
-                        centerY + MathF.Sin(angle) * 0.2f,
+                    string id = $"{formula}_{atomIndex}";
+                    float angle = MathF.PI * 2 / outerCount * i;
+                    mol.Atoms.Add(new Atom(id, outerSym,
+                        centerX + MathF.Cos(angle) * 0.5f,
+                        centerY + MathF.Sin(angle) * 0.5f,
                         centerZ));
-                    mol.Bonds.Add(new Bond(idA, idB));
+                    mol.Bonds.Add(new Bond(centerId, id));
                     atomIndex++;
                 }
             }
