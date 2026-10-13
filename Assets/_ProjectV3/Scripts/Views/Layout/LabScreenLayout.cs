@@ -38,6 +38,7 @@ namespace ChemLabSimV3.Views.Layout
         private const float Margin    = 16f;
         private const float TabHeight = 44f;
         private const float Gap       = 8f;
+        private const float SpeedBarHeight = 44f;
         private static readonly Vector2 DesktopReference = new Vector2(1920f, 1080f);
         private static readonly Vector2 PhoneReference   = new Vector2(1280f, 720f);
         private const float DesktopColumnWidth = 480f;
@@ -49,8 +50,14 @@ namespace ChemLabSimV3.Views.Layout
 
         private RectTransform safeArea;
         private RectTransform controlsPanel;
-        private ScrollRect resultsScroll, progressScroll;
-        private Image resultsTab, progressTab;
+        private const int ResultTab = 0, ProgressTab = 1, AssistantTab = 2;
+        private ScrollRect[] scrolls;
+        private Image[] tabImages;
+        private int activeTab;
+        private LabAssistantView assistantView;
+        private SimulationSpeedBar speedBar;
+        private ReactionHeadline headline;
+        private GameObject quizPanel, quizHintPanel;
         private Rect lastSafeArea;
         private Vector2 lastScreen;
         private float columnWidth;
@@ -109,16 +116,31 @@ namespace ChemLabSimV3.Views.Layout
             tabRow.childControlWidth = tabRow.childControlHeight = true;
             tabRow.childForceExpandWidth = tabRow.childForceExpandHeight = true;
 
-            resultsTab  = CreateTab(tabs, "Result",   () => ShowTab(true));
-            progressTab = CreateTab(tabs, "Progress", () => ShowTab(false));
+            tabImages = new[]
+            {
+                CreateTab(tabs, "Result",    () => ShowTab(ResultTab)),
+                CreateTab(tabs, "Progress",  () => ShowTab(ProgressTab)),
+                CreateTab(tabs, "Assistant", () => ShowTab(AssistantTab)),
+            };
+            scrolls = new[]
+            {
+                CreateScrollList("ResultsScroll", column),
+                CreateScrollList("ProgressScroll", column),
+                CreateScrollList("AssistantScroll", column),
+            };
 
-            resultsScroll  = CreateScrollList("ResultsScroll", column);
-            progressScroll = CreateScrollList("ProgressScroll", column);
+            foreach (var name in ResultPanels)   Adopt(name, scrolls[ResultTab].content);
+            foreach (var name in ProgressPanels) Adopt(name, scrolls[ProgressTab].content);
+            assistantView = LabAssistantView.Create(scrolls[AssistantTab].content);
+            assistantView.SetWidth(columnWidth);
+            speedBar = SimulationSpeedBar.Create(safeArea);
 
-            foreach (var name in ResultPanels)   Adopt(name, resultsScroll.content);
-            foreach (var name in ProgressPanels) Adopt(name, progressScroll.content);
+            quizPanel = FindPanel("QuizPanel")?.gameObject;
+            quizHintPanel = FindPanel("QuizHintPanel")?.gameObject;
+            headline = ReactionHeadline.Create(safeArea);
+            LabTheme.Apply(transform);
 
-            ShowTab(true);
+            ShowTab(ResultTab);
             ApplySafeArea();
         }
 
@@ -147,11 +169,17 @@ namespace ChemLabSimV3.Views.Layout
                 PlaceFloatingPanels();
             }
             FitControlsPanel();
+
+            // "Think about it" repeats the quiz question; show it only when there is no quiz.
+            if (quizHintPanel != null && quizPanel != null && quizPanel.activeSelf && quizHintPanel.activeSelf)
+                quizHintPanel.SetActive(false);
         }
 
-        // A new result should be visible right away, from the top.
-        private void OnReactionEvaluated(ReactionEvaluatedEvent e) => ShowTab(true);
-        private void OnReactionNotFound(ReactionNotFoundEvent e) => ShowTab(true);
+        // A new result should be visible right away, from the top (the assistant tab
+        // answers the new experiment by itself, so it stays open).
+        private void OnReactionEvaluated(ReactionEvaluatedEvent e) => OnNewExperiment();
+        private void OnReactionNotFound(ReactionNotFoundEvent e) => OnNewExperiment();
+        private void OnNewExperiment() => ShowTab(activeTab == AssistantTab ? AssistantTab : ResultTab);
 
         // ── Layout pieces ───────────────────────────────────────────────
 
@@ -205,7 +233,7 @@ namespace ChemLabSimV3.Views.Layout
         private void FitControlsPanel()
         {
             if (controlsPanel == null) return;
-            float available = safeArea.rect.height - 2f * Margin;
+            float available = safeArea.rect.height - 3f * Margin - SpeedBarHeight;
             float needed = controlsPanel.rect.height;
             float scale = needed > 0f && available > 0f ? Mathf.Min(1f, available / needed) : 1f;
             if (!Mathf.Approximately(controlsPanel.localScale.x, scale))
@@ -233,12 +261,33 @@ namespace ChemLabSimV3.Views.Layout
                     hint.sizeDelta.y);
             }
 
-            // Achievement toast: top centre, above the beaker.
+            if (speedBar != null)
+            {
+                var bar = (RectTransform)speedBar.transform;
+                bar.anchoredPosition = new Vector2(Margin, Margin);
+                if (controlsPanel != null)
+                    bar.sizeDelta = new Vector2(controlsPanel.rect.width, SpeedBarHeight);
+            }
+
+            // Free space between the side columns: headline on top, toast above the hint.
+            float leftEdge = controlsPanel != null ? controlsPanel.rect.width * controlsPanel.localScale.x + 2f * Margin : Margin;
+            float rightEdge = safeArea.rect.width - columnWidth - 2f * Margin;
+            float centreX = (leftEdge + rightEdge) * 0.5f - safeArea.rect.width * 0.5f;
+            float freeWidth = Mathf.Max(240f, rightEdge - leftEdge - 2f * Margin);
+
+            if (headline != null)
+            {
+                var rect = (RectTransform)headline.transform;
+                rect.anchoredPosition = new Vector2(centreX, -Margin);
+                rect.sizeDelta = new Vector2(freeWidth, rect.sizeDelta.y);
+            }
+
             var toast = FindPanel("AchievementToastPanel");
             if (toast != null)
             {
-                toast.anchorMin = toast.anchorMax = toast.pivot = new Vector2(0.5f, 1f);
-                toast.anchoredPosition = new Vector2(0f, -Margin);
+                float hintHeight = hint != null ? hint.sizeDelta.y : 0f;
+                toast.anchorMin = toast.anchorMax = toast.pivot = new Vector2(0.5f, 0f);
+                toast.anchoredPosition = new Vector2(centreX, hintHeight + 2f * Margin);
             }
         }
 
@@ -246,7 +295,7 @@ namespace ChemLabSimV3.Views.Layout
         {
             var rect = NewRect(label + "Tab", parent);
             var image = rect.gameObject.AddComponent<Image>();
-            image.color = TabOff;
+            LabTheme.Round(image, TabOff, 2f);
             var button = rect.gameObject.AddComponent<Button>();
             button.targetGraphic = image;
             button.onClick.AddListener(onClick);
@@ -343,17 +392,17 @@ namespace ChemLabSimV3.Views.Layout
             }
         }
 
-        private void ShowTab(bool results)
+        private void ShowTab(int tab)
         {
-            if (resultsScroll == null || progressScroll == null) return;
-            resultsScroll.gameObject.SetActive(results);
-            progressScroll.gameObject.SetActive(!results);
-            resultsTab.color = results ? TabOn : TabOff;
-            progressTab.color = results ? TabOff : TabOn;
-
-            var active = results ? resultsScroll : progressScroll;
+            if (scrolls == null) return;
+            activeTab = tab;
+            for (int i = 0; i < scrolls.Length; i++)
+            {
+                scrolls[i].gameObject.SetActive(i == tab);
+                tabImages[i].color = i == tab ? TabOn : TabOff;
+            }
             Canvas.ForceUpdateCanvases();
-            active.verticalNormalizedPosition = 1f;
+            scrolls[tab].verticalNormalizedPosition = 1f;
         }
 
         // ── Helpers ────────────────────────────────────────────────────

@@ -381,7 +381,7 @@
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
-      "color_change": "#F5F5F5",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 0,
@@ -392,7 +392,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -757,7 +757,7 @@
     ],
     "products": [
       {
-        "formula": "FeSCN2+",
+        "formula": "Fe(SCN)SO4",
         "state": "aq",
         "stoich": 2
       },
@@ -994,7 +994,7 @@
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
-      "color_change": "#4682B4",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 2,
@@ -1005,7 +1005,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#4FA3D9",
       "electrical": false
     },
     "safety": {
@@ -1066,7 +1066,7 @@
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
-      "color_change": "#FFD700",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 1,
@@ -1077,7 +1077,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#F6C915",
       "electrical": false
     },
     "safety": {
@@ -1138,7 +1138,7 @@
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
-      "color_change": "#FFFFFF",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 0,
@@ -1149,7 +1149,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -1281,7 +1281,7 @@
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
-      "color_change": "#C87533",
+      "color_change": "#B8D8A8",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 3,
@@ -1292,7 +1292,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#B87333",
       "electrical": false
     },
     "safety": {
@@ -2143,7 +2143,7 @@
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
-      "color_change": "#DC9F6E",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 4,
@@ -2154,7 +2154,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#B87333",
       "electrical": false
     },
     "safety": {
@@ -2760,7 +2760,7 @@
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
-      "color_change": "#8B4513",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 2,
@@ -2771,7 +2771,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#8B4A1C",
       "electrical": false
     },
     "safety": {
@@ -2904,7 +2904,7 @@
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
-      "color_change": "#FFFDD0",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 0,
@@ -2915,7 +2915,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#F1E7B6",
       "electrical": false
     },
     "safety": {
@@ -3154,7 +3154,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#F2E14C",
       "electrical": false
     },
     "safety": {
@@ -3635,7 +3635,7 @@
     "catalystDeltaTempC": 0,
     "producesGas": false,
     "visual_effects": {
-      "color_change": "#FFFFCC",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 1,
@@ -3646,7 +3646,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#F1E7B6",
       "electrical": false
     },
     "safety": {
@@ -3706,7 +3706,7 @@
     "catalystDeltaTempC": 0,
     "producesGas": false,
     "visual_effects": {
-      "color_change": "#FFFFFF",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 1,
@@ -3717,7 +3717,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -3778,7 +3778,7 @@
     "catalystDeltaTempC": 0,
     "producesGas": false,
     "visual_effects": {
-      "color_change": "#FFFFFF",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 1,
@@ -3789,7 +3789,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -3846,7 +3846,7 @@
     "catalystDeltaTempC": 0,
     "producesGas": false,
     "visual_effects": {
-      "color_change": "#FFFFFF",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 1,
@@ -3858,7 +3858,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -3917,7 +3917,7 @@
     "catalystDeltaTempC": 0,
     "producesGas": false,
     "visual_effects": {
-      "color_change": "#33AA88",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 2,
@@ -3929,7 +3929,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#3F9C8A",
       "electrical": false
     },
     "safety": {
@@ -3973,6 +3973,11 @@
     ],
     "products": [
       {
+        "formula": "Fe(OH)3",
+        "state": "s",
+        "stoich": 2
+      },
+      {
         "formula": "NaCl",
         "state": "aq",
         "stoich": 6
@@ -3989,7 +3994,7 @@
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
-      "color_change": "#8B4513",
+      "color_change": "",
       "precipitate": true,
       "gas": true,
       "temperature_delta": 2,
@@ -4000,7 +4005,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#8B4A1C",
       "electrical": false
     },
     "safety": {
@@ -4022,7 +4027,8 @@
     "condition_notes": "Room temperature. Both precipitation and gas evolution occur simultaneously.",
     "requiresHeating": false,
     "requiresCatalyst": false,
-    "safety_notes": "Irritant \u2014 avoid skin and eye contact. Gas evolved \u2014 ensure adequate ventilation."
+    "safety_notes": "Irritant \u2014 avoid skin and eye contact. Gas evolved \u2014 ensure adequate ventilation.",
+    "solvent_water": 3
   },
   {
     "id": "rxn_057",
@@ -4059,8 +4065,8 @@
     "catalystDeltaTempC": 0,
     "producesGas": false,
     "visual_effects": {
-      "color_change": "#87CEEB",
-      "precipitate": false,
+      "color_change": "#3D8FD6",
+      "precipitate": true,
       "gas": false,
       "temperature_delta": 2,
       "sound_id": "crystal_grow",
@@ -4071,7 +4077,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#A8A8A8",
       "electrical": false
     },
     "safety": {
@@ -4130,8 +4136,8 @@
     "catalystDeltaTempC": 0,
     "producesGas": false,
     "visual_effects": {
-      "color_change": "#A0522D",
-      "precipitate": false,
+      "color_change": "#B8D8A8",
+      "precipitate": true,
       "gas": false,
       "temperature_delta": 3,
       "sound_id": "crackle",
@@ -4141,7 +4147,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#B87333",
       "electrical": false
     },
     "safety": {
@@ -4200,8 +4206,8 @@
     "catalystDeltaTempC": 0,
     "producesGas": false,
     "visual_effects": {
-      "color_change": "#808080",
-      "precipitate": false,
+      "color_change": "",
+      "precipitate": true,
       "gas": false,
       "temperature_delta": 2,
       "sound_id": "crystal_grow",
@@ -4212,7 +4218,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#707070",
       "electrical": false
     },
     "safety": {
@@ -4272,8 +4278,8 @@
     "catalystDeltaTempC": 0,
     "producesGas": false,
     "visual_effects": {
-      "color_change": "#C0C0C0",
-      "precipitate": false,
+      "color_change": "",
+      "precipitate": true,
       "gas": false,
       "temperature_delta": 8,
       "sound_id": "crackle",
@@ -4283,7 +4289,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#B87333",
       "electrical": false
     },
     "safety": {
@@ -4500,7 +4506,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -5308,7 +5314,7 @@
     "catalystDeltaTempC": 0,
     "producesGas": false,
     "visual_effects": {
-      "color_change": "#FFFFFF",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 1,
@@ -5319,7 +5325,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -5930,8 +5936,8 @@
     "catalystDeltaTempC": 0,
     "producesGas": false,
     "visual_effects": {
-      "color_change": "#808080",
-      "precipitate": false,
+      "color_change": "",
+      "precipitate": true,
       "gas": false,
       "temperature_delta": 12,
       "sound_id": "crackle",
@@ -5941,7 +5947,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#555555",
       "electrical": false
     },
     "safety": {
@@ -6201,14 +6207,14 @@
     ],
     "products": [
       {
-        "formula": "FeSCN2+",
+        "formula": "Fe(SCN)Cl2",
         "state": "aq",
         "stoich": 1
       },
       {
         "formula": "KCl",
         "state": "aq",
-        "stoich": 3
+        "stoich": 1
       }
     ],
     "activationTempC": 25,
@@ -7031,7 +7037,8 @@
     "condition_notes": "Needs warming to ~50\u00b0C to start. Basic medium. Self-accelerating as exothermic. Demonstrates amphoteric nature of aluminum.",
     "requiresHeating": false,
     "requiresCatalyst": false,
-    "safety_notes": "Flammable \u2014 keep away from ignition sources. Corrosive \u2014 wear gloves and eye protection. Gas evolved \u2014 ensure adequate ventilation."
+    "safety_notes": "Flammable \u2014 keep away from ignition sources. Corrosive \u2014 wear gloves and eye protection. Gas evolved \u2014 ensure adequate ventilation.",
+    "solvent_water": 2
   },
   {
     "id": "rxn_099",
@@ -7139,7 +7146,7 @@
     "catalystDeltaTempC": 0,
     "producesGas": false,
     "visual_effects": {
-      "color_change": "#FFFF00",
+      "color_change": "",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 1,
@@ -7151,7 +7158,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#F3E27A",
       "electrical": false
     },
     "safety": {
@@ -7626,7 +7633,8 @@
     "activationEnergyKJ": 35,
     "equilibriumConstant": 0,
     "isReversible": false,
-    "defaultPressureAtm": 1
+    "defaultPressureAtm": 1,
+    "debug_only": true
   },
   {
     "id": "rxn_107",
@@ -7739,67 +7747,6 @@
     "safety_notes": "Ozone is toxic - ensure proper fume extraction."
   },
   {
-    "id": "rxn_109",
-    "name_en": "Photosynthesis (Simplified)",
-    "reactionType": "Synthesis",
-    "reactants": [
-      {
-        "formula": "CO2",
-        "state": "g",
-        "stoich": 6
-      },
-      {
-        "formula": "H2O",
-        "state": "l",
-        "stoich": 6
-      }
-    ],
-    "products": [
-      {
-        "formula": "C6H12O6",
-        "state": "aq",
-        "stoich": 1
-      },
-      {
-        "formula": "O2",
-        "state": "g",
-        "stoich": 6
-      }
-    ],
-    "activationTempC": 15,
-    "requiredMedium": "Neutral",
-    "catalystAllowed": false,
-    "catalystDeltaTempC": 0,
-    "visual_effects": {
-      "color_change": "#00AA00",
-      "precipitate": false,
-      "gas": true,
-      "temperature_delta": 0,
-      "sound_id": "",
-      "dissolution": false,
-      "crystallization": false,
-      "effervescence": "mild",
-      "vortex": false,
-      "vapor": false,
-      "turbidity": false,
-      "precipitate_color": "",
-      "electrical": false,
-      "glow": true
-    },
-    "safety": {
-      "ghs_icons": [],
-      "warnings_en": [
-        "Safe reaction. No hazards."
-      ]
-    },
-    "observation_en": "In the presence of light and chlorophyll, CO2 and water are converted into glucose and oxygen gas.",
-    "explanation_en": "Plants convert carbon dioxide and water into glucose and oxygen using sunlight energy captured by chlorophyll. 6CO2 + 6H2O -> C6H12O6 + 6O2.",
-    "condition_notes": "Requires light energy and chlorophyll. Occurs in chloroplasts.",
-    "requiresHeating": false,
-    "requiresCatalyst": true,
-    "safety_notes": ""
-  },
-  {
     "id": "rxn_110",
     "name_en": "Thermal Decomposition of Copper Carbonate",
     "reactionType": "Decomposition",
@@ -7853,67 +7800,6 @@
     "requiresHeating": true,
     "requiresCatalyst": false,
     "safety_notes": "Hot apparatus - allow to cool before handling."
-  },
-  {
-    "id": "rxn_111",
-    "name_en": "Displacement of Copper by Iron",
-    "reactionType": "Single Displacement",
-    "reactants": [
-      {
-        "formula": "Fe",
-        "state": "s",
-        "stoich": 1
-      },
-      {
-        "formula": "CuSO4",
-        "state": "aq",
-        "stoich": 1
-      }
-    ],
-    "products": [
-      {
-        "formula": "FeSO4",
-        "state": "aq",
-        "stoich": 1
-      },
-      {
-        "formula": "Cu",
-        "state": "s",
-        "stoich": 1
-      }
-    ],
-    "activationTempC": 15,
-    "requiredMedium": "Neutral",
-    "catalystAllowed": false,
-    "catalystDeltaTempC": 0,
-    "visual_effects": {
-      "color_change": "#00AA55",
-      "precipitate": true,
-      "gas": false,
-      "temperature_delta": 3,
-      "sound_id": "",
-      "dissolution": true,
-      "crystallization": false,
-      "effervescence": "none",
-      "vortex": false,
-      "vapor": false,
-      "turbidity": false,
-      "precipitate_color": "#B87333",
-      "electrical": false
-    },
-    "safety": {
-      "ghs_icons": [],
-      "warnings_en": [
-        "Copper sulfate is an irritant.",
-        "Wash hands after handling."
-      ]
-    },
-    "observation_en": "The blue copper sulfate solution turns greenish as iron displaces copper. Copper deposits on the iron.",
-    "explanation_en": "Iron is more reactive than copper, so it displaces copper from copper sulfate. Fe + CuSO4 -> FeSO4 + Cu.",
-    "condition_notes": "Occurs readily at room temperature. The blue color fades as Cu2+ is replaced by Fe2+.",
-    "requiresHeating": false,
-    "requiresCatalyst": false,
-    "safety_notes": "Wear gloves when handling copper sulfate solution."
   },
   {
     "id": "rxn_112",
@@ -8475,77 +8361,6 @@
     "safety_notes": "Base is corrosive. Avoid contact with eyes and skin."
   },
   {
-    "id": "rxn_121",
-    "name_en": "Oxidation of Ethanol to Ethanoic Acid",
-    "reactionType": "Redox",
-    "reactants": [
-      {
-        "formula": "C2H5OH",
-        "state": "l",
-        "stoich": 1
-      },
-      {
-        "formula": "K2Cr2O7",
-        "state": "aq",
-        "stoich": 1
-      }
-    ],
-    "products": [
-      {
-        "formula": "CH3COOH",
-        "state": "aq",
-        "stoich": 1
-      },
-      {
-        "formula": "Cr2O3",
-        "state": "s",
-        "stoich": 1
-      },
-      {
-        "formula": "K2SO4",
-        "state": "aq",
-        "stoich": 1
-      }
-    ],
-    "activationTempC": 50,
-    "requiredMedium": "Acidic",
-    "catalystAllowed": false,
-    "catalystDeltaTempC": 0,
-    "visual_effects": {
-      "color_change": "#00AA44",
-      "precipitate": false,
-      "gas": false,
-      "temperature_delta": 5,
-      "sound_id": "",
-      "glow": true,
-      "dissolution": false,
-      "crystallization": false,
-      "effervescence": "none",
-      "vortex": false,
-      "vapor": true,
-      "turbidity": false,
-      "precipitate_color": "",
-      "electrical": false
-    },
-    "safety": {
-      "ghs_icons": [
-        "GHS03",
-        "GHS07"
-      ],
-      "warnings_en": [
-        "Potassium dichromate is toxic and carcinogenic.",
-        "Strong oxidizer.",
-        "Avoid skin contact."
-      ]
-    },
-    "observation_en": "The orange dichromate solution turns green as Cr(VI) is reduced to Cr(III). A pungent vinegar smell indicates ethanoic acid formation.",
-    "explanation_en": "Primary alcohols can be oxidized to carboxylic acids using strong oxidizing agents like acidified K2Cr2O7. The orange to green color change confirms oxidation. Ethanol -> ethanal -> ethanoic acid.",
-    "condition_notes": "Requires acidic conditions (H2SO4) and heat. The color change from orange (Cr2O7^2-) to green (Cr^3+) is diagnostic.",
-    "requiresHeating": true,
-    "requiresCatalyst": false,
-    "safety_notes": "Dichromate is a known carcinogen \u2014 wear gloves. Strong oxidizer \u2014 keep away from organics."
-  },
-  {
     "id": "rxn_122",
     "name_en": "Polymerization of Ethene",
     "reactionType": "Polymerization",
@@ -8597,7 +8412,8 @@
     "condition_notes": "Industrial process: high pressure (1000-3000 atm) or Ziegler-Natta catalyst at lower pressure.",
     "requiresHeating": true,
     "requiresCatalyst": true,
-    "safety_notes": "High pressure operation hazard. Ethene is highly flammable."
+    "safety_notes": "High pressure operation hazard. Ethene is highly flammable.",
+    "skip_balance": "polymer (C2H4)n"
   },
   {
     "id": "rxn_123",
@@ -8607,14 +8423,24 @@
       {
         "formula": "CuSO4",
         "state": "aq",
-        "stoich": 1
+        "stoich": 2
       }
     ],
     "products": [
       {
         "formula": "Cu",
         "state": "s",
+        "stoich": 2
+      },
+      {
+        "formula": "O2",
+        "state": "g",
         "stoich": 1
+      },
+      {
+        "formula": "H2SO4",
+        "state": "aq",
+        "stoich": 2
       }
     ],
     "activationTempC": 20,
@@ -8622,7 +8448,7 @@
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
-      "color_change": "#B87333",
+      "color_change": "",
       "precipitate": true,
       "gas": true,
       "temperature_delta": 2,
@@ -8634,7 +8460,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": false,
-      "precipitate_color": "",
+      "precipitate_color": "#B87333",
       "electrical": true
     },
     "safety": {
@@ -8649,7 +8475,8 @@
     "condition_notes": "Requires DC power supply (low voltage). Current density affects plating quality.",
     "requiresHeating": false,
     "requiresCatalyst": false,
-    "safety_notes": "Low voltage safe. Copper sulfate is an environmental pollutant \u2014 dispose properly."
+    "safety_notes": "Low voltage safe. Copper sulfate is an environmental pollutant \u2014 dispose properly.",
+    "solvent_water": 2
   },
   {
     "id": "rxn_124",
@@ -8715,136 +8542,6 @@
     "safety_notes": "EXTREME HAZARD: Chlorine gas is toxic. Sodium metal reacts violently with water. Molten salt causes severe burns."
   },
   {
-    "id": "rxn_125",
-    "name_en": "Daniell Cell (Galvanic Cell)",
-    "reactionType": "Electrochemistry",
-    "reactants": [
-      {
-        "formula": "Zn",
-        "state": "s",
-        "stoich": 1
-      },
-      {
-        "formula": "CuSO4",
-        "state": "aq",
-        "stoich": 1
-      }
-    ],
-    "products": [
-      {
-        "formula": "ZnSO4",
-        "state": "aq",
-        "stoich": 1
-      },
-      {
-        "formula": "Cu",
-        "state": "s",
-        "stoich": 1
-      }
-    ],
-    "activationTempC": 15,
-    "requiredMedium": "Neutral",
-    "catalystAllowed": false,
-    "catalystDeltaTempC": 0,
-    "visual_effects": {
-      "color_change": "#0066AA",
-      "precipitate": true,
-      "gas": false,
-      "temperature_delta": 1,
-      "sound_id": "",
-      "glow": true,
-      "dissolution": true,
-      "crystallization": false,
-      "effervescence": "none",
-      "vortex": false,
-      "vapor": false,
-      "turbidity": false,
-      "precipitate_color": "#B87333",
-      "electrical": true
-    },
-    "safety": {
-      "ghs_icons": [],
-      "warnings_en": [
-        "Copper sulfate is an irritant.",
-        "Zinc sulfate is an irritant."
-      ]
-    },
-    "observation_en": "The zinc electrode slowly dissolves while copper deposits on the copper electrode. A voltage of ~1.1V is produced. The blue CuSO4 solution fades.",
-    "explanation_en": "A classic galvanic/voltaic cell. Zinc oxidizes: Zn -> Zn2+ + 2e-. Copper reduces: Cu2+ + 2e- -> Cu. Electrons flow through the external circuit, producing electricity spontaneously.",
-    "condition_notes": "Salt bridge (KCl/agar) or porous barrier needed to complete the circuit. Produces 1.1V spontaneously.",
-    "requiresHeating": false,
-    "requiresCatalyst": false,
-    "safety_notes": "Safe demonstration. Wash hands after handling salt bridge materials."
-  },
-  {
-    "id": "rxn_127",
-    "name_en": "Aluminothermic Reaction (Thermite)",
-    "reactionType": "Redox",
-    "reactants": [
-      {
-        "formula": "Fe2O3",
-        "state": "s",
-        "stoich": 1
-      },
-      {
-        "formula": "Al",
-        "state": "s",
-        "stoich": 2
-      }
-    ],
-    "products": [
-      {
-        "formula": "Al2O3",
-        "state": "s",
-        "stoich": 1
-      },
-      {
-        "formula": "Fe",
-        "state": "l",
-        "stoich": 2
-      }
-    ],
-    "activationTempC": 1200,
-    "requiredMedium": "Neutral",
-    "catalystAllowed": false,
-    "catalystDeltaTempC": 0,
-    "visual_effects": {
-      "color_change": "#FF6600",
-      "precipitate": false,
-      "gas": false,
-      "temperature_delta": 200,
-      "sound_id": "explosion",
-      "glow": true,
-      "sparks": true,
-      "smoke": true,
-      "dissolution": false,
-      "crystallization": false,
-      "effervescence": "violent",
-      "vortex": false,
-      "vapor": false,
-      "turbidity": false,
-      "precipitate_color": "",
-      "electrical": false
-    },
-    "safety": {
-      "ghs_icons": [
-        "GHS02"
-      ],
-      "warnings_en": [
-        "EXTREMELY HOT (2500\u00b0C).",
-        "Severe burn hazard.",
-        "Use fireproof surface.",
-        "Keep at least 5m distance."
-      ]
-    },
-    "observation_en": "A brilliant white-hot reaction with sparks. Molten iron flows out of the crucible. The reaction is self-sustaining once ignited.",
-    "explanation_en": "Aluminum reduces iron oxide in a highly exothermic reaction reaching 2500\u00b0C. The aluminum is oxidized (to Al2O3) and iron is reduced (to molten Fe). Fe2O3 + 2Al -> Al2O3 + 2Fe. Used in railway welding.",
-    "condition_notes": "Requires magnesium ribbon fuse to initiate. Reaction is self-sustaining once started. Do NOT use with metal containers \u2014 use ceramic crucible.",
-    "requiresHeating": true,
-    "requiresCatalyst": false,
-    "safety_notes": "DANGER: 2500\u00b0C reaction. Do not look directly at the reaction (severe eye damage). Have fire extinguisher ready. Use ONLY on fireproof surface."
-  },
-  {
     "id": "rxn_128",
     "name_en": "Blue Bottle Experiment (Redox Indicator)",
     "reactionType": "Redox",
@@ -8852,19 +8549,29 @@
       {
         "formula": "C6H12O6",
         "state": "aq",
-        "stoich": 1
+        "stoich": 2
       },
       {
         "formula": "NaOH",
         "state": "aq",
+        "stoich": 2
+      },
+      {
+        "formula": "O2",
+        "state": "g",
         "stoich": 1
       }
     ],
     "products": [
       {
-        "formula": "C6H12O7",
+        "formula": "C6H11NaO7",
         "state": "aq",
-        "stoich": 1
+        "stoich": 2
+      },
+      {
+        "formula": "H2O",
+        "state": "l",
+        "stoich": 2
       }
     ],
     "activationTempC": 20,
@@ -9028,134 +8735,6 @@
     "safety_notes": "High pressure and temperature. Ammonia is toxic and irritating. Hydrogen is flammable."
   },
   {
-    "id": "rxn_131",
-    "name_en": "Contact Process (Sulfuric Acid Production)",
-    "reactionType": "Synthesis",
-    "reactants": [
-      {
-        "formula": "SO2",
-        "state": "g",
-        "stoich": 2
-      },
-      {
-        "formula": "O2",
-        "state": "g",
-        "stoich": 1
-      }
-    ],
-    "products": [
-      {
-        "formula": "SO3",
-        "state": "g",
-        "stoich": 2
-      }
-    ],
-    "activationTempC": 450,
-    "requiredMedium": "Neutral",
-    "catalystAllowed": true,
-    "catalystDeltaTempC": 200,
-    "visual_effects": {
-      "color_change": "",
-      "precipitate": false,
-      "gas": true,
-      "temperature_delta": 50,
-      "sound_id": "",
-      "glow": true,
-      "dissolution": false,
-      "crystallization": false,
-      "effervescence": "vigorous",
-      "vortex": false,
-      "vapor": false,
-      "turbidity": false,
-      "precipitate_color": "",
-      "electrical": false
-    },
-    "safety": {
-      "ghs_icons": [
-        "GHS05",
-        "GHS06"
-      ],
-      "warnings_en": [
-        "SO2 and SO3 are toxic and corrosive.",
-        "Sulfuric acid causes severe burns.",
-        "High temperature."
-      ]
-    },
-    "observation_en": "SO2 gas reacts with oxygen over the catalyst producing SO3 fumes, which dissolve in water to form a mist of sulfuric acid.",
-    "explanation_en": "The Contact Process: Sulfur dioxide is oxidized to sulfur trioxide over a vanadium(V) oxide catalyst (V2O5) at 450\u00b0C. 2SO2 + O2 <-> 2SO3. The SO3 is then absorbed in H2SO4 to form oleum, which is diluted to produce concentrated H2SO4.",
-    "condition_notes": "Industrial: 450\u00b0C, 1-2 atm, V2O5 catalyst. Exothermic equilibrium - lower temp favors SO3 but slows rate.",
-    "requiresHeating": true,
-    "requiresCatalyst": true,
-    "safety_notes": "SO3 fumes are extremely corrosive. Concentrated H2SO4 causes severe burns."
-  },
-  {
-    "id": "rxn_132",
-    "name_en": "Combustion of Methane",
-    "reactionType": "Combustion",
-    "reactants": [
-      {
-        "formula": "CH4",
-        "state": "g",
-        "stoich": 1
-      },
-      {
-        "formula": "O2",
-        "state": "g",
-        "stoich": 2
-      }
-    ],
-    "products": [
-      {
-        "formula": "CO2",
-        "state": "g",
-        "stoich": 1
-      },
-      {
-        "formula": "H2O",
-        "state": "g",
-        "stoich": 2
-      }
-    ],
-    "activationTempC": 550,
-    "requiredMedium": "Neutral",
-    "catalystAllowed": false,
-    "catalystDeltaTempC": 0,
-    "visual_effects": {
-      "color_change": "#FFAA00",
-      "precipitate": false,
-      "gas": true,
-      "temperature_delta": 100,
-      "sound_id": "burn",
-      "glow": true,
-      "sparks": true,
-      "smoke": true,
-      "dissolution": false,
-      "crystallization": false,
-      "effervescence": "violent",
-      "vortex": false,
-      "vapor": false,
-      "turbidity": false,
-      "precipitate_color": "",
-      "electrical": false
-    },
-    "safety": {
-      "ghs_icons": [
-        "GHS02"
-      ],
-      "warnings_en": [
-        "Methane is highly flammable.",
-        "CO2 asphyxiation risk in enclosed spaces.",
-        "Explosion risk with air mixtures (5-15%)."
-      ]
-    },
-    "observation_en": "A clean blue flame with intense heat. Water vapor condenses on cold surfaces. CO2 is odorless but detectable with limewater (turns milky).",
-    "explanation_en": "Natural gas (methane) undergoes complete combustion in excess oxygen. The blue flame indicates complete combustion. CH4 + 2O2 -> CO2 + 2H2O. Incomplete combustion produces soot (C) and toxic CO.",
-    "condition_notes": "Requires ignition source. Complete combustion requires sufficient O2 supply. Blue flame = complete, yellow/orange = incomplete.",
-    "requiresHeating": true,
-    "requiresCatalyst": false,
-    "safety_notes": "Explosive in air between 5-15% concentration. Install gas detector. Ensure ventilation to prevent CO2 buildup."
-  },
-  {
     "id": "rxn_133",
     "name_en": "Cracking of Decane (Thermal Cracking)",
     "reactionType": "Decomposition",
@@ -9214,74 +8793,6 @@
     "requiresHeating": true,
     "requiresCatalyst": false,
     "safety_notes": "Flammable hydrocarbons. High temperature. Ensure no air ingress (explosion risk)."
-  },
-  {
-    "id": "rxn_134",
-    "name_en": "Sodium in Water (with phenolphthalein)",
-    "reactionType": "Redox",
-    "reactants": [
-      {
-        "formula": "Na",
-        "state": "s",
-        "stoich": 2
-      },
-      {
-        "formula": "H2O",
-        "state": "l",
-        "stoich": 2
-      }
-    ],
-    "products": [
-      {
-        "formula": "NaOH",
-        "state": "aq",
-        "stoich": 2
-      },
-      {
-        "formula": "H2",
-        "state": "g",
-        "stoich": 1
-      }
-    ],
-    "activationTempC": 15,
-    "requiredMedium": "Neutral",
-    "catalystAllowed": false,
-    "catalystDeltaTempC": 0,
-    "visual_effects": {
-      "color_change": "#FF1493",
-      "precipitate": false,
-      "gas": true,
-      "temperature_delta": 15,
-      "sound_id": "fizz",
-      "glow": true,
-      "sparks": true,
-      "dissolution": true,
-      "crystallization": false,
-      "effervescence": "vigorous",
-      "vortex": false,
-      "vapor": true,
-      "turbidity": false,
-      "precipitate_color": "",
-      "electrical": false
-    },
-    "safety": {
-      "ghs_icons": [
-        "GHS02",
-        "GHS05"
-      ],
-      "warnings_en": [
-        "Sodium metal reacts explosively with water.",
-        "Severe caustic burn hazard from NaOH.",
-        "Hydrogen gas is flammable.",
-        "Use only small pieces."
-      ]
-    },
-    "observation_en": "Sodium metal fizzes vigorously on water, skating across the surface. A lilac flame appears as hydrogen ignites. Phenolphthalein indicator turns bright pink showing base formation.",
-    "explanation_en": "Sodium reacts violently with water producing sodium hydroxide and hydrogen gas. The heat of reaction ignites the hydrogen (lilac flame is characteristic of Na). 2Na + 2H2O -> 2NaOH + H2. The pink color with phenolphthalein confirms the basic product.",
-    "condition_notes": "Always use a small piece (<0.5g). Use a safety screen. Water trough experiment with phenolphthalein indicator.",
-    "requiresHeating": false,
-    "requiresCatalyst": false,
-    "safety_notes": "DANGER: Sodium explodes with water. Use ONLY small pieces (<0.5g). Wear face shield and safety screen. Keep dry sand (NOT water) for fire extinguishing."
   },
   {
     "id": "rxn_135",
@@ -10834,7 +10345,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -10904,7 +10415,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -11518,7 +11029,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -11587,7 +11098,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -15102,7 +14613,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -15174,7 +14685,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -15245,7 +14756,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -15314,7 +14825,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -15383,7 +14894,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -15452,7 +14963,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -15523,7 +15034,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#BFE3F2",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -15594,7 +15105,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -15665,7 +15176,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFDD0",
+      "precipitate_color": "#F1E7B6",
       "electrical": false
     },
     "safety": {
@@ -15736,7 +15247,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFF99",
+      "precipitate_color": "#F3E27A",
       "electrical": false
     },
     "safety": {
@@ -15807,7 +15318,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -15876,7 +15387,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -15936,7 +15447,7 @@
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
-      "color_change": "#1E90FF",
+      "color_change": "#3D8FD6",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 0,
@@ -15947,7 +15458,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -16018,7 +15529,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -16088,7 +15599,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -16157,7 +15668,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -16226,7 +15737,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -16297,7 +15808,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFACD",
+      "precipitate_color": "#F3EDC8",
       "electrical": false
     },
     "safety": {
@@ -16366,7 +15877,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFD700",
+      "precipitate_color": "#F2D24B",
       "electrical": false
     },
     "safety": {
@@ -16435,7 +15946,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -16581,7 +16092,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -16652,7 +16163,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -16724,7 +16235,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -16793,7 +16304,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -16854,7 +16365,7 @@
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
-      "color_change": "#1E90FF",
+      "color_change": "#3D8FD6",
       "precipitate": true,
       "gas": false,
       "temperature_delta": 0,
@@ -16865,7 +16376,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -16936,7 +16447,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -17005,7 +16516,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -17076,7 +16587,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -17145,7 +16656,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -17216,7 +16727,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -17285,7 +16796,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -17356,7 +16867,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#7EC8E3",
+      "precipitate_color": "#4FA3D9",
       "electrical": false
     },
     "safety": {
@@ -17427,7 +16938,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#7EC8E3",
+      "precipitate_color": "#4FA3D9",
       "electrical": false
     },
     "safety": {
@@ -17498,7 +17009,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#7EC8E3",
+      "precipitate_color": "#4FA3D9",
       "electrical": false
     },
     "safety": {
@@ -17567,7 +17078,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#7EC8E3",
+      "precipitate_color": "#4FA3D9",
       "electrical": false
     },
     "safety": {
@@ -17638,7 +17149,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#33AA88",
+      "precipitate_color": "#3F9C8A",
       "electrical": false
     },
     "safety": {
@@ -17707,7 +17218,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#6B8E23",
+      "precipitate_color": "#6E8B4E",
       "electrical": false
     },
     "safety": {
@@ -17776,7 +17287,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#6B8E23",
+      "precipitate_color": "#6E8B4E",
       "electrical": false
     },
     "safety": {
@@ -17845,7 +17356,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#8B4513",
+      "precipitate_color": "#8B4A1C",
       "electrical": false
     },
     "safety": {
@@ -17915,7 +17426,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#8B4513",
+      "precipitate_color": "#8B4A1C",
       "electrical": false
     },
     "safety": {
@@ -17984,7 +17495,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -18053,7 +17564,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -18122,7 +17633,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -18192,7 +17703,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -18261,7 +17772,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -18330,7 +17841,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -18539,7 +18050,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -18606,7 +18117,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -18673,7 +18184,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -18809,7 +18320,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -18879,7 +18390,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -18946,7 +18457,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -19016,7 +18527,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -19083,7 +18594,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -19290,7 +18801,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -19357,7 +18868,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -19424,7 +18935,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -19493,7 +19004,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFFFF",
+      "precipitate_color": "#F4F4F2",
       "electrical": false
     },
     "safety": {
@@ -19925,7 +19436,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#C0C0C0",
+      "precipitate_color": "#A8A8A8",
       "electrical": false
     },
     "safety": {
@@ -19996,7 +19507,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#C0C0C0",
+      "precipitate_color": "#A8A8A8",
       "electrical": false
     },
     "safety": {
@@ -20065,7 +19576,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#C0C0C0",
+      "precipitate_color": "#A8A8A8",
       "electrical": false
     },
     "safety": {
@@ -26683,7 +26194,7 @@
       "vortex": false,
       "vapor": false,
       "turbidity": true,
-      "precipitate_color": "#FFFACD",
+      "precipitate_color": "#F2E14C",
       "electrical": false
     },
     "safety": {
