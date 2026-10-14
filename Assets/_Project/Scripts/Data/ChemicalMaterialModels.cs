@@ -30,6 +30,14 @@ public class ChemicalMaterial
     public bool supportsCatalyst   = true;
     public string state            = "solid";        // alias for default_state (new schema)
 
+    // -- Amounts (Stage 5) — 0 means "not known", never a default ---------------
+    // Intrinsic property of a pure liquid, with its literature source.
+    public float densityGPerMl;
+    public string densitySource    = string.Empty;
+    // Configuration of the bottle on the lab shelf (a solution's concentration), not a property of the substance.
+    public float stockConcentrationM;
+    public string stockLabel       = string.Empty;
+
     /// <summary>Display name resolved by language index (0=EN, 1=AR).</summary>
     public string GetDisplayName(int languageIndex)
     {

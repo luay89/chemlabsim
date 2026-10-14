@@ -22,9 +22,12 @@ namespace ChemLabSimV3.DebugTools
         private const string Arg = "-chemlab-tour";
 
         // name | reagent A | reagent B (empty = one reactant) | medium | °C | stirring | grinding | catalyst | DC current
+        //      | amount A | amount B   (optional, in the row's default unit)
         private static readonly string[] Steps =
         {
             "neutralization|HCl|NaOH|Neutral|25|0.6|0.5|0",
+            "neutralization_amounts|HCl|NaOH|Neutral|25|0.6|0.5|0|0|20|30",
+            "magnesium_acid_amounts|Mg|HCl|Neutral|25|0.6|0.6|0|0|0.5|10",
             "silver_chloride|AgNO3|NaCl|Neutral|25|0.6|0.5|0",
             "copper_hydroxide|CuSO4|NaOH|Basic|25|0.6|0.5|0",
             "lead_iodide|KI|Pb(NO3)2|Neutral|25|0.6|0.5|0",
@@ -82,6 +85,11 @@ namespace ChemLabSimV3.DebugTools
                 SetSlider<GrindingSliderView>(float.Parse(p[6], System.Globalization.CultureInfo.InvariantCulture));
                 SetCatalyst(p[7] == "1");
                 SetCurrent(p.Length > 8 && p[8] == "1");
+                if (p.Length > 10)
+                {
+                    SetAmount("ReagentAAmountRow", p[9]);
+                    SetAmount("ReagentBAmountRow", p[10]);
+                }
                 yield return new WaitForSeconds(1f);
                 yield return Capture(p[0] + "_a_ready");
 
@@ -154,6 +162,14 @@ namespace ChemLabSimV3.DebugTools
             var view = FindObjectsOfType<CatalystToggleView>(true).FirstOrDefault(v => v.name != "ElectricCurrentRow");
             var toggle = view != null ? view.GetComponentInChildren<Toggle>(true) : null;
             if (toggle != null) toggle.isOn = on;
+        }
+
+        private static void SetAmount(string row, string value)
+        {
+            var view = GameObject.Find(row)?.GetComponent<ReagentAmountView>();
+            if (view != null && double.TryParse(value, System.Globalization.NumberStyles.Float,
+                                                System.Globalization.CultureInfo.InvariantCulture, out double v))
+                view.SetValue(v);
         }
 
         private static void SetCurrent(bool on)

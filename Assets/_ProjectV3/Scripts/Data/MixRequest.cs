@@ -15,6 +15,9 @@ namespace ChemLabSimV3.Data
         public float Grinding;
         public bool HasCatalyst;
         public bool HasElectricCurrent;
+
+        /// <summary>Amount of each selected reagent; null when the student gave no amounts.</summary>
+        public List<ReagentAmountInput> Amounts;
         public float PressureAtm;
         public bool IsClosedContainer;
         public float HeadspaceVolumeLiters;
@@ -38,6 +41,7 @@ namespace ChemLabSimV3.Data
             Grinding = grinding;
             HasCatalyst = hasCatalyst;
             HasElectricCurrent = false;
+            Amounts = null;
             PressureAtm = 1f;
             IsClosedContainer = false;
             HeadspaceVolumeLiters = 1f;

@@ -106,6 +106,7 @@ namespace ChemLabSimV3.Controllers
             Debug.Log($"[ReactionController] Evaluated '{detailed.Reaction.id}' → {result.Status} (Valid={result.IsValid})");
 
             EventBus.Publish(new ReactionEvaluatedEvent(input, result));
+            EventBus.Publish(new StoichiometryEvaluatedEvent { Evaluation = detailed.Amounts, Reaction = detailed.Reaction });
 
             if (ShouldStartLiveSimulation(result))
                 StartLiveSimulation(detailed, request);
