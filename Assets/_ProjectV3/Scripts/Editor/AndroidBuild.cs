@@ -98,6 +98,19 @@ namespace ChemLabSimV3.Editor
             Save("BenchParticleAlpha",    Bench3DMeshes.Particle(soft, false, 3005));
             Save("BenchParticleAdditive", Bench3DMeshes.Particle(soft, true, 3005));
 
+            // Post-processing profile as an asset, so URP keeps the bloom/tonemapping variants.
+            string profilePath = $"{ShaderMatFolder}/LabPostProcessing.asset";
+            if (AssetDatabase.LoadAssetAtPath<UnityEngine.Rendering.VolumeProfile>(profilePath) == null)
+            {
+                var profile = LabAtmosphere.CreateProfile();
+                AssetDatabase.CreateAsset(profile, profilePath);
+                foreach (var component in profile.components)
+                {
+                    component.hideFlags = HideFlags.HideInInspector | HideFlags.HideInHierarchy;
+                    AssetDatabase.AddObjectToAsset(component, profile);
+                }
+            }
+
             var liquid = Shader.Find("ChemLabSim/Liquid");
             if (liquid != null) Save("BenchLiquid", new Material(liquid));
             else Debug.LogWarning("[AndroidBuild] ChemLabSim/Liquid shader not found.");

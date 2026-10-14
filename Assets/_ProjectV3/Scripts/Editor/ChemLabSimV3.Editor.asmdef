@@ -3,7 +3,9 @@
   "rootNamespace": "ChemLabSimV3.Editor",
   "references": [
     "ChemLabSimV3",
-    "Unity.TextMeshPro"
+    "Unity.TextMeshPro",
+    "Unity.RenderPipelines.Core.Runtime",
+    "Unity.RenderPipelines.Universal.Runtime"
   ],
   "includePlatforms": [
     "Editor"

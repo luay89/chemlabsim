@@ -31,6 +31,7 @@ namespace ChemLabSimV3.DebugTools
             "zinc_acid|Zn|HCl|Acidic|25|0.6|0.6|0",
             "vinegar_soda|CH3COOH|NaHCO3|Acidic|25|0.6|0.5|0",
             "iron_copper|Fe|CuSO4|Neutral|25|0.6|0.6|0",
+            "iron_copper_acidic_hot|Fe|CuSO4|Acidic|52|0.6|0|0|0",
             "magnesium_burn|Mg|O2|Neutral|600|0.6|0.6|0",
             "dilution|HCl|H2O|Neutral|25|0.5|0|0",
             "sodium_chlorine|Na|Cl2|Neutral|300|0.6|0.6|0",

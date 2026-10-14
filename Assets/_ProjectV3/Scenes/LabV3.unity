@@ -12261,7 +12261,7 @@ MonoBehaviour:
   catalystToggle: {fileID: 2001528682}
   mixButton: {fileID: 1870880837}
   reactionController: {fileID: 1299712039}
-  materialsJsonAsset: {fileID: 0}
+  materialsJsonAsset: {fileID: 4900000, guid: 577243e64b2520a9db7618301e77df36, type: 3}
   vesselContainer: {fileID: 0}
 --- !u!114 &1299712034
 MonoBehaviour:
