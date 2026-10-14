@@ -1,6 +1,6 @@
 # Project Status
 
-Last reviewed: `2026-10-13`
+Last reviewed: `2026-10-14`
 
 ## High-Level Summary
 
@@ -59,6 +59,25 @@ As of 2026-08-20, V3 execution is governed by a mandatory constitution at `docs/
   - `SimulationStepper`
   - molecular simulation classes
   - scene/editor setup scripts
+
+## Stage 5 — quantities, stoichiometry, instruments (2026-10-14, branch `android/slice-5a-quantities`)
+
+Done and verified (EditMode 260/260; LinuxPreview tour, desktop and 20:9 phone, 0 exceptions):
+
+- amounts per reagent (g / mg / mol / mmol / mL) with explicit "unsupported" results when the data is missing (`QuantityConverter`)
+- molar mass from CIAAW 2021 atomic weights (`AtomicWeights`, `MolarMass`); ions/polymers rejected
+- limiting reactant, excess left over, theoretical yield (`LimitingReactant` → `Stoichiometry.Solve`), shown in the Result tab (`StoichiometryPanelView`)
+- material data: CRC densities (6 liquids) and bench-stock concentrations (42 solutions) are bottle configuration, kept apart from intrinsic properties (`tools/reactions/material_properties_003.py`)
+- pH meter: strong acid/base, H2SO4 (Ka2), acetic acid (exact), strong acid + strong base neutralisation from amounts; everything else shows "not supported" with the reason (`PhModel`)
+- thermometer labels each reading as set point / estimated / calculated (`Thermometry`)
+- probe readings and reagent labels are UI cards pinned to the 3D bench (`PinnedCards`, `LabInstruments`)
+
+Known limits:
+
+- reaction enthalpy exists for 1 of 422 reactions, so most temperatures are estimates; needs a sourced ΔHf° dataset
+- the 3D animation runs in stoichiometric proportions, not the student's amounts (stated in the panel)
+- gas volumes, salt hydrolysis, buffers and weak acid + base pH are not modelled
+- not yet tested on a real Android device
 
 ## Data Status
 

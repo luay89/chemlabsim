@@ -1,0 +1,184 @@
+// ChemLabSim v3 — digital thermometer and pH meter on the bench
+// Two probes dip into the beaker; each probe's reading is shown in a card pinned next to
+// the top of the probe on screen (it follows the beaker and stays readable on phones).
+// The displays only show what the engine computed:
+//   thermometer  set point (EnvironmentChangedEvent) → simulated temperature
+//                (SimulationTickEvent / SimulationCompletedEvent) once the reaction is visible,
+//                labelled set / estimated / calculated (Thermometry)
+//   pH meter     pH of reagent A's solution before mixing (PhModel.ForSolution), pH after the
+//                reaction from the amounts (PhModel.AfterReaction), or "not supported"
+// Like a real probe the display needs a moment to settle; the value it settles on is the
+// engine's value.
+
+using ChemLabSimV3.Controllers;
+using ChemLabSimV3.Engine.Chemistry;
+using ChemLabSimV3.Events;
+using UnityEngine;
+using UnityEngine.Rendering;
+
+namespace ChemLabSimV3.Views.Bench3D
+{
+    public class LabInstruments : MonoBehaviour
+    {
+        private const float ProbeResponseSeconds = 1.2f;
+
+        private PinnedCards.Card tempCard, phCard;
+        private LabInputController input;
+
+        // Thermometer state
+        private float setPointC = 25f;
+        private float simulatedC = float.NaN;
+        private TemperatureBasis basis = TemperatureBasis.SetPoint;
+        private bool reactionVisible;
+        private float shownC = 25f;
+
+        // pH state
+        // A struct's default status would read as "calculated pH 0", so start as unsupported.
+        private PhResult beforeMix = PhResult.Unsupported("no experiment yet");
+        private PhResult afterMix = PhResult.Unsupported("no experiment yet");
+        private bool haveAfterMix;
+        private ReactionEntry currentReaction;
+
+        public static LabInstruments Create(Transform parent, PinnedCards cards)
+        {
+            var go = new GameObject("LabInstruments");
+            go.transform.SetParent(parent, false);
+            var instruments = go.AddComponent<LabInstruments>();
+            instruments.Build(cards);
+            return instruments;
+        }
+
+        private void Build(PinnedCards cards)
+        {
+            var steel = Bench3DMeshes.Lit(new Color(0.75f, 0.77f, 0.80f), 0.8f, 0.6f);
+            var black = Bench3DMeshes.Lit(new Color(0.05f, 0.05f, 0.06f), 0.4f);
+
+            // Probes: a steel temperature probe and a glass pH electrode, leaning into the beaker.
+            var tempProbe = AddRod("TemperatureProbe", new Vector3(0.24f, 0.62f, 0.18f), new Vector3(0f, 0f, -8f), 0.022f, 0.95f, steel);
+            var phProbe = AddRod("PhElectrode", new Vector3(-0.22f, 0.62f, 0.2f), new Vector3(0f, 0f, 8f), 0.032f, 0.95f,
+                                 Bench3DMeshes.Glass(new Color(0.75f, 0.85f, 0.95f, 0.35f), 3011, CullMode.Back));
+            AddRod("PhElectrodeCap", new Vector3(-0.29f, 1.12f, 0.2f), new Vector3(0f, 0f, 8f), 0.04f, 0.12f, black);
+
+            // Reading cards next to the top of each probe (cylinder primitives span y −1…1).
+            var tint = new Color(0.02f, 0.06f, 0.05f, 0.88f);
+            tempCard = cards.Add("TemperatureCard", "TEMPERATURE", tint, tempProbe, new Vector3(0f, 1f, 0f),
+                                 new Vector2(0f, 0.5f), new Vector2(18f, 0f), 210f, 30f);
+            phCard = cards.Add("PhCard", "pH", tint, phProbe, new Vector3(0f, 1f, 0f),
+                               new Vector2(1f, 0.5f), new Vector2(-18f, 0f), 210f, 30f);
+        }
+
+        private Transform AddRod(string name, Vector3 pos, Vector3 euler, float radius, float length, Material mat)
+        {
+            var rod = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            rod.name = name;
+            rod.transform.SetParent(transform, false);
+            rod.transform.localScale = new Vector3(radius * 2f, length * 0.5f, radius * 2f);
+            rod.transform.localPosition = pos;
+            rod.transform.localRotation = Quaternion.Euler(euler);
+            rod.GetComponent<Renderer>().sharedMaterial = mat;
+            rod.GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.Off;
+            Destroy(rod.GetComponent<Collider>());
+            return rod.transform;
+        }
+
+        // ── Events ─────────────────────────────────────────────────────
+
+        private void OnEnable()
+        {
+            EventBus.Subscribe<EnvironmentChangedEvent>(OnEnvironment);
+            EventBus.Subscribe<ReactionEvaluatedEvent>(OnEvaluated);
+            EventBus.Subscribe<ReactionNotFoundEvent>(OnNotFound);
+            EventBus.Subscribe<StoichiometryEvaluatedEvent>(OnStoichiometry);
+            EventBus.Subscribe<SimulationTickEvent>(OnTick);
+            EventBus.Subscribe<SimulationCompletedEvent>(OnCompleted);
+        }
+
+        private void OnDisable()
+        {
+            EventBus.Unsubscribe<EnvironmentChangedEvent>(OnEnvironment);
+            EventBus.Unsubscribe<ReactionEvaluatedEvent>(OnEvaluated);
+            EventBus.Unsubscribe<ReactionNotFoundEvent>(OnNotFound);
+            EventBus.Unsubscribe<StoichiometryEvaluatedEvent>(OnStoichiometry);
+            EventBus.Unsubscribe<SimulationTickEvent>(OnTick);
+            EventBus.Unsubscribe<SimulationCompletedEvent>(OnCompleted);
+        }
+
+        private void OnEnvironment(EnvironmentChangedEvent e) => setPointC = e.Temperature;
+
+        private void OnEvaluated(ReactionEvaluatedEvent e)
+        {
+            currentReaction = e.Input.reaction;
+            bool runs = e.Result.IsValid && e.Result.Status != ReactionStatus.Fail;
+            basis = runs ? Thermometry.BasisFor(currentReaction) : TemperatureBasis.SetPoint;
+            simulatedC = float.NaN;
+        }
+
+        private void OnNotFound(ReactionNotFoundEvent e)
+        {
+            currentReaction = null;
+            basis = TemperatureBasis.SetPoint;
+            simulatedC = float.NaN;
+            afterMix = PhResult.Unsupported("the substances did not react");
+            haveAfterMix = true;
+        }
+
+        private void OnStoichiometry(StoichiometryEvaluatedEvent e)
+        {
+            afterMix = PhModel.AfterReaction(e.Reaction, e.Evaluation);
+            haveAfterMix = true;
+        }
+
+        private void OnTick(SimulationTickEvent e) { if (e.State != null) simulatedC = e.State.TemperatureC; }
+        private void OnCompleted(SimulationCompletedEvent e) { if (e.State != null) simulatedC = e.State.TemperatureC; }
+
+        // ── Called by the bench ────────────────────────────────────────
+
+        /// <summary>New experiment: reagent A alone in the beaker.</summary>
+        public void BeginExperiment(string reagentA)
+        {
+            reactionVisible = false;
+            haveAfterMix = false;
+            basis = TemperatureBasis.SetPoint;
+            simulatedC = float.NaN;
+            if (input == null) input = FindObjectOfType<LabInputController>();
+
+            if (string.IsNullOrWhiteSpace(reagentA))
+                beforeMix = PhResult.Unsupported("the beaker is empty");
+            else if (reagentA.Trim() == "H2O")
+                beforeMix = PhModel.ForSolution("H2O", double.NaN);
+            else if (input != null && input.TryGetStockConcentration(reagentA.Trim(), out double molar))
+                beforeMix = PhModel.ForSolution(reagentA.Trim(), molar);
+            else
+                beforeMix = PhResult.Unsupported("not a solution");
+        }
+
+        /// <summary>Mix pressed: the readings stay on reagent A until the pour reaches the beaker.</summary>
+        public void HideReaction() => reactionVisible = false;
+
+        /// <summary>The poured reagent reached the beaker: show the reaction's readings.</summary>
+        public void RevealReaction() => reactionVisible = true;
+
+        // ── Display ────────────────────────────────────────────────────
+
+        private void Update()
+        {
+            bool showSim = reactionVisible && basis != TemperatureBasis.SetPoint && !float.IsNaN(simulatedC);
+            float target = showSim ? simulatedC : setPointC;
+            shownC = Mathf.Lerp(shownC, target, 1f - Mathf.Exp(-Time.unscaledDeltaTime * 3f / ProbeResponseSeconds));
+            tempCard.Value.text = $"{shownC:0.0} °C";
+            tempCard.Caption.text = Thermometry.Label(showSim ? basis : TemperatureBasis.SetPoint);
+
+            var ph = reactionVisible && haveAfterMix ? afterMix : beforeMix;
+            if (ph.IsCalculated)
+            {
+                phCard.Value.text = $"{ph.Ph:0.00}";
+                phCard.Caption.text = ph.Approximate ? "calculated (approx., concentrated)" : "calculated, 25 °C";
+            }
+            else
+            {
+                phCard.Value.text = "--";
+                phCard.Caption.text = "not supported: " + ph.Basis;
+            }
+        }
+    }
+}

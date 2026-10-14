@@ -545,6 +545,32 @@ namespace ChemLabSimV3.Controllers
             return true;
         }
 
+        /// <summary>The material record of a reagent (read-only use).</summary>
+        public bool TryGetMaterial(string formula, out ChemicalMaterial material)
+        {
+            material = null;
+            return !string.IsNullOrEmpty(formula) && materialLookup.TryGetValue(formula.Trim(), out material) && material != null;
+        }
+
+        /// <summary>Amount typed for reagent slot 0–3 (A–D).</summary>
+        public bool TryGetAmount(int slot, out double value, out string unit)
+        {
+            value = slot >= 0 && slot < amountValues.Length ? amountValues[slot] : double.NaN;
+            unit = slot >= 0 && slot < amountUnits.Length ? amountUnits[slot] : string.Empty;
+            return !double.IsNaN(value) && !string.IsNullOrEmpty(unit);
+        }
+
+        /// <summary>Concentration of the reagent's bottle (mol/L), when it is a solution with a configured stock.</summary>
+        public bool TryGetStockConcentration(string formula, out double molar)
+        {
+            molar = double.NaN;
+            if (string.IsNullOrEmpty(formula) || !materialLookup.TryGetValue(formula, out var mat) || mat == null
+                || mat.stockConcentrationM <= 0f)
+                return false;
+            molar = mat.stockConcentrationM;
+            return true;
+        }
+
         private void PublishMaterialPreview()
         {
             // LabInputViewModel is a struct, so ReagentA is read directly.

@@ -104,6 +104,22 @@ Implications:
 - Colours in `reactions.json` follow the rules in `tools/reactions/curate_002.py`; new batches should go through it.
 - Contact factor has one definition: `ContactModel`.
 
+### 2026-10-14: Scientific data policy for quantities, pH and temperature (Stage 5)
+
+Status: accepted
+
+Reason:
+
+- The app teaches chemistry; a plausible-looking invented number is worse than no number.
+
+Implications:
+
+- Missing data gives an explicit unavailable/unsupported result with the reason; values are never filled in.
+- Bottle configuration (stock concentration, label) is stored apart from intrinsic material properties (density, molar mass) and cited.
+- pH is only calculated for the models listed in `PhModel`; concentrated solutions (> 0.1 M) are marked approximate.
+- Temperatures carry their basis (set point / estimated / calculated).
+- 3D readings are screen-space cards pinned to world anchors (`PinnedCards`), not world-space text, so they stay readable on phones.
+
 ## Decision Update Rules
 
 - Add a new dated entry when a meaningful architectural or process choice changes.

@@ -92,6 +92,10 @@ namespace ChemLabSimV3.Views.Bench3D
         // Hot plate under the beaker, reagent B in its own flask, poured in on Mix.
         private HotPlate hotPlate;
         private PourFlask pourFlask;
+        private LabInstruments instruments;
+        private PinnedCards cards;
+        private PinnedCards.Card labelA, labelB;
+        private Transform beakerRoot;
         private string shownReagentB;
         private Color flameColor = DefaultFlame;
 
@@ -145,6 +149,8 @@ namespace ChemLabSimV3.Views.Bench3D
             // Show the default reagent B as soon as the controllers have set up the inputs.
             labInput = FindObjectOfType<LabInputController>();
             if (labInput != null) ShowReagentB(labInput.CurrentInput.ReagentB);
+            if (instruments != null) instruments.BeginExperiment(labInput != null ? labInput.CurrentInput.ReagentA : null);
+            RefreshLabels();
         }
 
         private void OnEnable()
@@ -246,6 +252,7 @@ namespace ChemLabSimV3.Views.Bench3D
         private void BuildBeaker()
         {
             var beaker = new GameObject("Beaker").transform;
+            beakerRoot = beaker;
             beaker.SetParent(transform, false);
 
             // Back half: inner wall + inside of the base, drawn before the liquid.
@@ -451,6 +458,7 @@ namespace ChemLabSimV3.Views.Bench3D
             currentOn = labInput != null && labInput.CurrentInput.HasElectricCurrent;
             electrodes.SetActive(currentOn);
             ShowReagentB(labInput != null ? labInput.CurrentInput.ReagentB : null);
+            RefreshLabels();
         }
 
         private void BuildEquipment()
@@ -461,7 +469,37 @@ namespace ChemLabSimV3.Views.Bench3D
             hotPlate.transform.localPosition = new Vector3(0f, -HotPlate.Height, 0f);
             hotPlate.TargetC = benchTemperatureC;
             pourFlask = PourFlask.Create(transform, -HotPlate.Height, bead, soft);
+            cards = PinnedCards.Create(transform);
+            instruments = LabInstruments.Create(transform, cards);
+
+            // Labels of the selected reagents: A in the beaker, B in the pouring flask.
+            var labelTint = new Color(0.07f, 0.1f, 0.16f, 0.9f);
+            labelA = cards.Add("ReagentALabel", string.Empty, labelTint, beakerRoot, new Vector3(0f, 0f, -OuterRadius),
+                               new Vector2(0.5f, 1f), new Vector2(0f, -8f), 230f, 16f);
+            labelB = cards.Add("ReagentBLabel", string.Empty, labelTint, pourFlask.transform, new Vector3(0f, 0f, -0.17f),
+                               new Vector2(0.5f, 1f), new Vector2(0f, -8f), 190f, 16f);
             LabAtmosphere.SetUp(Camera.main, transform, UnityEngine.Application.isMobilePlatform);
+        }
+
+        /// <summary>Bottle-style labels: formula and name, amount and the bottle's concentration.</summary>
+        private void RefreshLabels()
+        {
+            if (labInput == null || labelA == null) return;
+            Label(labelA, labInput.CurrentInput.ReagentA, 0);
+            Label(labelB, labInput.CurrentInput.ReagentB, 1);
+        }
+
+        private void Label(PinnedCards.Card card, string formula, int slot)
+        {
+            bool has = !string.IsNullOrWhiteSpace(formula);
+            card.Hidden = !has;
+            if (!has) return;
+            string f = formula.Trim();
+            string name = labInput.TryGetMaterial(f, out var mat) ? mat.GetDisplayName(0) : string.Empty;
+            card.Value.text = $"{ChemText.Formula(f)}  <size=70%><color=#B8C6D8>{name}</color></size>";
+            string amount = labInput.TryGetAmount(slot, out double v, out string unit)
+                ? $"{v.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture)} {unit}" : "no amount";
+            card.Caption.text = mat != null && mat.stockConcentrationM > 0f ? $"{amount}  ·  {mat.stockLabel}" : amount;
         }
 
         /// <summary>Puts reagent B in the pouring flask, in its real state and colour.</summary>
@@ -566,6 +604,7 @@ namespace ChemLabSimV3.Views.Bench3D
             previewState = e.State;
             previewHex = e.ColorHex;
             PrepareFreshBeaker();
+            if (instruments != null) instruments.BeginExperiment(e.Formula);   // new reagent A: new experiment
         }
 
         private string previewState = "liquid", previewHex = string.Empty;
@@ -579,6 +618,8 @@ namespace ChemLabSimV3.Views.Bench3D
             reactionDeltaC = 0f;
             SetPlating(0f);
             SetIdle(previewState, previewHex);
+            // The mix's results have already arrived; they are shown when the pour reaches the beaker.
+            if (instruments != null) instruments.HideReaction();
 
             // A clean beaker right away: nothing from the previous experiment fades out slowly.
             solidLevel = solidTarget;
@@ -639,6 +680,7 @@ namespace ChemLabSimV3.Views.Bench3D
 
         private void ApplyFx(FxState fx, ReactionEntry reaction)
         {
+            if (instruments != null) instruments.RevealReaction();
             if (fx.StopAll)
             {
                 effervescence = 0;
