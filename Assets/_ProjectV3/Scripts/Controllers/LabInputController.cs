@@ -435,6 +435,18 @@ namespace ChemLabSimV3.Controllers
         /// physical-state preview (powder pile, tinted liquid, transparent gas)
         /// without coupling the view layer to <see cref="AppManager"/> or the JSON DB.
         /// </summary>
+        /// <summary>Physical state ("solid", "liquid", "aqueous", "gas") and colour of a reagent, for 3D previews.</summary>
+        public bool TryGetMaterialLook(string formula, out string state, out string colorHex)
+        {
+            state = "solid";
+            colorHex = string.Empty;
+            if (string.IsNullOrEmpty(formula) || !materialLookup.TryGetValue(formula, out var mat) || mat == null)
+                return false;
+            state = mat.GetState();
+            colorHex = mat.color ?? string.Empty;
+            return true;
+        }
+
         private void PublishMaterialPreview()
         {
             // LabInputViewModel is a struct, so ReagentA is read directly.
