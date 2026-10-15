@@ -1,6 +1,7 @@
 // ChemLabSim v3 — titration burette and flame-test burner on the bench (Stage 6)
-//   burette  appears above the beaker while a titration is set up; its liquid column goes
-//            down with the added volume and a drop falls on every addition
+//   burette  a 50 mL burette (scale read from 0 at the top, GraduatedScale) above the beaker
+//            while a titration is set up; the titrant surface stands at the mark of the added
+//            volume, and a drop falls on every addition
 //   burner   to the right of the beaker; a wire loop holds reagent A in the flame. The flame
 //            is a normal pale-blue burner flame, coloured only by a FlameTest result for a while;
 //            the result itself is read in the Tests tab
@@ -15,8 +16,10 @@ namespace ChemLabSimV3.Views.Bench3D
 {
     public class LabTestRigs : MonoBehaviour
     {
-        private const float BuretteMl = 50f;            // a standard 50 mL burette
         private const float BuretteLength = 0.9f;
+        private const float BuretteBelowScale = 0.05f;  // glass between the 50 mL mark and the stopcock
+        private const float BuretteScaleHeight = 0.75f; // 50 mL mark → 0 mL mark
+        private static readonly GraduatedScale BuretteScale = GraduatedScale.Burette50(BuretteScaleHeight);
         private const float BuretteBottom = 1.15f;      // tip just above the beaker rim (1.10)
         private const float FlameSeconds = 8f;
         private static readonly Color BurnerBlue = new Color(0.35f, 0.55f, 1f);
@@ -47,8 +50,27 @@ namespace ChemLabSimV3.Views.Bench3D
             Rod(burette.transform, "Tip", new Vector3(0f, BuretteBottom + 0.04f, 0.12f), 0.012f, 0.08f, glass);
             Rod(burette.transform, "Stopcock", new Vector3(0f, BuretteBottom + 0.07f, 0.12f), 0.02f, 0.03f,
                 Bench3DMeshes.Lit(new Color(0.15f, 0.15f, 0.18f), 0.5f));
+            // Retort stand behind the beaker: base plate, upright rod and a clamp arm holding the burette.
+            var steel = Bench3DMeshes.Lit(new Color(0.62f, 0.64f, 0.67f), 0.75f, 0.8f);
+            var plate = Rod(burette.transform, "StandBase", new Vector3(0.62f, -HotPlate.Height + 0.012f, 0.55f), 0.16f, 0.024f,
+                            Bench3DMeshes.Lit(new Color(0.12f, 0.13f, 0.15f), 0.5f));
+            plate.transform.localScale = new Vector3(0.42f, 0.012f, 0.3f);
+            Rod(burette.transform, "StandRod", new Vector3(0.62f, 1.05f, 0.55f), 0.014f, 2.3f, steel);
+            var arm = Rod(burette.transform, "ClampArm", new Vector3(0.31f, 1.62f, 0.335f), 0.01f, 0.76f, steel);
+            arm.transform.localRotation = Quaternion.LookRotation(new Vector3(-0.62f, 0f, -0.43f)) * Quaternion.Euler(90f, 0f, 0f);
+            Rod(burette.transform, "Clamp", new Vector3(0f, 1.62f, 0.12f), 0.055f, 0.06f, Bench3DMeshes.Lit(new Color(0.15f, 0.15f, 0.17f), 0.4f));
+
             buretteLiquid = Rod(burette.transform, "Titrant", Vector3.zero, 0.038f, BuretteLength * 0.96f,
                                 Bench3DMeshes.Glass(new Color(0.55f, 0.75f, 1f, 0.7f), 3013, CullMode.Back)).transform;
+            GlasswareScale.Build(burette.transform, BuretteScale, new GlasswareScale.Style
+            {
+                Radius = 0.045f, ZeroY = BuretteBottom + 0.08f + BuretteBelowScale, CentreDegrees = 0f,
+                MinorLength = 0.03f, MajorLength = 0.05f, MinorThickness = 0.0025f, MajorThickness = 0.004f,
+                FontSize = 0.36f, UnitText = "mL"
+            });
+            // Positioned at x = 0, z = 0.12: the scale root sits on the tube axis.
+            var scaleRoot = burette.transform.Find("Scale_" + BuretteScale.Vessel.Replace(' ', '_'));
+            if (scaleRoot != null) scaleRoot.localPosition = new Vector3(0f, 0f, 0.12f);
             drops = LabBench3D.CreateEmitter(burette.transform, "Drops", new Vector3(0f, BuretteBottom, 0.12f), 0.004f,
                                              Bench3DMeshes.Particle(soft, false, 3014));
             var main = drops.main;
@@ -139,9 +161,10 @@ namespace ChemLabSimV3.Views.Bench3D
 
         private void SetFill(float addedMl)
         {
-            float left = Mathf.Clamp01(1f - addedMl / BuretteMl);
-            float full = BuretteLength * 0.96f;
-            float h = Mathf.Max(0.002f, full * left);
+            // The surface stands at the mark of the volume run out (0 at the top); below the
+            // scale the tube stays full down to the stopcock.
+            double remaining = System.Math.Max(0.0, System.Math.Min(BuretteScale.CapacityMl, BuretteScale.CapacityMl - addedMl));
+            float h = BuretteBelowScale + (float)BuretteScale.HeightOf(remaining);
             buretteLiquid.localScale = new Vector3(0.076f, h * 0.5f, 0.076f);
             buretteLiquid.localPosition = new Vector3(0f, BuretteBottom + 0.08f + h * 0.5f, 0.12f);
         }

@@ -153,7 +153,9 @@ namespace ChemLabSimV3.Views.Layout
             titrationSetup.text =
                 $"Beaker: <b>{ChemText.Formula(s.Analyte)}</b> {N(s.AnalyteMl)} mL of {N(s.AnalyteMolar)} M (bench stock)\n" +
                 $"Burette: <b>{ChemText.Formula(s.Titrant)}</b> {N(s.TitrantMolar)} M (bench stock)\n" +
-                $"Equivalence point at <b>{m.EquivalenceMl.ToString("0.00", CultureInfo.InvariantCulture)} mL</b>";
+                "Net ionic equation: H<sup>+</sup>(aq) + OH<sup>−</sup>(aq) → H<sub>2</sub>O(l)\n" +
+                $"Equivalence point at <b>{m.EquivalenceMl.ToString("0.00", CultureInfo.InvariantCulture)} mL</b>" +
+                (m.EquivalenceMl > 50.0 ? "\n<color=#FFBD47>More than one 50 mL burette is needed (it would be refilled).</color>" : string.Empty);
             foreach (var b in addButtons) b.interactable = true;
             Record();
         }
