@@ -471,6 +471,7 @@ namespace ChemLabSimV3.Views.Bench3D
             pourFlask = PourFlask.Create(transform, -HotPlate.Height, bead, soft);
             cards = PinnedCards.Create(transform);
             instruments = LabInstruments.Create(transform, cards);
+            LabTestRigs.Create(transform, soft);
 
             // Labels of the selected reagents: A in the beaker, B in the pouring flask.
             var labelTint = new Color(0.07f, 0.1f, 0.16f, 0.9f);
@@ -562,9 +563,13 @@ namespace ChemLabSimV3.Views.Bench3D
         }
 
         private ParticleSystem CreateEmitter(string name, Vector3 position, float radius, Material mat)
+            => CreateEmitter(transform, name, position, radius, mat);
+
+        /// <summary>An upward cone emitter (world space, nothing emitted until its rate is set).</summary>
+        public static ParticleSystem CreateEmitter(Transform parent, string name, Vector3 position, float radius, Material mat)
         {
             var go = new GameObject(name);
-            go.transform.SetParent(transform, false);
+            go.transform.SetParent(parent, false);
             go.transform.localPosition = position;
             go.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);   // cone +Z → world up
             var ps = go.AddComponent<ParticleSystem>();

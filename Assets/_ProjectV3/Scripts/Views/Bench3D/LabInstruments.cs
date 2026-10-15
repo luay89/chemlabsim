@@ -40,6 +40,10 @@ namespace ChemLabSimV3.Views.Bench3D
         private bool haveAfterMix;
         private ReactionEntry currentReaction;
 
+        // Titration (Stage 6): while one is set up the pH meter reads the titration model.
+        private bool titrating;
+        private PhResult titrationPh = PhResult.Unsupported("no titration");
+
         public static LabInstruments Create(Transform parent, PinnedCards cards)
         {
             var go = new GameObject("LabInstruments");
@@ -92,6 +96,7 @@ namespace ChemLabSimV3.Views.Bench3D
             EventBus.Subscribe<StoichiometryEvaluatedEvent>(OnStoichiometry);
             EventBus.Subscribe<SimulationTickEvent>(OnTick);
             EventBus.Subscribe<SimulationCompletedEvent>(OnCompleted);
+            EventBus.Subscribe<TitrationUpdatedEvent>(OnTitration);
         }
 
         private void OnDisable()
@@ -102,6 +107,15 @@ namespace ChemLabSimV3.Views.Bench3D
             EventBus.Unsubscribe<StoichiometryEvaluatedEvent>(OnStoichiometry);
             EventBus.Unsubscribe<SimulationTickEvent>(OnTick);
             EventBus.Unsubscribe<SimulationCompletedEvent>(OnCompleted);
+            EventBus.Unsubscribe<TitrationUpdatedEvent>(OnTitration);
+        }
+
+        private void OnTitration(TitrationUpdatedEvent e)
+        {
+            titrating = e.Active;
+            titrationPh = e.Supported
+                ? PhResult.Calculated(e.Point.Ph, "titration model", e.Point.Approximate)
+                : PhResult.Unsupported(e.Message);
         }
 
         private void OnEnvironment(EnvironmentChangedEvent e) => setPointC = e.Temperature;
@@ -161,6 +175,7 @@ namespace ChemLabSimV3.Views.Bench3D
         public void BeginExperiment(string reagentA)
         {
             reactionVisible = false;
+            titrating = false;
             haveAfterMix = false;
             basis = TemperatureBasis.SetPoint;
             simulatedC = float.NaN;
@@ -177,7 +192,11 @@ namespace ChemLabSimV3.Views.Bench3D
         }
 
         /// <summary>Mix pressed: the readings stay on reagent A until the pour reaches the beaker.</summary>
-        public void HideReaction() => reactionVisible = false;
+        public void HideReaction()
+        {
+            reactionVisible = false;
+            titrating = false;
+        }
 
         /// <summary>The poured reagent reached the beaker: show the reaction's readings.</summary>
         public void RevealReaction() => reactionVisible = true;
@@ -192,8 +211,9 @@ namespace ChemLabSimV3.Views.Bench3D
             tempCard.Value.text = $"{shownC:0.0} °C";
             tempCard.Caption.text = Thermometry.Label(showSim ? basis : TemperatureBasis.SetPoint);
 
-            var ph = reactionVisible && haveAfterMix ? afterMix : beforeMix;
+            var ph = titrating ? titrationPh : reactionVisible && haveAfterMix ? afterMix : beforeMix;
             PhDisplay(ph, out string value, out string caption);
+            if (titrating && ph.IsCalculated) caption += " · titration";
             phCard.Value.text = value;
             phCard.Caption.text = caption;
         }
