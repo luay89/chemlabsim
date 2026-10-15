@@ -162,6 +162,7 @@ namespace ChemLabSimV3.Views.Bench3D
             EventBus.Subscribe<EnvironmentChangedEvent>(OnEnvironment);
             EventBus.Subscribe<EnvironmentFxChangedEvent>(OnEnvironmentFx);
             EventBus.Subscribe<InputChangedEvent>(OnInputChanged);
+            EventBus.Subscribe<TitrationUpdatedEvent>(OnTitration);
         }
 
         private void OnDisable()
@@ -173,6 +174,7 @@ namespace ChemLabSimV3.Views.Bench3D
             EventBus.Unsubscribe<EnvironmentChangedEvent>(OnEnvironment);
             EventBus.Unsubscribe<EnvironmentFxChangedEvent>(OnEnvironmentFx);
             EventBus.Unsubscribe<InputChangedEvent>(OnInputChanged);
+            EventBus.Unsubscribe<TitrationUpdatedEvent>(OnTitration);
         }
 
         // ── Scene construction ─────────────────────────────────────────
@@ -471,6 +473,7 @@ namespace ChemLabSimV3.Views.Bench3D
             pourFlask = PourFlask.Create(transform, -HotPlate.Height, bead, soft);
             cards = PinnedCards.Create(transform);
             instruments = LabInstruments.Create(transform, cards);
+            LabTestRigs.Create(transform, soft);
 
             // Labels of the selected reagents: A in the beaker, B in the pouring flask.
             var labelTint = new Color(0.07f, 0.1f, 0.16f, 0.9f);
@@ -562,9 +565,13 @@ namespace ChemLabSimV3.Views.Bench3D
         }
 
         private ParticleSystem CreateEmitter(string name, Vector3 position, float radius, Material mat)
+            => CreateEmitter(transform, name, position, radius, mat);
+
+        /// <summary>An upward cone emitter (world space, nothing emitted until its rate is set).</summary>
+        public static ParticleSystem CreateEmitter(Transform parent, string name, Vector3 position, float radius, Material mat)
         {
             var go = new GameObject(name);
-            go.transform.SetParent(transform, false);
+            go.transform.SetParent(parent, false);
             go.transform.localPosition = position;
             go.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);   // cone +Z → world up
             var ps = go.AddComponent<ParticleSystem>();
@@ -677,6 +684,29 @@ namespace ChemLabSimV3.Views.Bench3D
         }
 
         private void OnReactionEvaluated(ReactionEvaluatedEvent e) => lastReaction = e.Input.reaction;
+
+        // Titration: the beaker fills with the added titrant and takes the indicator's colour.
+        private bool titrationShown;
+
+        private void OnTitration(TitrationUpdatedEvent e)
+        {
+            if (!e.Active || !e.Supported)
+            {
+                if (!titrationShown) return;
+                titrationShown = false;
+                if (!reacting && (pourFlask == null || !pourFlask.Busy)) SetIdle(previewState, previewHex);
+                return;
+            }
+            titrationShown = true;
+            SetIdle(previewState, previewHex);
+            double range = 2.0 * e.EquivalenceMl;
+            liquidTarget = Mathf.Lerp(0.45f, 0.85f, range > 0 ? Mathf.Clamp01((float)(e.Point.AddedMl / range)) : 0f);
+            if (e.Indicator >= 0 && e.Indicator < ChemLabSimV3.Engine.Chemistry.Indicators.All.Length)
+            {
+                var c = ChemLabSimV3.Engine.Chemistry.Indicators.ColourAt(ChemLabSimV3.Engine.Chemistry.Indicators.All[e.Indicator], e.Point.Ph);
+                if (c != null) liquidTargetColor = new Color(c[0], c[1], c[2], c[3]);
+            }
+        }
         private void OnReactionNotFound(ReactionNotFoundEvent e) => lastReaction = null;
 
         private void OnFx(FxTriggeredEvent e)

@@ -10,6 +10,7 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using ChemLabSimV3.Views;
+using ChemLabSimV3.Views.Layout;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -26,7 +27,7 @@ namespace ChemLabSimV3.DebugTools
         //      | checks   (optional, ';'-separated, read from the real UI after the reaction:
         //                  panel~text  Result-tab amounts panel contains text
         //                  phv=text    pH card value is exactly text      phc~text  pH caption contains text
-        //                  tc~text     temperature caption contains text
+        //                  tc~text     temperature caption contains text   tv=text  temperature value
         //                  labelA~text / labelB~text  reagent label caption contains text)
         //        Each check logs "[TourCheck] PASS|FAIL step: check"; the totals are logged at the end.
         private static readonly string[] Steps =
@@ -34,7 +35,7 @@ namespace ChemLabSimV3.DebugTools
             "neutralization|HCl|NaOH|Neutral|25|0.6|0.5|0",
             "neutralization_amounts|HCl|NaOH|Neutral|25|0.6|0.5|0|0|20|30|" +
                 "panel~Limiting reactant: <b>HCl</b>;panel~excess, 10 mmol left;panel~= 1.169 g;phv=13.30;" +
-                "phc~approx.;tc~estimated;labelA~20 mL  ·  1.0 M bench stock;labelB~30 mL  ·  1.0 M bench stock",
+                "phc~approx.;tc~calculated from ΔH_neut;tv=30.3 °C;labelA~20 mL  ·  1.0 M bench stock;labelB~30 mL  ·  1.0 M bench stock",
             "magnesium_acid_amounts|Mg|HCl|Neutral|25|0.6|0.6|0|0|0.5|10|" +
                 "panel~Limiting reactant: <b>HCl</b>;panel~10.08 mg;phv=--;phc~not supported;labelA~0.5 g;labelB~10 mL",
             "silver_chloride|AgNO3|NaCl|Neutral|25|0.6|0.5|0|0|25|25|" +
@@ -65,6 +66,11 @@ namespace ChemLabSimV3.DebugTools
         {
             string dir = ReadArg();
             if (string.IsNullOrEmpty(dir) || SceneManager.GetActiveScene().name != "LabV3") return;
+            // Unattended runs: keep rendering when the window is hidden or the screen is off
+            // (with vsync the player can wait minutes for the compositor between frames).
+            UnityEngine.Application.runInBackground = true;
+            QualitySettings.vSyncCount = 0;
+            UnityEngine.Application.targetFrameRate = 30;
             var go = new GameObject("ScreenshotTour");
             DontDestroyOnLoad(go);
             go.AddComponent<ScreenshotTour>().outDir = dir;
@@ -111,6 +117,9 @@ namespace ChemLabSimV3.DebugTools
                 yield return Capture(p[0] + "_c_late");
                 if (p.Length > 11) Verify(p[0], p[11]);
             }
+
+            yield return TitrationTour();
+            yield return FlameTour();
 
             Click(GameObject.Find("AssistantTab")?.GetComponent<Button>());
             yield return new WaitForSeconds(0.6f);
@@ -185,6 +194,66 @@ namespace ChemLabSimV3.DebugTools
                 view.SetValue(v);
         }
 
+        // ── Stage 6: titration and flame test, driven through the Tests tab ──
+
+        private IEnumerator TitrationTour()
+        {
+            // 20 mL of 1.0 M HCl titrated with 1.0 M NaOH: equivalence at 20.00 mL.
+            Select("ReagentA", "HCl");
+            Select("ReagentB", "NaOH");
+            SetAmount("ReagentAAmountRow", "20");
+            yield return new WaitForSeconds(0.8f);
+            Click(GameObject.Find("TestsTab")?.GetComponent<Button>());
+            Click(GameObject.Find("TitrationSetup")?.GetComponent<Button>());
+            Click(GameObject.Find("IndicatorButton")?.GetComponent<Button>());   // phenolphthalein
+            yield return new WaitForSeconds(1.5f);
+            yield return Capture("titration_a_setup");
+            Verify("titration_setup", "tsetup~Equivalence point at <b>20.00 mL</b>;phv=0.00;phc~titration;titr~no titrant added yet");
+
+            for (int i = 0; i < 3; i++) Click(GameObject.Find("Add5")?.GetComponent<Button>());
+            yield return new WaitForSeconds(1.5f);
+            yield return Capture("titration_b_15ml");
+            Verify("titration_15ml", "titr~Added <b>15.00 mL</b>;titr~pH <b>0.85</b>;titr~before the equivalence point;phv=0.85;titr~Phenolphthalein: <b>colourless</b>");
+
+            for (int i = 0; i < 5; i++) Click(GameObject.Find("Add1")?.GetComponent<Button>());
+            yield return new WaitForSeconds(1.5f);
+            yield return Capture("titration_c_equivalence");
+            Verify("titration_20ml", "titr~pH <b>7.00</b>;titr~equivalence point;phv=7.00;tc~calculated from ΔH_neut");
+
+            for (int i = 0; i < 5; i++) Click(GameObject.Find("Add1")?.GetComponent<Button>());
+            yield return new WaitForSeconds(1.5f);
+            yield return Capture("titration_d_25ml");
+            Verify("titration_25ml", "titr~pH <b>13.05</b>;titr~after the equivalence point;phv=13.05;titr~Phenolphthalein: <b>pink</b>");
+
+            // A weak acid is outside the model: no curve, a reason instead.
+            Select("ReagentA", "CH3COOH");
+            yield return new WaitForSeconds(0.8f);
+            Click(GameObject.Find("TitrationSetup")?.GetComponent<Button>());
+            yield return new WaitForSeconds(1.2f);
+            yield return Capture("titration_e_weak_acid");
+            Verify("titration_weak_acid", "tsetup~Not supported;tsetup~weak acid;phv=--;phc~weak acid");
+        }
+
+        private IEnumerator FlameTour()
+        {
+            foreach (var test in new[]
+            {
+                "NaCl|flame~yellow-orange;flame~(Na⁺);tsetup~The reagents or the volume changed;phc~no acid–base model for NaCl",
+                "CuSO4|flame~blue-green;flame~(Cu²⁺)",
+                "LiOH|flame~crimson;flame~(Li⁺)",
+                "KMnO4|flame~Not supported;flame~Mn is not in this flame-test table",
+            })
+            {
+                var p = test.Split('|');
+                Select("ReagentA", p[0]);
+                yield return new WaitForSeconds(0.6f);
+                Click(GameObject.Find("FlameButton")?.GetComponent<Button>());
+                yield return new WaitForSeconds(1.5f);
+                yield return Capture("flame_" + p[0]);
+                Verify("flame_" + p[0], p[1]);
+            }
+        }
+
         // ── Checks on what the UI actually shows ───────────────────────
 
         private void Verify(string step, string spec)
@@ -210,8 +279,12 @@ namespace ChemLabSimV3.DebugTools
                 case "phv":    return CardLine("PhCard", 1);
                 case "phc":    return CardLine("PhCard", 2);
                 case "tc":     return CardLine("TemperatureCard", 2);
+                case "tv":     return CardLine("TemperatureCard", 1);
                 case "labelA": return CardLine("ReagentALabel", 2);
                 case "labelB": return CardLine("ReagentBLabel", 2);
+                case "titr":   return FindObjectOfType<LabTestsView>(true)?.TitrationText;
+                case "tsetup": return Texts("TitrationPanel", "Setup");
+                case "flame":  return FindObjectOfType<LabTestsView>(true)?.FlameText;
                 default:       return null;
             }
         }

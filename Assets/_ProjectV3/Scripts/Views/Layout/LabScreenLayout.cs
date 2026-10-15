@@ -50,7 +50,7 @@ namespace ChemLabSimV3.Views.Layout
 
         private RectTransform safeArea;
         private RectTransform controlsPanel;
-        private const int ResultTab = 0, ProgressTab = 1, AssistantTab = 2;
+        private const int ResultTab = 0, ProgressTab = 1, AssistantTab = 2, TestsTab = 3;
         private ScrollRect[] scrolls;
         private Image[] tabImages;
         private int activeTab;
@@ -121,12 +121,14 @@ namespace ChemLabSimV3.Views.Layout
                 CreateTab(tabs, "Result",    () => ShowTab(ResultTab)),
                 CreateTab(tabs, "Progress",  () => ShowTab(ProgressTab)),
                 CreateTab(tabs, "Assistant", () => ShowTab(AssistantTab)),
+                CreateTab(tabs, "Tests",     () => ShowTab(TestsTab)),
             };
             scrolls = new[]
             {
                 CreateScrollList("ResultsScroll", column),
                 CreateScrollList("ProgressScroll", column),
                 CreateScrollList("AssistantScroll", column),
+                CreateScrollList("TestsScroll", column),
             };
 
             foreach (var name in ResultPanels)   Adopt(name, scrolls[ResultTab].content);
@@ -135,6 +137,7 @@ namespace ChemLabSimV3.Views.Layout
             amounts.transform.SetSiblingIndex(1);   // right below the reaction result
             assistantView = LabAssistantView.Create(scrolls[AssistantTab].content);
             assistantView.SetWidth(columnWidth);
+            LabTestsView.Create(scrolls[TestsTab].content);
             speedBar = SimulationSpeedBar.Create(safeArea);
 
             quizPanel = FindPanel("QuizPanel")?.gameObject;
@@ -311,6 +314,9 @@ namespace ChemLabSimV3.Views.Layout
             var text = textRect.gameObject.AddComponent<TextMeshProUGUI>();
             text.text = label;
             text.fontSize = 18;
+            text.enableAutoSizing = true;   // four tabs share the phone column
+            text.fontSizeMin = 13;
+            text.fontSizeMax = 18;
             text.fontStyle = FontStyles.Bold;
             text.alignment = TextAlignmentOptions.Center;
             text.color = Color.white;

@@ -115,6 +115,14 @@ JSON in `Assets/_ProjectV3/Resources/Data` drives:
 - lessons
 - quiz questions
 
+### Amounts, instruments and lab tests (Stage 5–6)
+
+- amounts: `LabInputController.AmountInputFor` (materials.json data) → `MixRequest.Amounts` → `ReactionEngine.ProcessDetailed` → `AmountEvaluator` (`QuantityConverter` → `LimitingReactant` → `Stoichiometry.Solve`)
+- `ReactionController.StoichiometryEventFor` publishes `StoichiometryEvaluatedEvent`, which records whether the reaction proceeded or completed. `StoichiometryPanelView` (Result tab) and `LabInstruments` (pH and temperature probes, using `PhModel` and `Thermometry`) only display it.
+- `PinnedCards`: screen-space cards pinned to 3D anchors, used for probe readings and reagent labels
+- Tests tab (`LabTestsView`): `TitrationModel` and `FlameTest` in `Engine/Chemistry`. The view publishes `TitrationUpdatedEvent` and `FlameTestEvent`; `LabTestRigs` (burette, burner), `LabInstruments` and `ReactionHeadline` display them.
+- verification: `QuantityPathIntegrationTests` (shipped data, end to end) and `ScreenshotTour` `[TourCheck]` lines, which read the real UI in a player build
+
 ### Save data
 
 - V3 save state is persisted through `SaveService`

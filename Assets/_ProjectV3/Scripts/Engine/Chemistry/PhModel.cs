@@ -132,6 +132,23 @@ namespace ChemLabSimV3.Engine.Chemistry
             return FromOH(cOH, Basis, cOH > DiluteLimitM);
         }
 
+        /// <summary>H+ per formula unit of a strong acid (0 when it is not one of the modelled strong acids).</summary>
+        public static int StrongAcidProtons(string formula)
+            => formula != null && StrongAcids.TryGetValue(formula, out int n) ? n : 0;
+
+        /// <summary>OH− per formula unit of a strong base (0 when it is not one of the modelled strong bases).</summary>
+        public static int StrongBaseHydroxides(string formula)
+            => formula != null && StrongBases.TryGetValue(formula, out int n) ? n : 0;
+
+        /// <summary>
+        /// pH of a solution holding only fully dissociated H+/OH− and spectator ions, from the net
+        /// strong acid concentration (mol/L; negative = net strong base). Water's ions included, so
+        /// the result is continuous through neutrality: [H+] = (d + √(d² + 4Kw)) / 2.
+        /// For a net base the same is solved for [OH−], which avoids cancellation in d + √(…).
+        /// </summary>
+        public static double PhFromNetStrongAcid(double netMolar)
+            => netMolar >= 0 ? -Math.Log10(WithWater(netMolar)) : 14.0 + Math.Log10(WithWater(-netMolar));
+
         // ── Equilibria ─────────────────────────────────────────────────
 
         /// <summary>[H+] of a weak acid HA, exact: x² / (C − x) = Ka.</summary>
