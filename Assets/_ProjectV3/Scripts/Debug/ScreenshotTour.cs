@@ -22,13 +22,23 @@ namespace ChemLabSimV3.DebugTools
         private const string Arg = "-chemlab-tour";
 
         // name | reagent A | reagent B (empty = one reactant) | medium | °C | stirring | grinding | catalyst | DC current
-        //      | amount A | amount B   (optional, in the row's default unit)
+        //      | amount A | amount B   (optional, in the row's default unit; empty = keep the default)
+        //      | checks   (optional, ';'-separated, read from the real UI after the reaction:
+        //                  panel~text  Result-tab amounts panel contains text
+        //                  phv=text    pH card value is exactly text      phc~text  pH caption contains text
+        //                  tc~text     temperature caption contains text
+        //                  labelA~text / labelB~text  reagent label caption contains text)
+        //        Each check logs "[TourCheck] PASS|FAIL step: check"; the totals are logged at the end.
         private static readonly string[] Steps =
         {
             "neutralization|HCl|NaOH|Neutral|25|0.6|0.5|0",
-            "neutralization_amounts|HCl|NaOH|Neutral|25|0.6|0.5|0|0|20|30",
-            "magnesium_acid_amounts|Mg|HCl|Neutral|25|0.6|0.6|0|0|0.5|10",
-            "silver_chloride|AgNO3|NaCl|Neutral|25|0.6|0.5|0",
+            "neutralization_amounts|HCl|NaOH|Neutral|25|0.6|0.5|0|0|20|30|" +
+                "panel~Limiting reactant: <b>HCl</b>;panel~excess, 10 mmol left;panel~= 1.169 g;phv=13.30;" +
+                "phc~approx.;tc~estimated;labelA~20 mL  ·  1.0 M bench stock;labelB~30 mL  ·  1.0 M bench stock",
+            "magnesium_acid_amounts|Mg|HCl|Neutral|25|0.6|0.6|0|0|0.5|10|" +
+                "panel~Limiting reactant: <b>HCl</b>;panel~10.08 mg;phv=--;phc~not supported;labelA~0.5 g;labelB~10 mL",
+            "silver_chloride|AgNO3|NaCl|Neutral|25|0.6|0.5|0|0|25|25|" +
+                "panel~Exact proportions;panel~= 0.358 g;phv=--;phc~AgNO3 is not a strong acid or base;labelA~0.1 M bench stock",
             "copper_hydroxide|CuSO4|NaOH|Basic|25|0.6|0.5|0",
             "lead_iodide|KI|Pb(NO3)2|Neutral|25|0.6|0.5|0",
             "zinc_acid|Zn|HCl|Acidic|25|0.6|0.6|0",
@@ -43,11 +53,12 @@ namespace ChemLabSimV3.DebugTools
             "water_no_current|H2O||Neutral|25|0.3|0|0|0",
             "water_electrolysis|H2O||Neutral|25|0.3|0|0|1",
             "copper_electrolysis|CuSO4||Acidic|25|0.3|0|0|1",
-            "magnesium_cold|Mg|O2|Neutral|25|0.6|0.6|0|0",
+            "magnesium_cold|Mg|O2|Neutral|25|0.6|0.6|0|0|||panel~did not proceed;phv=--;phc~did not proceed;tc~set on the hot plate",
         };
 
         private string outDir;
         private int shot;
+        private int checksPassed, checksFailed;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Boot()
@@ -98,6 +109,7 @@ namespace ChemLabSimV3.DebugTools
                 yield return Capture(p[0] + "_b_early");
                 yield return new WaitForSeconds(4f);
                 yield return Capture(p[0] + "_c_late");
+                if (p.Length > 11) Verify(p[0], p[11]);
             }
 
             Click(GameObject.Find("AssistantTab")?.GetComponent<Button>());
@@ -114,6 +126,7 @@ namespace ChemLabSimV3.DebugTools
             yield return new WaitForSeconds(0.8f);
             yield return Capture("progress_tab");
 
+            Debug.Log($"[TourCheck] TOTAL passed={checksPassed} failed={checksFailed}");
             Debug.Log($"[ScreenshotTour] Done — {shot} screenshots in {outDir}");
             UnityEngine.Application.Quit(0);
         }
@@ -167,9 +180,59 @@ namespace ChemLabSimV3.DebugTools
         private static void SetAmount(string row, string value)
         {
             var view = GameObject.Find(row)?.GetComponent<ReagentAmountView>();
-            if (view != null && double.TryParse(value, System.Globalization.NumberStyles.Float,
+            if (view != null && !string.IsNullOrEmpty(value) && double.TryParse(value, System.Globalization.NumberStyles.Float,
                                                 System.Globalization.CultureInfo.InvariantCulture, out double v))
                 view.SetValue(v);
+        }
+
+        // ── Checks on what the UI actually shows ───────────────────────
+
+        private void Verify(string step, string spec)
+        {
+            foreach (var check in spec.Split(';'))
+            {
+                if (string.IsNullOrEmpty(check)) continue;
+                bool exact = check.Contains("=") && (check.IndexOf('=') < check.IndexOf('~') || !check.Contains("~"));
+                int at = exact ? check.IndexOf('=') : check.IndexOf('~');
+                string key = check.Substring(0, at), expected = check.Substring(at + 1);
+                string actual = ShownText(key);
+                bool ok = actual != null && (exact ? actual == expected : actual.Contains(expected));
+                if (ok) checksPassed++; else checksFailed++;
+                Debug.Log($"[TourCheck] {(ok ? "PASS" : "FAIL")} {step}: {check}" + (ok ? "" : $"  (shown: '{actual}')"));
+            }
+        }
+
+        private static string ShownText(string key)
+        {
+            switch (key)
+            {
+                case "panel":  return Texts("StoichiometryPanel", "Body");
+                case "phv":    return CardLine("PhCard", 1);
+                case "phc":    return CardLine("PhCard", 2);
+                case "tc":     return CardLine("TemperatureCard", 2);
+                case "labelA": return CardLine("ReagentALabel", 2);
+                case "labelB": return CardLine("ReagentBLabel", 2);
+                default:       return null;
+            }
+        }
+
+        private static Transform Named(string name)
+            => FindObjectsOfType<RectTransform>(true).FirstOrDefault(t => t.name == name && t.gameObject.activeInHierarchy);
+
+        private static string Texts(string parent, string child)
+        {
+            var root = Named(parent);
+            var t = root != null ? root.Find(child)?.GetComponent<TMP_Text>() : null;
+            return t != null ? t.text : null;
+        }
+
+        /// <summary>Line of a pinned card: 0 title, 1 value, 2 caption.</summary>
+        private static string CardLine(string card, int line)
+        {
+            var root = Named(card);
+            if (root == null) return null;
+            var texts = root.GetComponentsInChildren<TMP_Text>(true);
+            return line < texts.Length ? texts[line].text : null;
         }
 
         private static void SetCurrent(bool on)

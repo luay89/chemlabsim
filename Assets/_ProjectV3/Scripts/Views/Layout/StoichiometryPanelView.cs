@@ -60,13 +60,16 @@ namespace ChemLabSimV3.Views.Layout
         private void OnEvaluated(StoichiometryEvaluatedEvent e)
         {
             gameObject.SetActive(e.Evaluation != null);
-            if (e.Evaluation != null) body.text = Describe(e.Evaluation);
+            if (e.Evaluation != null) body.text = Describe(e.Evaluation, e.Proceeded);
         }
 
-        public static string Describe(AmountEvaluation evaluation)
+        public static string Describe(AmountEvaluation evaluation, bool proceeded = true)
         {
             var sb = new StringBuilder();
             var stoich = evaluation.Stoichiometry;
+            if (!proceeded)
+                sb.Append("<color=#FFBD47>The reaction did not proceed under these conditions. ")
+                  .Append("The numbers below are what it would give if it did.</color>\n\n");
 
             foreach (var line in evaluation.Lines)
             {

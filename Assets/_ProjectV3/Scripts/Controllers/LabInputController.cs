@@ -471,18 +471,24 @@ namespace ChemLabSimV3.Controllers
                 if (string.IsNullOrWhiteSpace(formulas[i])) continue;
                 string f = formulas[i].Trim();
                 materialLookup.TryGetValue(f, out var mat);
-                list.Add(new ReagentAmountInput
-                {
-                    Formula = f,
-                    Value = amountValues[i],
-                    Unit = amountUnits[i],
-                    State = mat != null ? mat.GetState() : string.Empty,
-                    DensityGPerMl = mat != null ? mat.densityGPerMl : 0f,
-                    StockConcentrationM = mat != null ? mat.stockConcentrationM : 0f,
-                    StockLabel = mat != null ? mat.stockLabel : string.Empty
-                });
+                list.Add(AmountInputFor(f, mat, amountValues[i], amountUnits[i]));
             }
             return list;
+        }
+
+        /// <summary>One reagent's amount with its material data (unknown material → no data, never defaults).</summary>
+        public static ReagentAmountInput AmountInputFor(string formula, ChemicalMaterial mat, double value, string unit)
+        {
+            return new ReagentAmountInput
+            {
+                Formula = formula,
+                Value = value,
+                Unit = unit,
+                State = mat != null ? mat.GetState() : string.Empty,
+                DensityGPerMl = mat != null ? mat.densityGPerMl : 0f,
+                StockConcentrationM = mat != null ? mat.stockConcentrationM : 0f,
+                StockLabel = mat != null ? mat.stockLabel : string.Empty
+            };
         }
         private void OnMediumChanged(int index)      { inputState.MediumIndex = index; NotifyInputChanged(); }
         private void OnTemperatureChanged(float val)  { inputState.Temperature = val; NotifyInputChanged(); PublishEnvironment(); }

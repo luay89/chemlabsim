@@ -32,6 +32,8 @@ namespace ChemLabSimV3.Events
     {
         public Engine.Chemistry.AmountEvaluation Evaluation;
         public ReactionEntry Reaction;
+        public bool Proceeded;   // the engine let the reaction run (Success or Partial)
+        public bool Complete;    // the engine ran it to completion (Success)
     }
 
     /// <summary>Fired when the user's mix request cannot be matched to any known reaction.</summary>

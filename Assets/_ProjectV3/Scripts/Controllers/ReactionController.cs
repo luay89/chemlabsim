@@ -106,10 +106,22 @@ namespace ChemLabSimV3.Controllers
             Debug.Log($"[ReactionController] Evaluated '{detailed.Reaction.id}' → {result.Status} (Valid={result.IsValid})");
 
             EventBus.Publish(new ReactionEvaluatedEvent(input, result));
-            EventBus.Publish(new StoichiometryEvaluatedEvent { Evaluation = detailed.Amounts, Reaction = detailed.Reaction });
+            EventBus.Publish(StoichiometryEventFor(detailed, result));
 
             if (ShouldStartLiveSimulation(result))
                 StartLiveSimulation(detailed, request);
+        }
+
+        /// <summary>The amounts result of a mix together with whether the engine let the reaction run.</summary>
+        public static StoichiometryEvaluatedEvent StoichiometryEventFor(ReactionEngineResult detailed, ReactionEvaluationResult result)
+        {
+            return new StoichiometryEvaluatedEvent
+            {
+                Evaluation = detailed.Amounts,
+                Reaction   = detailed.Reaction,
+                Proceeded  = ShouldStartLiveSimulation(result),
+                Complete   = result.IsValid && result.Status == ReactionStatus.Success
+            };
         }
 
         // -- Simulation wiring -----------------------------------

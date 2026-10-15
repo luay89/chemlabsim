@@ -4,9 +4,10 @@
 // The displays only show what the engine computed:
 //   thermometer  set point (EnvironmentChangedEvent) → simulated temperature
 //                (SimulationTickEvent / SimulationCompletedEvent) once the reaction is visible,
-//                labelled set / estimated / calculated (Thermometry)
+//                labelled set / estimated / simulated (Thermometry)
 //   pH meter     pH of reagent A's solution before mixing (PhModel.ForSolution), pH after the
-//                reaction from the amounts (PhModel.AfterReaction), or "not supported"
+//                reaction from the amounts (PhModel.AfterReaction, only if the reaction ran to
+//                completion), or "not supported"
 // Like a real probe the display needs a moment to settle; the value it settles on is the
 // engine's value.
 
@@ -124,8 +125,31 @@ namespace ChemLabSimV3.Views.Bench3D
 
         private void OnStoichiometry(StoichiometryEvaluatedEvent e)
         {
-            afterMix = PhModel.AfterReaction(e.Reaction, e.Evaluation);
+            afterMix = PhAfterMix(e);
             haveAfterMix = true;
+        }
+
+        /// <summary>pH of the beaker after a mix: only when the engine ran the reaction to completion.</summary>
+        public static PhResult PhAfterMix(StoichiometryEvaluatedEvent e)
+        {
+            if (!e.Proceeded) return PhResult.Unsupported("the reaction did not proceed, so the mixture is not modelled");
+            if (!e.Complete) return PhResult.Unsupported("the reaction only partly proceeded, so the final mixture is not modelled");
+            return PhModel.AfterReaction(e.Reaction, e.Evaluation);
+        }
+
+        /// <summary>Display text of the pH card for a result.</summary>
+        public static void PhDisplay(PhResult ph, out string value, out string caption)
+        {
+            if (ph.IsCalculated)
+            {
+                value = ph.Ph.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+                caption = ph.Approximate ? "calculated (approx., concentrated)" : "calculated, 25 °C";
+            }
+            else
+            {
+                value = "--";
+                caption = "not supported: " + ph.Basis;
+            }
         }
 
         private void OnTick(SimulationTickEvent e) { if (e.State != null) simulatedC = e.State.TemperatureC; }
@@ -169,16 +193,9 @@ namespace ChemLabSimV3.Views.Bench3D
             tempCard.Caption.text = Thermometry.Label(showSim ? basis : TemperatureBasis.SetPoint);
 
             var ph = reactionVisible && haveAfterMix ? afterMix : beforeMix;
-            if (ph.IsCalculated)
-            {
-                phCard.Value.text = $"{ph.Ph:0.00}";
-                phCard.Caption.text = ph.Approximate ? "calculated (approx., concentrated)" : "calculated, 25 °C";
-            }
-            else
-            {
-                phCard.Value.text = "--";
-                phCard.Caption.text = "not supported: " + ph.Basis;
-            }
+            PhDisplay(ph, out string value, out string caption);
+            phCard.Value.text = value;
+            phCard.Caption.text = caption;
         }
     }
 }

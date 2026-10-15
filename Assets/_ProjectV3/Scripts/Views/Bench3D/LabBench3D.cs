@@ -497,9 +497,16 @@ namespace ChemLabSimV3.Views.Bench3D
             string f = formula.Trim();
             string name = labInput.TryGetMaterial(f, out var mat) ? mat.GetDisplayName(0) : string.Empty;
             card.Value.text = $"{ChemText.Formula(f)}  <size=70%><color=#B8C6D8>{name}</color></size>";
-            string amount = labInput.TryGetAmount(slot, out double v, out string unit)
-                ? $"{v.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture)} {unit}" : "no amount";
-            card.Caption.text = mat != null && mat.stockConcentrationM > 0f ? $"{amount}  ·  {mat.stockLabel}" : amount;
+            bool hasAmount = labInput.TryGetAmount(slot, out double v, out string unit);
+            card.Caption.text = LabelCaption(mat, hasAmount, v, unit);
+        }
+
+        /// <summary>Second line of a reagent label: the amount and, for a solution, the bottle's concentration.</summary>
+        public static string LabelCaption(ChemicalMaterial mat, bool hasAmount, double value, string unit)
+        {
+            string amount = hasAmount
+                ? $"{value.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture)} {unit}" : "no amount";
+            return mat != null && mat.stockConcentrationM > 0f ? $"{amount}  ·  {mat.stockLabel}" : amount;
         }
 
         /// <summary>Puts reagent B in the pouring flask, in its real state and colour.</summary>

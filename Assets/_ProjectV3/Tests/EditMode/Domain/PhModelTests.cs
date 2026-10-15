@@ -111,7 +111,7 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
         {
             Assert.That(Thermometry.BasisFor(null), Is.EqualTo(TemperatureBasis.SetPoint));
             Assert.That(Thermometry.BasisFor(new ReactionEntry()), Is.EqualTo(TemperatureBasis.Estimated));
-            Assert.That(Thermometry.BasisFor(new ReactionEntry { enthalpyKJPerMol = -55.8f }), Is.EqualTo(TemperatureBasis.Calculated));
+            Assert.That(Thermometry.BasisFor(new ReactionEntry { enthalpyKJPerMol = -55.8f }), Is.EqualTo(TemperatureBasis.Simulated));
         }
     }
 }

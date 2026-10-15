@@ -62,7 +62,7 @@ As of 2026-08-20, V3 execution is governed by a mandatory constitution at `docs/
 
 ## Stage 5 — quantities, stoichiometry, instruments (2026-10-14, branch `android/slice-5a-quantities`)
 
-Done and verified (EditMode 260/260; LinuxPreview tour, desktop and 20:9 phone, 0 exceptions):
+Stage 5 acceptance gate passed on 2026-10-15 (EditMode 312/312; LinuxPreview tour desktop and 20:9 phone, 0 exceptions, 23/23 UI checks each; Linux and Android builds). Done and verified:
 
 - amounts per reagent (g / mg / mol / mmol / mL) with explicit "unsupported" results when the data is missing (`QuantityConverter`)
 - molar mass from CIAAW 2021 atomic weights (`AtomicWeights`, `MolarMass`); ions/polymers rejected
@@ -71,6 +71,10 @@ Done and verified (EditMode 260/260; LinuxPreview tour, desktop and 20:9 phone, 
 - pH meter: strong acid/base, H2SO4 (Ka2), acetic acid (exact), strong acid + strong base neutralisation from amounts; everything else shows "not supported" with the reason (`PhModel`)
 - thermometer labels each reading as set point / estimated / calculated (`Thermometry`)
 - probe readings and reagent labels are UI cards pinned to the 3D bench (`PinnedCards`, `LabInstruments`)
+- slice F (2026-10-15): end-to-end tests on the shipped data (`QuantityPathIntegrationTests`: materials.json → `LabInputController.AmountInputFor` → `ReactionEngine` → `ReactionController.StoichiometryEventFor` → panel / pH meter / label text), and `ScreenshotTour` checks that read the real UI after each amount experiment (`[TourCheck]` lines, 23 checks, desktop and phone)
+- a reaction that did not proceed shows no pH and the panel says so; a partly proceeded one shows no pH
+- temperature basis "calculated" renamed "simulated": the ΔH-driven reading runs in a model vessel, not the student's amounts
+- 421 of 422 stored equations are balanced; rxn_122 (polyethene, `(C2H4)n`) is refused for amounts
 
 Known limits:
 
