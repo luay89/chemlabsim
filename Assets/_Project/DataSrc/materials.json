@@ -68,7 +68,9 @@
     ],
     "used_in_reactions": [
       "rxn_006"
-    ]
+    ],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_al",
@@ -180,7 +182,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_bacl2",
@@ -202,7 +206,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_bao",
@@ -270,7 +276,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "densityGPerMl": 3.1,
+    "densitySource": "CRC Handbook 97th ed., 25 °C"
   },
   {
     "id": "mat_c",
@@ -362,7 +370,9 @@
       "reactant",
       "solvent"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "densityGPerMl": 0.789,
+    "densitySource": "CRC Handbook 97th ed., 20 °C"
   },
   {
     "id": "mat_c6h12o6",
@@ -408,7 +418,9 @@
       "reactant",
       "solvent"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "densityGPerMl": 0.877,
+    "densitySource": "CRC Handbook 97th ed., 20 °C"
   },
   {
     "id": "mat_ca",
@@ -453,7 +465,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.0233,
+    "stockLabel": "saturated limewater (1.73 g/L, 20 °C)"
   },
   {
     "id": "mat_cacl2",
@@ -477,7 +491,9 @@
     ],
     "used_in_reactions": [
       "rxn_009"
-    ]
+    ],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_caco3",
@@ -570,7 +586,9 @@
       "reactant",
       "solvent"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "densityGPerMl": 0.785,
+    "densitySource": "CRC Handbook 97th ed., 25 °C"
   },
   {
     "id": "mat_ch3cooh",
@@ -594,7 +612,9 @@
     ],
     "used_in_reactions": [
       "rxn_002"
-    ]
+    ],
+    "stockConcentrationM": 1.0,
+    "stockLabel": "1.0 M bench stock"
   },
   {
     "id": "mat_ch3coona",
@@ -618,7 +638,9 @@
     ],
     "used_in_reactions": [
       "rxn_002"
-    ]
+    ],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_ch3oh",
@@ -642,7 +664,9 @@
       "reactant",
       "solvent"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "densityGPerMl": 0.791,
+    "densitySource": "CRC Handbook 97th ed., 20 °C"
   },
   {
     "id": "mat_ch4",
@@ -803,7 +827,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_cuo",
@@ -850,7 +876,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_fe",
@@ -923,7 +951,9 @@
       "reactant",
       "catalyst"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_fescn2p",
@@ -971,7 +1001,9 @@
     ],
     "used_in_reactions": [
       "rxn_011"
-    ]
+    ],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_h2",
@@ -1054,7 +1086,9 @@
       "rxn_010",
       "rxn_011",
       "rxn_012"
-    ]
+    ],
+    "densityGPerMl": 0.997,
+    "densitySource": "CRC Handbook 97th ed., 25 °C"
   },
   {
     "id": "mat_h2o2",
@@ -1081,7 +1115,9 @@
       "rxn_007",
       "rxn_010",
       "rxn_011"
-    ]
+    ],
+    "stockConcentrationM": 0.882,
+    "stockLabel": "3 % w/v hydrogen peroxide"
   },
   {
     "id": "mat_h2s",
@@ -1130,7 +1166,9 @@
     "used_in_reactions": [
       "rxn_010",
       "rxn_011"
-    ]
+    ],
+    "stockConcentrationM": 1.0,
+    "stockLabel": "1.0 M bench stock"
   },
   {
     "id": "mat_h3po4",
@@ -1152,7 +1190,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 1.0,
+    "stockLabel": "1.0 M bench stock"
   },
   {
     "id": "mat_hbr",
@@ -1174,7 +1214,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 1.0,
+    "stockLabel": "1.0 M bench stock"
   },
   {
     "id": "mat_hcho",
@@ -1223,7 +1265,9 @@
       "rxn_001",
       "rxn_005",
       "rxn_009"
-    ]
+    ],
+    "stockConcentrationM": 1.0,
+    "stockLabel": "1.0 M bench stock"
   },
   {
     "id": "mat_he",
@@ -1265,7 +1309,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 1.0,
+    "stockLabel": "1.0 M bench stock"
   },
   {
     "id": "mat_hi",
@@ -1287,7 +1333,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 1.0,
+    "stockLabel": "1.0 M bench stock"
   },
   {
     "id": "mat_hno3",
@@ -1310,7 +1358,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 1.0,
+    "stockLabel": "1.0 M bench stock"
   },
   {
     "id": "mat_i2",
@@ -1402,7 +1452,9 @@
     "used_in_reactions": [
       "rxn_010",
       "rxn_011"
-    ]
+    ],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_kbr",
@@ -1424,7 +1476,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_kcl",
@@ -1446,7 +1500,9 @@
     "roles": [
       "product"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_ki",
@@ -1469,7 +1525,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_kmno4",
@@ -1493,7 +1551,9 @@
     ],
     "used_in_reactions": [
       "rxn_010"
-    ]
+    ],
+    "stockConcentrationM": 0.02,
+    "stockLabel": "0.02 M bench stock"
   },
   {
     "id": "mat_kno3",
@@ -1537,7 +1597,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 1.0,
+    "stockLabel": "1.0 M bench stock"
   },
   {
     "id": "mat_kscn",
@@ -1561,7 +1623,9 @@
     ],
     "used_in_reactions": [
       "rxn_011"
-    ]
+    ],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_li",
@@ -1606,7 +1670,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 1.0,
+    "stockLabel": "1.0 M bench stock"
   },
   {
     "id": "mat_mg",
@@ -1675,7 +1741,9 @@
     "roles": [
       "product"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_mgo",
@@ -1721,7 +1789,9 @@
     "roles": [
       "product"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_mn",
@@ -1791,7 +1861,9 @@
     ],
     "used_in_reactions": [
       "rxn_010"
-    ]
+    ],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_n2",
@@ -1905,7 +1977,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_na2so4",
@@ -1927,7 +2001,9 @@
     "roles": [
       "product"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_na3po4",
@@ -1949,7 +2025,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_naalo2",
@@ -1973,7 +2051,9 @@
     ],
     "used_in_reactions": [
       "rxn_012"
-    ]
+    ],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_nabr",
@@ -1996,7 +2076,9 @@
       "reactant",
       "product"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_nacl",
@@ -2022,7 +2104,9 @@
     "used_in_reactions": [
       "rxn_001",
       "rxn_006"
-    ]
+    ],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_nahco3",
@@ -2070,7 +2154,9 @@
     ],
     "used_in_reactions": [
       "rxn_006"
-    ]
+    ],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_naoh",
@@ -2097,7 +2183,9 @@
       "rxn_001",
       "rxn_008",
       "rxn_012"
-    ]
+    ],
+    "stockConcentrationM": 1.0,
+    "stockLabel": "1.0 M bench stock"
   },
   {
     "id": "mat_ne",
@@ -2350,7 +2438,9 @@
     "roles": [
       "reactant"
     ],
-    "used_in_reactions": []
+    "used_in_reactions": [],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_pbi2",
@@ -2622,7 +2712,9 @@
     ],
     "used_in_reactions": [
       "rxn_005"
-    ]
+    ],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_zno",
@@ -2845,7 +2937,9 @@
     "used_in_reactions": [
       "rxn_062",
       "rxn_073"
-    ]
+    ],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   },
   {
     "id": "mat_124",
@@ -2869,6 +2963,8 @@
     ],
     "used_in_reactions": [
       "rxn_030"
-    ]
+    ],
+    "stockConcentrationM": 0.1,
+    "stockLabel": "0.1 M bench stock"
   }
 ]

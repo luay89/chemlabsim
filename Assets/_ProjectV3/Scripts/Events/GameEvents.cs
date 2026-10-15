@@ -24,6 +24,18 @@ namespace ChemLabSimV3.Events
         }
     }
 
+    /// <summary>
+    /// Fired after every mix: moles, limiting reactant and theoretical yield from the student's
+    /// amounts. Evaluation is null when no amounts were given or no reaction was found.
+    /// </summary>
+    public struct StoichiometryEvaluatedEvent : IGameEvent
+    {
+        public Engine.Chemistry.AmountEvaluation Evaluation;
+        public ReactionEntry Reaction;
+        public bool Proceeded;   // the engine let the reaction run (Success or Partial)
+        public bool Complete;    // the engine ran it to completion (Success)
+    }
+
     /// <summary>Fired when the user's mix request cannot be matched to any known reaction.</summary>
     public struct ReactionNotFoundEvent : IGameEvent
     {
