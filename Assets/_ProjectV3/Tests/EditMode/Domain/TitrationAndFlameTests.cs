@@ -139,6 +139,34 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
             Assert.That(Calorimetry.NeutralisationRiseK(double.NaN, 10), Is.NaN);
         }
 
+        [Test]
+        public void Indicators_ChangeOnlyInsideTheirRange()
+        {
+            var php = Indicators.All.First(i => i.Name == "phenolphthalein");
+            Assert.That(Indicators.ColourNameAt(php, 7.0), Is.EqualTo("colourless"));
+            Assert.That(Indicators.ColourNameAt(php, 9.1), Does.StartWith("changing"));
+            Assert.That(Indicators.ColourNameAt(php, 12.0), Is.EqualTo("pink"));
+            Assert.That(Indicators.BaseFraction(php, 9.1), Is.EqualTo(0.5).Within(1e-9));
+            Assert.That(Indicators.ColourAt(php, 2.0), Is.EqualTo(php.AcidRgba));
+            Assert.That(Indicators.ColourAt(php, 13.0), Is.EqualTo(php.BaseRgba));
+            Assert.That(Indicators.ColourAt(php, double.NaN), Is.Null);
+
+            var mo = Indicators.All.First(i => i.Name == "methyl orange");
+            Assert.That(Indicators.ColourNameAt(mo, 2.0), Is.EqualTo("red"));
+            Assert.That(Indicators.ColourNameAt(mo, 7.0), Is.EqualTo("yellow-orange"));
+            var btb = Indicators.All.First(i => i.Name == "bromothymol blue");
+            Assert.That(btb.LowPh, Is.EqualTo(6.0));
+            Assert.That(btb.HighPh, Is.EqualTo(7.6));
+
+            // In a strong acid + strong base titration, phenolphthalein is still colourless at the
+            // equivalence point (pH 7), turning one drop later (25.05 mL: pH 10.00) and pink after
+            // two drops (25.1 mL: pH 10.30).
+            var m = HClWithNaOH();
+            Assert.That(Indicators.ColourNameAt(php, PhAt(m, 25.0)), Is.EqualTo("colourless"));
+            Assert.That(Indicators.ColourNameAt(php, PhAt(m, 25.05)), Does.StartWith("changing"));
+            Assert.That(Indicators.ColourNameAt(php, PhAt(m, 25.1)), Is.EqualTo("pink"));
+        }
+
         // ── Flame test ───────────────────────────────────────────────
 
         [TestCase("LiOH", "Li", "crimson")]

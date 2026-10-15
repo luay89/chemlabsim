@@ -205,6 +205,7 @@ namespace ChemLabSimV3.DebugTools
             yield return new WaitForSeconds(0.8f);
             Click(GameObject.Find("TestsTab")?.GetComponent<Button>());
             Click(GameObject.Find("TitrationSetup")?.GetComponent<Button>());
+            Click(GameObject.Find("IndicatorButton")?.GetComponent<Button>());   // phenolphthalein
             yield return new WaitForSeconds(1.5f);
             yield return Capture("titration_a_setup");
             Verify("titration_setup", "tsetup~Equivalence point at <b>20.00 mL</b>;phv=0.00;phc~titration;titr~no titrant added yet");
@@ -212,7 +213,7 @@ namespace ChemLabSimV3.DebugTools
             for (int i = 0; i < 3; i++) Click(GameObject.Find("Add5")?.GetComponent<Button>());
             yield return new WaitForSeconds(1.5f);
             yield return Capture("titration_b_15ml");
-            Verify("titration_15ml", "titr~Added <b>15.00 mL</b>;titr~pH <b>0.85</b>;titr~before the equivalence point;phv=0.85");
+            Verify("titration_15ml", "titr~Added <b>15.00 mL</b>;titr~pH <b>0.85</b>;titr~before the equivalence point;phv=0.85;titr~Phenolphthalein: <b>colourless</b>");
 
             for (int i = 0; i < 5; i++) Click(GameObject.Find("Add1")?.GetComponent<Button>());
             yield return new WaitForSeconds(1.5f);
@@ -222,7 +223,7 @@ namespace ChemLabSimV3.DebugTools
             for (int i = 0; i < 5; i++) Click(GameObject.Find("Add1")?.GetComponent<Button>());
             yield return new WaitForSeconds(1.5f);
             yield return Capture("titration_d_25ml");
-            Verify("titration_25ml", "titr~pH <b>13.05</b>;titr~after the equivalence point;phv=13.05");
+            Verify("titration_25ml", "titr~pH <b>13.05</b>;titr~after the equivalence point;phv=13.05;titr~Phenolphthalein: <b>pink</b>");
 
             // A weak acid is outside the model: no curve, a reason instead.
             Select("ReagentA", "CH3COOH");

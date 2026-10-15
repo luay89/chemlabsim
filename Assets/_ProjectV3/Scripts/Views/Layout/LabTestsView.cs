@@ -31,6 +31,8 @@ namespace ChemLabSimV3.Views.Layout
         private LabInputController input;
 
         private TitrationModel model;
+        private int indicator = -1;                    // index in Indicators.All, −1 = none
+        private TextMeshProUGUI indicatorLabel;
         private readonly List<TitrationPoint> taken = new List<TitrationPoint>();
         private double addedMl;
         private string setupSignature;
@@ -99,6 +101,10 @@ namespace ChemLabSimV3.Views.Layout
                                           "+" + step.ToString("0.#", CultureInfo.InvariantCulture) + " mL", LabTheme.ControlColor, () => Add(step));
             }
 
+            var indicatorRow = Row(panel, "IndicatorRow");
+            var indicatorButton = AddButton(indicatorRow, "IndicatorButton", "Indicator: none", LabTheme.ControlColor, NextIndicator);
+            indicatorLabel = indicatorButton.GetComponentInChildren<TextMeshProUGUI>();
+
             titrationReadout = Text(panel, "Readout", 15f, LabTheme.TextColor);
 
             var graphGo = new GameObject("TitrationGraph", typeof(RectTransform));
@@ -110,7 +116,8 @@ namespace ChemLabSimV3.Views.Layout
 
             var note = Text(panel, "Scope", 11.5f, LabTheme.MutedText);
             note.text = "Model: complete reaction at 25 °C, ideal solution, volumes additive, Kw = 1.0 × 10⁻¹⁴. " +
-                        "y axis pH 0–14, dashed line = equivalence volume. Weak acids, buffers and H2SO4 are not modelled.";
+                        "y axis pH 0–14, dashed line = equivalence volume. Weak acids, buffers and H2SO4 are not modelled. " +
+                        "Indicator ranges: " + Indicators.Source + " (colours illustrative).";
         }
 
         private void SetUp()
@@ -133,7 +140,7 @@ namespace ChemLabSimV3.Views.Layout
                     ? "measure reagent A in mL so the volume in the beaker is known" : m.Reason;
                 ClearTitration("<color=#FFBD47>Not supported: " + reason + "</color>");
                 setupSignature = Signature();
-                EventBus.Publish(new TitrationUpdatedEvent { Active = true, Supported = false, Message = reason });
+                EventBus.Publish(new TitrationUpdatedEvent { Active = true, Supported = false, Message = reason, Indicator = -1 });
                 return;
             }
 
@@ -149,6 +156,13 @@ namespace ChemLabSimV3.Views.Layout
                 $"Equivalence point at <b>{m.EquivalenceMl.ToString("0.00", CultureInfo.InvariantCulture)} mL</b>";
             foreach (var b in addButtons) b.interactable = true;
             Record();
+        }
+
+        private void NextIndicator()
+        {
+            indicator = indicator + 1 >= Indicators.All.Length ? -1 : indicator + 1;
+            indicatorLabel.text = "Indicator: " + (indicator < 0 ? "none" : Indicators.All[indicator].Name);
+            if (model != null && taken.Count > 0) Show(taken[taken.Count - 1]);
         }
 
         private void Add(double ml)
@@ -172,11 +186,23 @@ namespace ChemLabSimV3.Views.Layout
             }
             taken.Add(p);
             graph.SetTaken(taken);
+            Show(p);
+        }
+
+        private void Show(TitrationPoint p)
+        {
             titrationReadout.text = Readout(p, model);
+            if (indicator >= 0)
+            {
+                var ind = Indicators.All[indicator];
+                titrationReadout.text += $"\n{char.ToUpperInvariant(ind.Name[0])}{ind.Name.Substring(1)}: <b>{Indicators.ColourNameAt(ind, p.Ph)}</b>" +
+                                         $"  <size=85%>(changes at pH {N(ind.LowPh)}–{N(ind.HighPh)})</size>";
+            }
             EventBus.Publish(new TitrationUpdatedEvent
             {
                 Active = true, Supported = true, Point = p, EquivalenceMl = model.EquivalenceMl,
-                Analyte = model.Setup.Analyte, Titrant = model.Setup.Titrant
+                Analyte = model.Setup.Analyte, Titrant = model.Setup.Titrant, AnalyteMl = model.Setup.AnalyteMl,
+                Indicator = indicator
             });
         }
 

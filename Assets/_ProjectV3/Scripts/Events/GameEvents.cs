@@ -49,6 +49,8 @@ namespace ChemLabSimV3.Events
         public double EquivalenceMl;
         public string Analyte;
         public string Titrant;
+        public double AnalyteMl;
+        public int Indicator;                           // index in Indicators.All, −1 = none
     }
 
     /// <summary>Stage 6 flame test of reagent A.</summary>

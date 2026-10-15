@@ -85,7 +85,7 @@ Known limits:
 
 ## Stage 6 — titration and flame test (2026-10-15, branch `android/stage6-titration-flame`, stacked on Stage 5)
 
-Verified: EditMode 312/312; LinuxPreview tour on desktop and 20:9 phone, 71 screenshots each, 0 exceptions, 51/51 UI checks each (titration at 0, 15, 20 and 25 mL, the weak-acid refusal, flame tests for NaCl, CuSO4, LiOH and KMnO4, and stale-state clearing); Linux and Android builds.
+Verified (latest run): EditMode 314/314; LinuxPreview tour on desktop and 20:9 phone, 71 screenshots each, 0 exceptions, 55/55 UI checks each (titration at 0, 15, 20 and 25 mL, the weak-acid refusal, flame tests for NaCl, CuSO4, LiOH and KMnO4, and stale-state clearing); Linux and Android builds.
 
 - Titration covers a strong acid with a strong base, in either order (`TitrationModel`, `LabTestsView`, `TitrationGraph`):
   - live pH-vs-volume plot, equivalence volume, and region text;
@@ -99,9 +99,11 @@ Verified: EditMode 312/312; LinuxPreview tour on desktop and 20:9 phone, 71 scre
 
 - Calculated temperature (`Calorimetry`): for a strong acid + strong base neutralisation, from a mix with volumes or during a titration. ΔH = −55.815 kJ/mol from CODATA ΔfH° values, assuming no heat loss and water-like density and specific heat; labelled "calculated". Other reactions stay "estimated" or "simulated".
 
+- Indicators (`Indicators`, from the CRC table): phenolphthalein 8.2–10.0, bromothymol blue 6.0–7.6, methyl orange 3.1–4.4. They colour the beaker during a titration; colours inside a range are blended for illustration.
+
 Known limits:
 
-- No indicators or weak-acid curves.
+- No weak-acid curves.
 - The burette is mostly hidden behind the headline with the current camera.
 - Not tested on a real Android device.
 
