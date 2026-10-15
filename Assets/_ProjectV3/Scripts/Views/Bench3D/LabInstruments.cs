@@ -4,7 +4,9 @@
 // The displays only show what the engine computed:
 //   thermometer  set point (EnvironmentChangedEvent) → simulated temperature
 //                (SimulationTickEvent / SimulationCompletedEvent) once the reaction is visible,
-//                labelled set / estimated / simulated (Thermometry)
+//                labelled set / estimated / simulated (Thermometry); for a strong acid + strong
+//                base neutralisation (mix or titration) the rise calculated from the amounts
+//                (Calorimetry), labelled calculated
 //   pH meter     pH of reagent A's solution before mixing (PhModel.ForSolution), pH after the
 //                reaction from the amounts (PhModel.AfterReaction, only if the reaction ran to
 //                completion), or "not supported"
@@ -40,9 +42,13 @@ namespace ChemLabSimV3.Views.Bench3D
         private bool haveAfterMix;
         private ReactionEntry currentReaction;
 
-        // Titration (Stage 6): while one is set up the pH meter reads the titration model.
+        // Calculated temperature rise of a neutralisation from the amounts (NaN = not available).
+        private double calculatedRiseK = double.NaN;
+
+        // Titration (Stage 6): while one is set up the probes read the titration model.
         private bool titrating;
         private PhResult titrationPh = PhResult.Unsupported("no titration");
+        private double titrationRiseK = double.NaN;
 
         public static LabInstruments Create(Transform parent, PinnedCards cards)
         {
@@ -113,6 +119,7 @@ namespace ChemLabSimV3.Views.Bench3D
         private void OnTitration(TitrationUpdatedEvent e)
         {
             titrating = e.Active;
+            titrationRiseK = e.Supported ? e.Point.TemperatureRiseK : double.NaN;
             titrationPh = e.Supported
                 ? PhResult.Calculated(e.Point.Ph, "titration model", e.Point.Approximate)
                 : PhResult.Unsupported(e.Message);
@@ -135,13 +142,19 @@ namespace ChemLabSimV3.Views.Bench3D
             simulatedC = float.NaN;
             afterMix = PhResult.Unsupported("the substances did not react");
             haveAfterMix = true;
+            calculatedRiseK = double.NaN;
         }
 
         private void OnStoichiometry(StoichiometryEvaluatedEvent e)
         {
             afterMix = PhAfterMix(e);
             haveAfterMix = true;
+            calculatedRiseK = RiseAfterMix(e);
         }
+
+        /// <summary>Calculated temperature rise of the mix (K), or NaN when it cannot be calculated.</summary>
+        public static double RiseAfterMix(StoichiometryEvaluatedEvent e)
+            => e.Complete && Calorimetry.TryNeutralisation(e.Reaction, e.Evaluation, out double rise, out _) ? rise : double.NaN;
 
         /// <summary>pH of the beaker after a mix: only when the engine ran the reaction to completion.</summary>
         public static PhResult PhAfterMix(StoichiometryEvaluatedEvent e)
@@ -177,6 +190,7 @@ namespace ChemLabSimV3.Views.Bench3D
             reactionVisible = false;
             titrating = false;
             haveAfterMix = false;
+            calculatedRiseK = double.NaN;
             basis = TemperatureBasis.SetPoint;
             simulatedC = float.NaN;
             if (input == null) input = FindObjectOfType<LabInputController>();
@@ -205,11 +219,14 @@ namespace ChemLabSimV3.Views.Bench3D
 
         private void Update()
         {
-            bool showSim = reactionVisible && basis != TemperatureBasis.SetPoint && !float.IsNaN(simulatedC);
-            float target = showSim ? simulatedC : setPointC;
+            // Calculated (energy balance from the amounts) wins over simulated/estimated.
+            double rise = titrating ? titrationRiseK : reactionVisible && haveAfterMix ? calculatedRiseK : double.NaN;
+            bool showCalc = !double.IsNaN(rise);
+            bool showSim = !showCalc && !titrating && reactionVisible && basis != TemperatureBasis.SetPoint && !float.IsNaN(simulatedC);
+            float target = showCalc ? setPointC + (float)rise : showSim ? simulatedC : setPointC;
             shownC = Mathf.Lerp(shownC, target, 1f - Mathf.Exp(-Time.unscaledDeltaTime * 3f / ProbeResponseSeconds));
             tempCard.Value.text = $"{shownC:0.0} °C";
-            tempCard.Caption.text = Thermometry.Label(showSim ? basis : TemperatureBasis.SetPoint);
+            tempCard.Caption.text = Thermometry.Label(showCalc ? TemperatureBasis.Calculated : showSim ? basis : TemperatureBasis.SetPoint);
 
             var ph = titrating ? titrationPh : reactionVisible && haveAfterMix ? afterMix : beforeMix;
             PhDisplay(ph, out string value, out string caption);

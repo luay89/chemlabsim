@@ -97,9 +97,11 @@ Verified: EditMode 312/312; LinuxPreview tour on desktop and 20:9 phone, 71 scre
   - pure metals, compounds with no metal, mixed colouring ions and metals not in the table are unsupported.
 - Status: titration COMPLETE within the declared scope; flame test COMPLETE within the declared scope.
 
+- Calculated temperature (`Calorimetry`): for a strong acid + strong base neutralisation, from a mix with volumes or during a titration. ΔH = −55.815 kJ/mol from CODATA ΔfH° values, assuming no heat loss and water-like density and specific heat; labelled "calculated". Other reactions stay "estimated" or "simulated".
+
 Known limits:
 
-- No indicators, weak-acid curves or neutralisation heating.
+- No indicators or weak-acid curves.
 - The burette is mostly hidden behind the headline with the current camera.
 - Not tested on a real Android device.
 

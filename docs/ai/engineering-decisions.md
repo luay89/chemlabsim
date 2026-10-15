@@ -134,6 +134,7 @@ Implications:
 - The flame test uses a fixed table (Li, Na, K, Ca, Sr, Ba, Cu; no colour for Mg, Al, Zn), with sources cited in `FlameTest`. Colours are illustrative sRGB and are never derived from the liquid colour. Pure metals, compounds with no metal, compounds with mixed colouring ions, and metals not in the table are unsupported.
 - Both live in a fourth "Tests" tab (`LabTestsView`). The 3D burette and burner (`LabTestRigs`) only display events. The chemistry stays in `Engine/Chemistry`.
 - Strong acid/base pH uses `PhModel.PhFromNetStrongAcid`, which solves for [OH⁻] on the basic side to avoid floating-point cancellation.
+- A temperature is labelled "calculated" only when the energy balance is known from the student's amounts: strong acid + strong base, via `Calorimetry`, with the assumptions stated in the caption.
 
 ## Decision Update Rules
 

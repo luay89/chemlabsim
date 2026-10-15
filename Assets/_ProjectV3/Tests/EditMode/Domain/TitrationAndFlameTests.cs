@@ -124,6 +124,21 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
             Assert.That(error, Is.Not.Empty);
         }
 
+        [Test]
+        public void TemperatureRise_FromHeatOfNeutralisation()
+        {
+            // 20 mL 1.0 M HCl + 1.0 M NaOH: at 20 mL, 20 mmol water in 40 mL → 6.67 K; after it, no more heat.
+            var m = HClWithNaOH(1.0, 20, 1.0);
+            m.TryPointAt(0, out var p0, out _);
+            m.TryPointAt(20, out var eq, out _);
+            m.TryPointAt(30, out var after, out _);
+            Assert.That(p0.TemperatureRiseK, Is.EqualTo(0.0).Within(1e-12));
+            Assert.That(eq.TemperatureRiseK, Is.EqualTo(0.020 * 55815.0 / (40 * 4.184)).Within(1e-9));
+            Assert.That(after.TemperatureRiseK, Is.EqualTo(0.020 * 55815.0 / (50 * 4.184)).Within(1e-9));   // diluted, no new heat
+            Assert.That(Calorimetry.NeutralisationRiseK(0.01, 0), Is.NaN);
+            Assert.That(Calorimetry.NeutralisationRiseK(double.NaN, 10), Is.NaN);
+        }
+
         // ── Flame test ───────────────────────────────────────────────
 
         [TestCase("LiOH", "Li", "crimson")]

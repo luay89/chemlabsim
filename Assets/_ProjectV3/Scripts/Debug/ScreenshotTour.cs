@@ -27,7 +27,7 @@ namespace ChemLabSimV3.DebugTools
         //      | checks   (optional, ';'-separated, read from the real UI after the reaction:
         //                  panel~text  Result-tab amounts panel contains text
         //                  phv=text    pH card value is exactly text      phc~text  pH caption contains text
-        //                  tc~text     temperature caption contains text
+        //                  tc~text     temperature caption contains text   tv=text  temperature value
         //                  labelA~text / labelB~text  reagent label caption contains text)
         //        Each check logs "[TourCheck] PASS|FAIL step: check"; the totals are logged at the end.
         private static readonly string[] Steps =
@@ -35,7 +35,7 @@ namespace ChemLabSimV3.DebugTools
             "neutralization|HCl|NaOH|Neutral|25|0.6|0.5|0",
             "neutralization_amounts|HCl|NaOH|Neutral|25|0.6|0.5|0|0|20|30|" +
                 "panel~Limiting reactant: <b>HCl</b>;panel~excess, 10 mmol left;panel~= 1.169 g;phv=13.30;" +
-                "phc~approx.;tc~estimated;labelA~20 mL  ·  1.0 M bench stock;labelB~30 mL  ·  1.0 M bench stock",
+                "phc~approx.;tc~calculated from ΔH_neut;tv=30.3 °C;labelA~20 mL  ·  1.0 M bench stock;labelB~30 mL  ·  1.0 M bench stock",
             "magnesium_acid_amounts|Mg|HCl|Neutral|25|0.6|0.6|0|0|0.5|10|" +
                 "panel~Limiting reactant: <b>HCl</b>;panel~10.08 mg;phv=--;phc~not supported;labelA~0.5 g;labelB~10 mL",
             "silver_chloride|AgNO3|NaCl|Neutral|25|0.6|0.5|0|0|25|25|" +
@@ -217,7 +217,7 @@ namespace ChemLabSimV3.DebugTools
             for (int i = 0; i < 5; i++) Click(GameObject.Find("Add1")?.GetComponent<Button>());
             yield return new WaitForSeconds(1.5f);
             yield return Capture("titration_c_equivalence");
-            Verify("titration_20ml", "titr~pH <b>7.00</b>;titr~equivalence point;phv=7.00");
+            Verify("titration_20ml", "titr~pH <b>7.00</b>;titr~equivalence point;phv=7.00;tc~calculated from ΔH_neut");
 
             for (int i = 0; i < 5; i++) Click(GameObject.Find("Add1")?.GetComponent<Button>());
             yield return new WaitForSeconds(1.5f);
@@ -278,6 +278,7 @@ namespace ChemLabSimV3.DebugTools
                 case "phv":    return CardLine("PhCard", 1);
                 case "phc":    return CardLine("PhCard", 2);
                 case "tc":     return CardLine("TemperatureCard", 2);
+                case "tv":     return CardLine("TemperatureCard", 1);
                 case "labelA": return CardLine("ReagentALabel", 2);
                 case "labelB": return CardLine("ReagentBLabel", 2);
                 case "titr":   return FindObjectOfType<LabTestsView>(true)?.TitrationText;

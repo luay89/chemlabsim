@@ -9,6 +9,7 @@
 //   d = (n(H+) − n(OH−)) / V_total,   [H+] = (d + √(d² + 4Kw)) / 2,   pH = −log[H+]
 //   equivalence volume  V_eq = ν_analyte · C_analyte · V_analyte / (ν_titrant · C_titrant)
 // The exact water term keeps the curve continuous through the equivalence point (pH 7.00).
+// Each point also carries the temperature rise from the heat of neutralisation (Calorimetry).
 // Points where |d| > 0.1 M are flagged approximate (activities are not modelled).
 //
 // Not supported, with the reason: weak acids/bases (need a buffer / Ka model of the curve),
@@ -27,6 +28,7 @@ namespace ChemLabSimV3.Engine.Chemistry
         public double Ph;
         public bool Approximate;
         public TitrationRegion Region;
+        public double TemperatureRiseK;   // from the heat of neutralisation (Calorimetry), no heat loss
     }
 
     public class TitrationSetup
@@ -96,6 +98,8 @@ namespace ChemLabSimV3.Engine.Chemistry
                                            : titrantEquivalents - analyteEquivalents) / litres;
             point = new TitrationPoint
             {
+                TemperatureRiseK = Calorimetry.NeutralisationRiseK(Math.Min(titrantEquivalents, analyteEquivalents),
+                                                                   Setup.AnalyteMl + addedMl),
                 AddedMl = addedMl,
                 Ph = PhModel.PhFromNetStrongAcid(netAcid),
                 Approximate = Math.Abs(netAcid) > DiluteLimitM,
