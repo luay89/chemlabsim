@@ -5,11 +5,15 @@
 //             steps; every pH comes from TitrationModel, plotted on TitrationGraph. Unsupported
 //             pairs show the model's reason and no numbers.
 // Flame test  holds reagent A in the burner flame; colour and explanation from FlameTest.
+// Heating    reagent A in the beaker on the hot plate (HeatingLabController + PhaseHeatingModel):
+//             temperature, phase, liquid left, a temperature–time plot and what is happening.
 // Changing reagent A/B or A's amount ends the titration, so no stale curve is ever shown.
 // Display/presenter only — the chemistry lives in Engine/Chemistry.
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using ChemLabSimV3.Controllers;
 using ChemLabSimV3.Data;
 using ChemLabSimV3.Engine.Chemistry;
@@ -28,6 +32,7 @@ namespace ChemLabSimV3.Views.Layout
         private TitrationGraph graph;
         private Button[] addButtons;
         private Image flameSwatch;
+        private string flameSample;
         private LabInputController input;
 
         private TitrationModel model;
@@ -38,6 +43,13 @@ namespace ChemLabSimV3.Views.Layout
         private string setupSignature;
 
         public string TitrationText => titrationReadout != null ? titrationReadout.text : string.Empty;
+        public string HeatingText => heatingReadout != null ? heatingReadout.text + "\n" + heatingExplain.text : string.Empty;
+
+        // Heating lab
+        private HeatingLabController heating;
+        private TextMeshProUGUI heatingReadout, heatingExplain, powerLabel, frozenLabel;
+        private TitrationGraph heatingGraph;
+        private readonly List<Vector2> heatingCurve = new List<Vector2>();
         public string FlameText => flameResult != null ? flameResult.text : string.Empty;
 
         public static LabTestsView Create(RectTransform list)
@@ -52,6 +64,7 @@ namespace ChemLabSimV3.Views.Layout
             layout.childForceExpandHeight = false;
             var view = go.AddComponent<LabTestsView>();
             view.BuildTitration((RectTransform)go.transform);
+            view.BuildHeating((RectTransform)go.transform);
             view.BuildFlameTest((RectTransform)go.transform);
             view.ClearTitration("Choose an acid as reagent A (with its volume in mL) and a base as reagent B, or the other way round, then press Set up.");
             view.flameResult.text = "Choose a salt as reagent A, then hold it in the flame.";
@@ -61,6 +74,7 @@ namespace ChemLabSimV3.Views.Layout
         // Awake/OnDestroy: the panel lives in a tab that is often hidden.
         private void Awake()
         {
+            EventBus.Subscribe<HeatingUpdatedEvent>(OnHeating);
             EventBus.Subscribe<InputChangedEvent>(OnInputChanged);
             EventBus.Subscribe<ReactionEvaluatedEvent>(OnMix);
             EventBus.Subscribe<ReactionNotFoundEvent>(OnMixNotFound);
@@ -68,6 +82,7 @@ namespace ChemLabSimV3.Views.Layout
 
         private void OnDestroy()
         {
+            EventBus.Unsubscribe<HeatingUpdatedEvent>(OnHeating);
             EventBus.Unsubscribe<InputChangedEvent>(OnInputChanged);
             EventBus.Unsubscribe<ReactionEvaluatedEvent>(OnMix);
             EventBus.Unsubscribe<ReactionNotFoundEvent>(OnMixNotFound);
@@ -75,6 +90,14 @@ namespace ChemLabSimV3.Views.Layout
 
         private void OnInputChanged(InputChangedEvent e)
         {
+            // A flame-test result belongs to the sample it was made with.
+            string sample = input != null ? input.CurrentInput.ReagentA : null;
+            if (flameSample != null && sample != flameSample)
+            {
+                flameSample = null;
+                flameSwatch.color = new Color(0f, 0f, 0f, 0f);
+                flameResult.text = "Choose a salt as reagent A, then hold it in the flame.";
+            }
             // Also clears an "unsupported" message that was about the previous reagents.
             if (setupSignature != null && Signature() != setupSignature)
                 ClearTitration("The reagents or the volume changed. Press Set up to start a new titration.");
@@ -244,6 +267,106 @@ namespace ChemLabSimV3.Views.Layout
             return $"{input.CurrentInput.ReagentA}|{input.CurrentInput.ReagentB}|{v.ToString(CultureInfo.InvariantCulture)}|{unit}";
         }
 
+        // ── Heating (physical change) ─────────────────────────────────
+
+        private void BuildHeating(RectTransform parent)
+        {
+            heating = gameObject.AddComponent<HeatingLabController>();
+            var panel = Panel(parent, "HeatingPanel", "HEATING  ·  PHYSICAL CHANGE");
+            var intro = Text(panel, "Setup", 13f, LabTheme.MutedText);
+            intro.text = "Reagent A (its amount) in the beaker on the hot plate, starting at the Temperature slider's value. " +
+                         "Works for substances with sourced heat data: water and ethanol.";
+
+            var row = Row(panel, "HeatingButtons");
+            AddButton(row, "HeatButton", "Heat", LabTheme.Accent, () =>
+            {
+                if (!heating.Heat(out string why)) heatingReadout.text = "<color=#FFBD47>" + why + "</color>";
+            });
+            AddButton(row, "HeaterOffButton", "Heater off", LabTheme.ControlColor, () => heating.HeaterOff());
+            AddButton(row, "HeatResetButton", "Reset", LabTheme.ControlColor, () =>
+            {
+                heating.End();
+                heatingCurve.Clear();
+                heatingGraph.Clear();
+                heatingReadout.text = "Press Heat to start.";
+                heatingExplain.text = string.Empty;
+            });
+
+            var row2 = Row(panel, "HeatingOptions");
+            powerLabel = AddButton(row2, "PowerButton", PowerText(), LabTheme.ControlColor, () =>
+            {
+                heating.NextPower();
+                powerLabel.text = PowerText();
+            }).GetComponentInChildren<TextMeshProUGUI>();
+            frozenLabel = AddButton(row2, "FrozenButton", "Start frozen: no", LabTheme.ControlColor, () =>
+            {
+                heating.StartFrozen = !heating.StartFrozen;
+                frozenLabel.text = "Start frozen: " + (heating.StartFrozen ? "yes (0 °C)" : "no");
+            }).GetComponentInChildren<TextMeshProUGUI>();
+
+            heatingReadout = Text(panel, "HeatingReadout", 15f, LabTheme.TextColor);
+            heatingReadout.text = "Press Heat to start.";
+            var graphGo = new GameObject("HeatingGraph", typeof(RectTransform));
+            graphGo.layer = panel.gameObject.layer;
+            graphGo.transform.SetParent(panel, false);
+            graphGo.AddComponent<LayoutElement>().preferredHeight = 130f;
+            heatingGraph = graphGo.AddComponent<TitrationGraph>();
+            heatingGraph.raycastTarget = false;
+            heatingExplain = Text(panel, "HeatingExplain", 13f, LabTheme.TextColor);
+            var note = Text(panel, "HeatingAssumptions", 11.5f, LabTheme.MutedText);
+            note.text = PhaseHeatingModel.Assumptions + $" Simulated time runs {HeatingLabController.Acceleration:0}× faster than real time.";
+        }
+
+        private string PowerText() => $"Power: {heating.PowerW:0} W";
+
+        private void OnHeating(HeatingUpdatedEvent e)
+        {
+            if (!e.Active)
+            {
+                heatingCurve.Clear();
+                heatingGraph.Clear();
+                heatingReadout.text = string.IsNullOrEmpty(e.Message) ? "Press Heat to start." : e.Message;
+                heatingExplain.text = string.Empty;
+                return;
+            }
+            if (!e.Supported)
+            {
+                heatingReadout.text = "<color=#FFBD47>" + e.Message + "</color>";
+                heatingExplain.text = string.Empty;
+                return;
+            }
+            powerLabel.text = PowerText();
+            string phase = e.Phase switch
+            {
+                SamplePhase.Solid => "solid",
+                SamplePhase.Melting => "melting",
+                SamplePhase.Boiling => "boiling",
+                SamplePhase.Freezing => "freezing",
+                SamplePhase.Empty => "boiled dry",
+                _ => "liquid",
+            };
+            string liquid = double.IsNaN(e.LiquidMl) ? "?" : e.LiquidMl.ToString("0.0", CultureInfo.InvariantCulture);
+            string solid = e.SolidMl > 0 ? $" + {e.SolidMl.ToString("0.0", CultureInfo.InvariantCulture)} mL solid" : string.Empty;
+            int seconds = (int)e.TimeS;
+            heatingReadout.text =
+                $"<b>{e.TemperatureC.ToString("0.0", CultureInfo.InvariantCulture)} °C</b>  ·  <b>{phase}</b>  ·  heater {(e.HeaterOn ? "on" : "off")}\n" +
+                $"{liquid} mL liquid{solid}  ·  {e.VaporizedG.ToString("0.00", CultureInfo.InvariantCulture)} g boiled off  ·  {seconds / 60}:{seconds % 60:00} simulated";
+            heatingExplain.text = heating.Sample != null ? PhaseHeatingModel.Explain(heating.Sample, e.HeaterOn) : string.Empty;
+
+            // Temperature against simulated time (thinned out to stay light).
+            if (heatingCurve.Count == 0 || e.TimeS > heatingCurve[heatingCurve.Count - 1].x + 0.5)
+                heatingCurve.Add(new Vector2((float)e.TimeS, (float)e.TemperatureC));
+            if (heatingCurve.Count > 400)
+                for (int i = heatingCurve.Count - 2; i > 0; i -= 2) heatingCurve.RemoveAt(i);
+            var d = heating.Sample?.Data;
+            double top = Math.Max(e.BoilingPointC + 15, 40);
+            double bottom = d != null && heatingCurve.Any(p => p.y < 15) ? Math.Min(0, d.meltingPointC) - 5 : 15;
+            var guides = d != null && d.meltingPointC > bottom
+                ? new[] { (double)d.boilingPointC, d.meltingPointC }
+                : new[] { e.BoilingPointC };
+            heatingGraph.SetLine(heatingCurve, Math.Max(60, e.TimeS * 1.15), bottom, top, guides);
+        }
+
         // ── Flame test ─────────────────────────────────────────────────
 
         private void BuildFlameTest(RectTransform parent)
@@ -268,6 +391,7 @@ namespace ChemLabSimV3.Views.Layout
         {
             if (input == null) input = FindObjectOfType<LabInputController>();
             string sample = input != null ? input.CurrentInput.ReagentA : null;
+            flameSample = sample;
             var result = FlameTest.Test(sample);
             switch (result.Status)
             {

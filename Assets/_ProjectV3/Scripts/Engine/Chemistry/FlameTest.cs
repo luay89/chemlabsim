@@ -40,7 +40,8 @@ namespace ChemLabSimV3.Engine.Chemistry
         public FlameColourEntry Entry;   // valid when Status == Characteristic
         public string Explanation;       // what the student reads (also the reason when unsupported)
 
-        public bool HasColour => Status == FlameTestStatus.Characteristic;
+        // A default (never tested) result has no element, so it never counts as a colour.
+        public bool HasColour => Status == FlameTestStatus.Characteristic && !string.IsNullOrEmpty(Entry.Element);
     }
 
     public static class FlameTest

@@ -176,6 +176,7 @@ namespace ChemLabSimV3.Views.Bench3D
             EventBus.Subscribe<EnvironmentFxChangedEvent>(OnEnvironmentFx);
             EventBus.Subscribe<InputChangedEvent>(OnInputChanged);
             EventBus.Subscribe<TitrationUpdatedEvent>(OnTitration);
+            EventBus.Subscribe<HeatingUpdatedEvent>(OnHeating);
         }
 
         private void OnDisable()
@@ -188,6 +189,7 @@ namespace ChemLabSimV3.Views.Bench3D
             EventBus.Unsubscribe<EnvironmentFxChangedEvent>(OnEnvironmentFx);
             EventBus.Unsubscribe<InputChangedEvent>(OnInputChanged);
             EventBus.Unsubscribe<TitrationUpdatedEvent>(OnTitration);
+            EventBus.Unsubscribe<HeatingUpdatedEvent>(OnHeating);
         }
 
         // ── Scene construction ─────────────────────────────────────────
@@ -741,6 +743,16 @@ namespace ChemLabSimV3.Views.Bench3D
             }
         }
 
+        /// <summary>The beaker holds a water-based solution (aqueous reagent or reaction).</summary>
+        private bool AqueousBeaker()
+        {
+            if (previewState == "aqueous" || previewState == "aq") return true;
+            if (lastReaction == null) return false;
+            foreach (var c in lastReaction.reactants) if (c.state == "aq") return true;
+            foreach (var c in lastReaction.products) if (c.state == "aq") return true;
+            return false;
+        }
+
         // ── Volume ─────────────────────────────────────────────────────
 
         // Text is rebuilt only when the volume (or whether there is liquid) changes.
@@ -843,6 +855,47 @@ namespace ChemLabSimV3.Views.Bench3D
             lastReaction = e.Input.reaction;
             mixVolume = VolumeOfMix();
             experimentSignature = ExperimentSignature();
+        }
+
+        // Heating lab: the bench shows the model's state — liquid left, ice, boiling, vapour.
+        private bool heatingShown, heatingBoiling;
+        private float heatingTempC, heatingEvaporation;
+        private static readonly Color IceColor = new Color(0.86f, 0.93f, 1f, 0.95f);
+
+        private void OnHeating(HeatingUpdatedEvent e)
+        {
+            if (!e.Active || !e.Supported)
+            {
+                if (!heatingShown) return;
+                heatingShown = heatingBoiling = false;
+                if (hotPlate != null) hotPlate.TargetC = benchTemperatureC;
+                if (!reacting && (pourFlask == null || !pourFlask.Busy))
+                {
+                    beakerVolume = VolumeOfReagentA();
+                    foamTarget = 0f;
+                    SetIdle(previewState, previewHex);
+                }
+                return;
+            }
+            if (!heatingShown && !reacting && (pourFlask == null || !pourFlask.Busy))
+                PrepareFreshBeaker();   // heating starts from reagent A alone, not from an earlier mixture
+            heatingShown = true;
+            heatingTempC = (float)e.TemperatureC;
+            heatingBoiling = e.Phase == SamplePhase.Boiling;
+            heatingEvaporation = e.EvaporationVisual;
+            // The plate's ring shows only that the heater is on (its surface temperature is not modelled).
+            if (hotPlate != null) hotPlate.TargetC = e.HeaterOn ? 150f : benchTemperatureC;
+
+            beakerVolume = double.IsNaN(e.LiquidMl)
+                ? VolumeReading.Unknown("no density")
+                : VolumeReading.Of(e.LiquidMl, e.Phase == SamplePhase.Empty ? "all boiled away" : "liquid left (heating model)");
+            liquidTarget = e.LiquidMl > 0 ? LevelFor(beakerVolume, 0f) : 0f;
+            // Ice floats on its melt water; on its own it sits on the bottom. Its height follows its volume.
+            float ice = e.SolidMl > 0 && beakerScale != null ? Mathf.Clamp01((float)(beakerScale.HeightOf(e.SolidMl) / MaxFill)) : 0f;
+            bool floating = e.LiquidMl > 0.5;
+            solidTarget = floating ? 0f : ice;
+            foamTarget = floating ? ice : 0f;
+            if (ice > 0f) solidTargetColor = IceColor;
         }
 
         // Titration: the beaker fills with the added titrant and takes the indicator's colour.
@@ -984,7 +1037,7 @@ namespace ChemLabSimV3.Views.Bench3D
 
             // Reaction heat fades back toward the bench temperature over ~20 s.
             float heatFade = reacting ? Mathf.Exp(-reactionTime / 20f) : 0f;
-            float temperatureC = benchTemperatureC + reactionDeltaC * heatFade;
+            float temperatureC = heatingShown ? heatingTempC : benchTemperatureC + reactionDeltaC * heatFade;
 
             // Precipitate: the liquid clouds up first, then the solid settles to the bottom.
             if (precipitateOn)
@@ -1062,7 +1115,9 @@ namespace ChemLabSimV3.Views.Bench3D
             if (liquidHeight > 0.05f)
             {
                 bubbleRate = new[] { 0f, 35f, 110f, 260f }[Mathf.Clamp(effervescence, 0, 3)] * fade;
-                if (temperatureC >= 100f) bubbleRate += 80f;   // boiling
+                if (heatingShown) bubbleRate = heatingBoiling ? 160f : 0f;           // boiling, as the heating model says
+                else if (temperatureC >= 100f && AqueousBeaker()) bubbleRate += 80f;  // water-based solution near 100 °C
+                                                                                      // (boiling-point elevation not modelled)
                 var main = bubbles.main;
                 main.startLifetime = liquidHeight / 0.4f;
                 bubbles.transform.position = liquid.position + Vector3.up * (solidLevel * MaxFill + 0.02f);
@@ -1096,6 +1151,9 @@ namespace ChemLabSimV3.Views.Bench3D
             float hot = Mathf.Clamp01((temperatureC - 55f) / 45f);
             float steamRate = Mathf.Max(envSteamRate, hot * 30f);
             if (vapor) steamRate = Mathf.Max(steamRate, 25f * Mathf.Max(fade, 0.2f));
+            // Heating lab: vapour pours off while boiling; below the boiling point a few faint wisps
+            // stand for evaporation at the surface (illustrative: its rate is not modelled).
+            if (heatingShown) steamRate = heatingBoiling ? 40f : 8f * heatingEvaporation * heatingEvaporation;
             if (liquidHeight < 0.02f && !vapor) steamRate = 0f;
             SetRate(steam, steamRate);
 
