@@ -112,6 +112,18 @@ namespace ChemLabSimV3.Views.Bench3D
             }
         }
 
+        // Shelf liquids are dimmed so the background stays behind the experiment, and share one
+        // material per colour (the shelf repeats its colours).
+        private static readonly System.Collections.Generic.Dictionary<Color, Material> shelfLiquids =
+            new System.Collections.Generic.Dictionary<Color, Material>();
+
+        private static Material ShelfLiquid(Color c)
+        {
+            if (shelfLiquids.TryGetValue(c, out var m) && m != null) return m;
+            var dim = new Color(c.r * 0.68f, c.g * 0.68f, c.b * 0.68f, c.a);
+            return shelfLiquids[c] = Bench3DMeshes.Glass(dim, 2984, CullMode.Back);
+        }
+
         private static void AddBottle(Transform parent, Vector3 pos, float radius, float height, Material glass, Color liquid)
         {
             var body = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
@@ -128,7 +140,7 @@ namespace ChemLabSimV3.Views.Bench3D
             float level = height * (0.45f + liquid.a * 0.3f);
             fill.transform.localScale = new Vector3(radius * 1.8f, level * 0.5f, radius * 1.8f);
             fill.transform.localPosition = pos + Vector3.up * (level * 0.5f + 0.01f);
-            fill.GetComponent<Renderer>().sharedMaterial = Bench3DMeshes.Glass(liquid, 2984, CullMode.Back);
+            fill.GetComponent<Renderer>().sharedMaterial = ShelfLiquid(liquid);
             Object.Destroy(fill.GetComponent<Collider>());
 
             var cap = GameObject.CreatePrimitive(PrimitiveType.Cylinder);

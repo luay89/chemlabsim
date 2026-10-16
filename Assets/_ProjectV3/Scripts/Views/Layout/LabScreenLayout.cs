@@ -138,6 +138,7 @@ namespace ChemLabSimV3.Views.Layout
             assistantView = LabAssistantView.Create(scrolls[AssistantTab].content);
             assistantView.SetWidth(columnWidth);
             LabTestsView.Create(scrolls[TestsTab].content);
+            CreatePeriodicTableButton();
             speedBar = SimulationSpeedBar.Create(safeArea);
 
             quizPanel = FindPanel("QuizPanel")?.gameObject;
@@ -296,6 +297,38 @@ namespace ChemLabSimV3.Views.Layout
                 toast.anchorMin = toast.anchorMax = toast.pivot = new Vector2(0.5f, 0f);
                 toast.anchoredPosition = new Vector2(centreX, hintHeight + 2f * Margin);
             }
+        }
+
+        // Periodic Table & Element Explorer: a full-screen panel over the lab, opened from a small
+        // button in the corner of Lab Controls (beside the panel title).
+        private PeriodicTableView periodicTable;
+
+        private void CreatePeriodicTableButton()
+        {
+            periodicTable = PeriodicTableView.Create(safeArea, null);
+            var host = controlsPanel != null ? controlsPanel : safeArea;
+            var rect = NewRect("PeriodicTableButton", host);
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(1f, 1f);
+            rect.sizeDelta = new Vector2(124f, 24f);
+            rect.anchoredPosition = new Vector2(-8f, -6f);
+            var image = rect.gameObject.AddComponent<Image>();
+            LabTheme.Round(image, LabTheme.Accent, 2f);
+            var button = rect.gameObject.AddComponent<Button>();
+            button.targetGraphic = image;
+            button.onClick.AddListener(() => periodicTable.Open());
+            var label = NewRect("Label", rect);
+            label.anchorMin = Vector2.zero;
+            label.anchorMax = Vector2.one;
+            label.offsetMin = label.offsetMax = Vector2.zero;
+            var text = label.gameObject.AddComponent<TextMeshProUGUI>();
+            text.text = "Periodic Table";
+            text.fontSize = 13;
+            text.fontStyle = FontStyles.Bold;
+            text.alignment = TextAlignmentOptions.Center;
+            text.color = Color.white;
+            text.raycastTarget = false;
+            var element = rect.gameObject.AddComponent<LayoutElement>();
+            element.ignoreLayout = true;   // the panel's own layout must not move it
         }
 
         private Image CreateTab(RectTransform parent, string label, UnityEngine.Events.UnityAction onClick)

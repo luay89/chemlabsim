@@ -372,7 +372,20 @@
     ],
     "used_in_reactions": [],
     "densityGPerMl": 0.789,
-    "densitySource": "CRC Handbook 97th ed., 20 °C"
+    "densitySource": "CRC Handbook 97th ed., 20 °C",
+    "thermal": {
+      "available": true,
+      "referencePressureKPa": 101.325,
+      "meltingPointC": -114.0,
+      "boilingPointC": 78.35,
+      "heatCapacityLiquidJPerGK": 2.44,
+      "heatCapacitySolidJPerGK": 0.0,
+      "enthalpyFusionJPerG": 0.0,
+      "enthalpyVaporizationJPerG": 837.0,
+      "solidDensityGPerMl": 0.0,
+      "source": "NIST Chemistry WebBook, retrieved 2026-10-15: Tboil 351.5 K, ΔvapH 38.56 kJ/mol (Majer and Svoboda 1985), cp(liquid) 112.4 J/(mol·K) at 298 K (Petrov et al. 1989), Tfus 159 K",
+      "notes": "Liquid heat capacity at 25 °C taken as constant. Flammable vapour: in a real lab ethanol is warmed in a water bath, never over a flame."
+    }
   },
   {
     "id": "mat_c6h12o6",
@@ -1088,7 +1101,20 @@
       "rxn_012"
     ],
     "densityGPerMl": 0.997,
-    "densitySource": "CRC Handbook 97th ed., 25 °C"
+    "densitySource": "CRC Handbook 97th ed., 25 °C",
+    "thermal": {
+      "available": true,
+      "referencePressureKPa": 101.325,
+      "meltingPointC": 0.0,
+      "boilingPointC": 99.97,
+      "heatCapacityLiquidJPerGK": 4.19,
+      "heatCapacitySolidJPerGK": 0.0,
+      "enthalpyFusionJPerG": 333.6,
+      "enthalpyVaporizationJPerG": 2256.5,
+      "solidDensityGPerMl": 0.9167,
+      "source": "NIST Chemistry WebBook SRD 69 (IAPWS-95), retrieved 2026-10-15: boiling point, enthalpy of vaporization, liquid heat capacity; CRC Handbook 97th ed.: melting point, enthalpy of fusion, density of ice",
+      "notes": "Liquid heat capacity taken as constant (4.18–4.22 J/(g·K) over 1–99 °C). No heat capacity for ice: a frozen sample starts at 0 °C."
+    }
   },
   {
     "id": "mat_h2o2",
