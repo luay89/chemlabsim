@@ -152,6 +152,24 @@ Known limits:
   - The assumptions now state that the volume is shown at its 25 °C density.
 - Verified: EditMode suite, desktop and phone tours, Linux and Android builds (see PR #9).
 
+## Element texts and lab polish (2026-10-16, branch `android/polish-element-data`, stacked on PR #9; not committed yet)
+
+- **Element explorer texts,** quoted verbatim with the source and link (`tools/elements/extract_pubchem_texts.py` → `pubchem_element_texts_2026-10-16.json` → `build_elements.py`):
+  - **Uses:** 116/118 elements, from Jefferson Lab or Los Alamos National Laboratory (U.S. DOE), via PubChem.
+  - **Occurrence & production:** 69/118, from LANL (its "Sources" text covers both).
+  - **Abundance in the crust:** 88 listed, 30 not applicable. **In seawater:** 81 listed, 37 not applicable. Both from Jefferson Lab.
+  - **Safety:** the EU harmonised classification (CLP Annex VI) for 22 elements, per classified form. The other 96 say that no harmonised entry was found and that this does not mean the element is safe.
+  - Review fix (2026-10-17): PubChem listed a CLP entry for an azo dye under chlorine. Only entries whose classified substance is a form of the element itself are kept now, with a regression test; Cl shows no classification.
+  - **Licensing (read 2026-10-17) — release blockers:**
+    - **LANL:** "The public may copy and use this information without charge, provided that this Notice and any statement of authorship are reproduced on all copies." Done: the notice is shown verbatim in the References of every element that quotes LANL.
+    - **Jefferson Lab:** PubChem points to education.jlab.org/faq for "citation and linking", but that page states no reuse terms. **Unresolved:** permission or terms are needed before a commercial or store release.
+    - **PubChem:** its licensing page could not be read (behind a browser check). The texts belong to their depositors (JLab, LANL), and PubChem's own terms are **still to be confirmed**.
+    - **EU CLP:** EUR-Lex content is generally reusable with acknowledgement; **not verified in this session**.
+- **Lab look:**
+  - Mid-grey satin hot-plate casing; it had been the brightest object in view.
+  - Lip highlight ring on the beaker.
+  - Meniscus line that follows the liquid surface.
+
 ## Data Status
 
 Primary JSON content:
