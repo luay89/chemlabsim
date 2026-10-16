@@ -348,8 +348,16 @@ namespace ChemLabSimV3.Views.Layout
             Section(sb, "DISCOVERY");
             Line(sb, "Discovered", e.discovery.HasValue ? e.discovery.text : "—", e.discovery);
 
-            Section(sb, "OCCURRENCE · USES · SAFETY");
-            sb.Append(Muted("Not yet included: these texts will be added from a citable source.")).Append('\n');
+            Section(sb, "OCCURRENCE & PRODUCTION");   // the source's "Sources" text covers both
+            Quote(sb, e.occurrence, table);
+            Line(sb, "Abundance in the Earth's crust", e.crustalAbundance.HasValue ? e.crustalAbundance.text : "—", e.crustalAbundance);
+            Line(sb, "Abundance in seawater", e.oceanicAbundance.HasValue ? e.oceanicAbundance.text : "—", e.oceanicAbundance);
+
+            Section(sb, "USES & APPLICATIONS");
+            Quote(sb, e.uses, table);
+
+            Section(sb, "SAFETY · EU HARMONISED CLASSIFICATION");
+            Quote(sb, e.safety, table);
 
             Section(sb, "IN THIS LAB");
             var elemental = Elemental(e, materials).ToList();
@@ -371,10 +379,30 @@ namespace ChemLabSimV3.Views.Layout
             if (heated.Count > 0) sb.Append($"Heating lab (physical change): {string.Join(", ", heated)}\n");
 
             Section(sb, "REFERENCES");
-            foreach (var id in new[] { "pubchem_pt", "ciaaw_2021" })
-                if (table != null && table.TryGetSource(id, out var src))
+            var used = new HashSet<string> { "pubchem_pt", "ciaaw_2021" };
+            foreach (var p in new[] { e.uses, e.occurrence, e.safety, e.crustalAbundance, e.oceanicAbundance })
+                if (p.HasValue && !string.IsNullOrEmpty(p.source)) used.Add(p.source);
+            foreach (var id in new[] { "pubchem_pt", "ciaaw_2021", "jlab", "lanl", "eu_clp" })
+                if (used.Contains(id) && table != null && table.TryGetSource(id, out var src))
+                {
                     sb.Append(Muted($"{src.citation} — {src.url} (retrieved {src.retrieved})")).Append('\n');
+                    if (!string.IsNullOrEmpty(src.notice)) sb.Append(Muted(src.notice)).Append('\n');   // required by the source
+                }
             return sb.ToString().TrimEnd();
+        }
+
+        /// <summary>A text quoted from its source, followed by the attribution (or why there is none).</summary>
+        private static void Quote(StringBuilder sb, ElementProperty p, ElementTable table)
+        {
+            if (!p.HasValue)
+            {
+                sb.Append(Muted(string.IsNullOrEmpty(p.note) ? "Not available." : p.note)).Append('\n');
+                return;
+            }
+            sb.Append(p.text).Append('\n');
+            if (!string.IsNullOrEmpty(p.note)) sb.Append(Muted(p.note)).Append('\n');
+            string who = table != null && table.TryGetSource(p.source, out var s) ? s.citation : p.source;
+            sb.Append(Muted("Source: " + who + (string.IsNullOrEmpty(p.url) ? string.Empty : " — " + p.url))).Append('\n');
         }
 
         private static void Section(StringBuilder sb, string title)

@@ -36,7 +36,9 @@ namespace ChemLabSimV3.Views.Bench3D
             body.transform.SetParent(transform, false);
             body.transform.localScale = new Vector3(1.25f, Height - 0.012f, 1.15f);
             body.transform.localPosition = new Vector3(0f, (Height - 0.012f) * 0.5f, 0.05f);
-            body.GetComponent<Renderer>().sharedMaterial = Bench3DMeshes.Lit(new Color(0.78f, 0.80f, 0.82f), 0.55f, 0.3f);
+            // Mid-grey satin casing: a light glossy casing was the brightest thing in view and pulled
+            // the eye away from the beaker.
+            body.GetComponent<Renderer>().sharedMaterial = Bench3DMeshes.Lit(new Color(0.40f, 0.42f, 0.45f), 0.4f, 0.2f);
             Destroy(body.GetComponent<Collider>());
 
             var top = GameObject.CreatePrimitive(PrimitiveType.Cylinder);

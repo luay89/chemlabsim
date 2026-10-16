@@ -150,6 +150,13 @@ Status: accepted (open to review)
   - Thermal data is stored per material with its source; there is no generic default.
   - The heat-loss coefficient is an illustrative model value and is labelled as such.
 
+### 2026-10-16: Element texts are quoted, never written
+
+Status: accepted (open to review)
+
+- Descriptive element texts (uses, occurrence) are quoted verbatim from the U.S. DOE labs' pages as PubChem lists them, each with its link. They are not summarised, so nothing is reworded into a claim the source did not make.
+- Safety uses only the EU harmonised classification (CLP Annex VI), shown per classified form. Industry notifications are not used because they vary between notifiers. A missing entry is never shown as "safe".
+
 ## Decision Update Rules
 
 - Add a new dated entry when a meaningful architectural or process choice changes.
