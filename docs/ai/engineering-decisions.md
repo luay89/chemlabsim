@@ -170,6 +170,16 @@ Status: accepted (open to review)
 - **Calculated temperature for any reaction in water:** ΔT = −ΔH°·ξ / (V·ρ·c), with the neutralisation assumptions. Refused, with the reason shown, for heated reactions, electrolysis, a liquid other than water, H2SO4 (its heat of dilution at bench strength is ≈ 22 kJ/mol, NBS p. 2-58), and results that would boil or freeze the water. Strong acid + strong base keeps the existing `TryNeutralisation` path; both routes give the same −55.8 kJ/mol.
 - **Data corrections found by the sign check:** 10 room-temperature reactions in solution stored a small warming although ΔH° is endothermic (e.g. vinegar + baking soda, +30.9 kJ/mol). Their observed ΔT sign was turned to a fall (`TEMPERATURE_SIGN_FIX` in the tool). Heated reactions, electrolysis and concentrated acids keep theirs.
 
+### 2026-10-19: Guided experiments are checked against the live lab, not scored
+
+Status: accepted (open to review)
+
+- A step is done when the lab shows what it asks for (`GuidedExperimentRunner.Check` on a `LabSnapshot` built from `LabInputController.CurrentInput` and the last mix). There is no score: the goal is to see and understand, and the student moves on by doing.
+- Mix steps compare the reaction id and status the engine returned, so a lesson can never claim a result the simulation did not produce. A test runs every shipped step against the engine.
+- Guided content is English text in the JSON (English-first UI); there are no label keys for it.
+- The 3D bench follows the calculated temperature when there is one, so the picture and the thermometer agree; the observed ΔT stays the fallback.
+- "Predict" is optional and never blocks Mix; its answers come only from the engine's data.
+
 ## Decision Update Rules
 
 - Add a new dated entry when a meaningful architectural or process choice changes.

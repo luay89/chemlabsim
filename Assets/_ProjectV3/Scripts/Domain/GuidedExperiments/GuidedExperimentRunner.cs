@@ -1,268 +1,145 @@
-// ChemLabSim v3 — Guided Experiment Runner
+// ChemLabSim v3 — Guided experiment runner
 // Pure C# — no Unity dependencies.
-// Validates experiment steps and scores results.
+// Holds the experiments, runs a session step by step, and checks the current step against the
+// live lab state. A step is done when the lab shows what it asks for; otherwise the check says
+// what is still missing, in the student's terms.
 
 using System;
 using System.Collections.Generic;
-using ChemLabSimV3.Data;
-using ChemLabSimV3.Engine;
+using System.Linq;
 
 namespace ChemLabSimV3.Domain.GuidedExperiments
 {
-    /// <summary>
-    /// Validates student actions against experiment step requirements.
-    /// Pure business logic — no UI or Unity dependencies.
-    /// </summary>
     public class GuidedExperimentRunner
     {
-        private readonly Dictionary<string, GuidedExperimentDef> _experiments;
+        private readonly List<GuidedExperimentDef> _ordered = new List<GuidedExperimentDef>();
+        private readonly Dictionary<string, GuidedExperimentDef> _experiments =
+            new Dictionary<string, GuidedExperimentDef>(StringComparer.OrdinalIgnoreCase);
 
-        public GuidedExperimentRunner(List<GuidedExperimentDef> experiments)
+        public GuidedExperimentRunner(IEnumerable<GuidedExperimentDef> experiments)
         {
-            _experiments = new Dictionary<string, GuidedExperimentDef>(
-                StringComparer.OrdinalIgnoreCase);
-
-            if (experiments != null)
+            if (experiments == null) return;
+            foreach (var exp in experiments)
             {
-                foreach (var exp in experiments)
-                {
-                    if (exp != null && !string.IsNullOrEmpty(exp.Id))
-                        _experiments[exp.Id] = exp;
-                }
+                if (exp == null || string.IsNullOrEmpty(exp.id) || _experiments.ContainsKey(exp.id)) continue;
+                _experiments[exp.id] = exp;
+                _ordered.Add(exp);
             }
         }
 
         /// <summary>Number of registered experiments.</summary>
-        public int Count => _experiments.Count;
+        public int Count => _ordered.Count;
 
-        /// <summary>Get an experiment definition by ID.</summary>
         public GuidedExperimentDef Get(string experimentId)
         {
             if (string.IsNullOrEmpty(experimentId)) return null;
             return _experiments.TryGetValue(experimentId, out var exp) ? exp : null;
         }
 
-        /// <summary>Get all available experiments.</summary>
-        public IEnumerable<GuidedExperimentDef> GetAll()
-        {
-            return _experiments.Values;
-        }
+        /// <summary>All experiments in the order of the data file.</summary>
+        public IReadOnlyList<GuidedExperimentDef> GetAll() => _ordered;
 
-        /// <summary>Get experiments by category.</summary>
         public List<GuidedExperimentDef> GetByCategory(string category)
-        {
-            var result = new List<GuidedExperimentDef>();
-            foreach (var exp in _experiments.Values)
-            {
-                if (string.Equals(exp.Category, category, StringComparison.OrdinalIgnoreCase))
-                    result.Add(exp);
-            }
-            return result;
-        }
+            => _ordered.Where(e => string.Equals(e.category, category, StringComparison.OrdinalIgnoreCase)).ToList();
 
-        /// <summary>Get experiments by difficulty level.</summary>
         public List<GuidedExperimentDef> GetByDifficulty(int level)
-        {
-            var result = new List<GuidedExperimentDef>();
-            foreach (var exp in _experiments.Values)
-            {
-                if (exp.DifficultyLevel == level)
-                    result.Add(exp);
-            }
-            return result;
-        }
+            => _ordered.Where(e => e.difficultyLevel == level).ToList();
 
-        /// <summary>
-        /// Start a new experiment session.
-        /// </summary>
         public ExperimentSession StartSession(string experimentId)
         {
             var def = Get(experimentId);
-            if (def == null) return null;
-
-            return new ExperimentSession
-            {
-                ExperimentId = experimentId,
-                CurrentStepIndex = 0,
-                StepResults = new List<StepResult>(),
-                TotalScore = 0f,
-                IsCompleted = false,
-                IsPerfect = false,
-                StartedAt = DateTime.UtcNow,
-                StepData = new Dictionary<string, object>()
-            };
+            if (def == null || def.steps == null || def.steps.Count == 0) return null;
+            return new ExperimentSession { ExperimentId = def.id, CurrentStepIndex = 0, StartedAt = DateTime.UtcNow };
         }
 
-        /// <summary>
-        /// Get the current step definition for a session.
-        /// </summary>
         public ExperimentStep GetCurrentStep(ExperimentSession session)
         {
             var def = Get(session?.ExperimentId);
-            if (def == null || session == null) return null;
-            if (session.CurrentStepIndex < 0 || session.CurrentStepIndex >= def.Steps.Count)
-                return null;
-            return def.Steps[session.CurrentStepIndex];
+            if (def == null || session.CurrentStepIndex < 0 || session.CurrentStepIndex >= def.steps.Count) return null;
+            return def.steps[session.CurrentStepIndex];
         }
 
-        /// <summary>
-        /// Validate a step against the current step's validation rules.
-        /// Returns a StepResult with pass/fail and score.
-        /// </summary>
-        public StepResult ValidateStep(ExperimentSession session, MixRequest mixRequest, ReactionEvaluationResult? evaluation)
+        /// <summary>Moves to the next step; false (and the session completed) after the last one.</summary>
+        public bool AdvanceStep(ExperimentSession session)
         {
-            var result = new StepResult
-            {
-                StepNumber = session.CurrentStepIndex + 1,
-                Passed = false,
-                Score = 0f,
-                AttemptsCount = 1,
-                HintUsed = false
-            };
-
-            var step = GetCurrentStep(session);
-            if (step == null)
-            {
-                result.FeedbackKey = "guidedExp_error_stepNotFound";
-                return result;
-            }
-
-            var validation = step.Validation;
-            if (validation == null)
-            {
-                // No validation rules = auto-pass
-                result.Passed = true;
-                result.Score = 1f;
-                result.FeedbackKey = "guidedExp_stepPassed";
-                return result;
-            }
-
-            float maxScore = 1f;
-            float earnedScore = 1f;
-
-            // Validate temperature
-            if (validation.MinTemperature.HasValue && mixRequest.Temperature < validation.MinTemperature.Value)
-            {
-                earnedScore -= 0.25f;
-            }
-            if (validation.MaxTemperature.HasValue && mixRequest.Temperature > validation.MaxTemperature.Value)
-            {
-                earnedScore -= 0.25f;
-            }
-
-            // Validate stirring
-            if (validation.MinStirring.HasValue && mixRequest.Stirring < validation.MinStirring.Value)
-            {
-                earnedScore -= 0.2f;
-            }
-
-            // Validate grinding
-            if (validation.MinGrinding.HasValue && mixRequest.Grinding < validation.MinGrinding.Value)
-            {
-                earnedScore -= 0.2f;
-            }
-
-            // Validate medium
-            if (!string.IsNullOrEmpty(validation.RequiredMedium))
-            {
-                string reqMedium = validation.RequiredMedium;
-                string actualStr = mixRequest.Medium.ToString();
-                if (!string.Equals(reqMedium, actualStr, StringComparison.OrdinalIgnoreCase))
-                {
-                    earnedScore -= 0.3f;
-                }
-            }
-
-            // Validate catalyst
-            if (validation.RequireCatalyst.HasValue && validation.RequireCatalyst.Value)
-            {
-                if (!mixRequest.HasCatalyst)
-                    earnedScore -= 0.2f;
-            }
-
-            // Validate reagents
-            if (validation.ExpectedReagents != null && validation.ExpectedReagents.Count > 0)
-            {
-                foreach (var expected in validation.ExpectedReagents)
-                {
-                    if (!mixRequest.ReagentNames.Contains(expected))
-                    {
-                        earnedScore -= 0.3f;
-                    }
-                }
-            }
-
-            // Validate result status
-            if (!string.IsNullOrEmpty(validation.ExpectedResultStatus) && evaluation.HasValue)
-            {
-                var eval = evaluation.Value;
-                string actualStatus = eval.Status.ToString().ToUpperInvariant();
-                string expected = validation.ExpectedResultStatus.ToUpperInvariant();
-
-                if (expected != "ANY" && expected != actualStatus)
-                {
-                    earnedScore -= 0.3f;
-                }
-            }
-
-            // Clamp score
-            earnedScore = Math.Max(0f, Math.Min(1f, earnedScore));
-
-            result.Score = earnedScore;
-            result.Passed = earnedScore >= 0.5f;
-
-            // Set feedback
-            if (result.Passed)
-            {
-                result.FeedbackKey = earnedScore >= 0.9f
-                    ? "guidedExp_stepPerfect"
-                    : "guidedExp_stepPassed";
-            }
-            else
-            {
-                result.FeedbackKey = "guidedExp_stepFailed";
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Advance to the next step in the experiment.
-        /// </summary>
-        public bool AdvanceStep(ExperimentSession session, StepResult stepResult)
-        {
-            if (session == null) return false;
-
-            session.StepResults.Add(stepResult);
-            session.TotalScore += stepResult.Score;
-
-            var def = Get(session.ExperimentId);
-            if (def == null) return false;
-
+            var def = Get(session?.ExperimentId);
+            if (def == null || session.IsCompleted) return false;
             session.CurrentStepIndex++;
-
-            // Check if experiment is complete
-            if (session.CurrentStepIndex >= def.Steps.Count)
-            {
-                session.IsCompleted = true;
-                session.CompletedAt = DateTime.UtcNow;
-                session.TotalScore /= def.Steps.Count; // Normalize to 0-1
-                session.IsPerfect = session.TotalScore >= def.Evaluation?.PerfectScoreThreshold;
-                return false; // No more steps
-            }
-
-            return true; // More steps remain
+            if (session.CurrentStepIndex < def.steps.Count) return true;
+            session.IsCompleted = true;
+            session.CompletedAt = DateTime.UtcNow;
+            return false;
         }
 
-        /// <summary>
-        /// Get eligibility: whether a student can attempt an experiment based on prerequisites.
-        /// </summary>
-        public bool IsEligible(string experimentId, HashSet<string> completedExperimentIds)
+        public bool IsEligible(string experimentId, ICollection<string> completedExperimentIds)
         {
             var def = Get(experimentId);
             if (def == null) return false;
-            if (string.IsNullOrEmpty(def.PrerequisiteExperimentId)) return true;
-            return completedExperimentIds?.Contains(def.PrerequisiteExperimentId) == true;
+            if (string.IsNullOrEmpty(def.prerequisiteExperimentId)) return true;
+            return completedExperimentIds != null && completedExperimentIds.Contains(def.prerequisiteExperimentId);
+        }
+
+        /// <summary>The status name a step compares with ("Success", "Partial", "Fail"); "NotFound" is set by the caller.</summary>
+        public static string StatusOf(ReactionEvaluationResult result)
+            => result.IsValid ? result.Status.ToString() : ReactionStatus.Fail.ToString();
+
+        /// <summary>Is the step done in this lab state? If not, what is still missing.</summary>
+        public static StepCheck Check(ExperimentStep step, LabSnapshot lab)
+        {
+            if (step == null) return StepCheck.Wait("no step");
+            var v = step.validation ?? new StepValidation();
+            var reagents = lab.Reagents ?? Array.Empty<string>();
+
+            switch (step.ActionType)
+            {
+                case StepActionType.Observe:
+                    return StepCheck.Wait("read this, then press Next");
+                case StepActionType.Mix:
+                    return CheckMix(v, lab, reagents);
+            }
+
+            // Setting steps: everything the validation names must hold now.
+            var missing = Setup(v, lab, reagents);
+            return missing == null ? StepCheck.Ok : StepCheck.Wait(missing);
+        }
+
+        private static StepCheck CheckMix(StepValidation v, LabSnapshot lab, IReadOnlyList<string> reagents)
+        {
+            string setup = Setup(v, lab, reagents);
+            if (!lab.MixedSinceStepStart)
+                return StepCheck.Wait(setup ?? "press Mix");
+
+            bool idOk = string.IsNullOrEmpty(v.expectedReactionId) || v.expectedReactionId == lab.LastReactionId;
+            bool statusOk = string.IsNullOrEmpty(v.expectedResultStatus)
+                            || string.Equals(v.expectedResultStatus, lab.LastResultStatus, StringComparison.OrdinalIgnoreCase);
+            if (idOk && statusOk) return StepCheck.Ok;
+            return StepCheck.Wait(setup != null
+                ? "that mix did not match this step: " + setup + ", then press Mix again"
+                : "that mix gave a different result; check the settings and press Mix again");
+        }
+
+        /// <summary>The first setting that does not match yet, in the student's terms; null when all match.</summary>
+        private static string Setup(StepValidation v, LabSnapshot lab, IReadOnlyList<string> reagents)
+        {
+            if (v.expectedReagents != null && v.expectedReagents.Count > 0)
+            {
+                var want = v.expectedReagents.Select(r => r.Trim()).ToList();
+                var missing = want.Where(w => !reagents.Contains(w)).ToList();
+                if (missing.Count > 0) return "choose " + string.Join(" and ", missing);
+                var extra = reagents.Where(r => !want.Contains(r)).ToList();
+                if (extra.Count > 0) return "remove " + string.Join(" and ", extra) + " (set that reagent to −)";
+            }
+            if (!float.IsNaN(v.minTemperature) && lab.TemperatureC < v.minTemperature)
+                return $"raise the temperature to at least {v.minTemperature:0} °C";
+            if (!float.IsNaN(v.maxTemperature) && lab.TemperatureC > v.maxTemperature)
+                return $"lower the temperature to {v.maxTemperature:0} °C or less";
+            if (!float.IsNaN(v.minGrinding) && lab.Grinding < v.minGrinding)
+                return $"set grinding to at least {v.minGrinding * 100f:0}%";
+            if (v.catalyst == 1 && !lab.Catalyst) return "switch the catalyst on";
+            if (v.catalyst == 0 && lab.Catalyst) return "switch the catalyst off";
+            if (v.current == 1 && !lab.Current) return "switch the electric current on";
+            if (v.current == 0 && lab.Current) return "switch the electric current off";
+            return null;
         }
     }
 }
