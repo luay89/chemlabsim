@@ -1,0 +1,968 @@
+{
+ "source": "Wagman, D. D. et al., The NBS Tables of Chemical Thermodynamic Properties, J. Phys. Chem. Ref. Data 11, Suppl. 2 (1982)",
+ "url": "https://srd.nist.gov/JPCRD/jpcrdS2Vol11.pdf",
+ "retrieved": "2026-10-18",
+ "pdf_sha256": "65249690c25a3c98275279863264b870e9a955f51651ff3845ac3bc47f32de59",
+ "notes": "The PDF is a scan without a text layer. Each value below was read from the page image of the cited page (ΔfH° column, 298.15 K, 0.1 MPa), not taken from OCR. 'ao'/'ai' entries are listed with state aq. Only species that reactions.json needs and that CODATA does not list are included.",
+ "values": [
+  {
+   "species": "Fe+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -89.1,
+   "page": "2-177",
+   "as_printed": "Fe2+ ao"
+  },
+  {
+   "species": "Fe+3",
+   "state": "aq",
+   "dfH_kJ_per_mol": -48.5,
+   "page": "2-177",
+   "as_printed": "Fe3+ ao"
+  },
+  {
+   "species": "Fe2O3",
+   "state": "s",
+   "dfH_kJ_per_mol": -824.2,
+   "page": "2-177",
+   "as_printed": "Fe2O3 hematite cr"
+  },
+  {
+   "species": "Fe3O4",
+   "state": "s",
+   "dfH_kJ_per_mol": -1118.4,
+   "page": "2-177",
+   "as_printed": "Fe3O4 magnetite cr"
+  },
+  {
+   "species": "Fe(OH)2",
+   "state": "s",
+   "dfH_kJ_per_mol": -569.0,
+   "page": "2-177",
+   "as_printed": "Fe(OH)2 precipitated cr"
+  },
+  {
+   "species": "Fe(OH)3",
+   "state": "s",
+   "dfH_kJ_per_mol": -823.0,
+   "page": "2-177",
+   "as_printed": "Fe(OH)3 precipitated cr"
+  },
+  {
+   "species": "FeCl3",
+   "state": "s",
+   "dfH_kJ_per_mol": -399.49,
+   "page": "2-177",
+   "as_printed": "FeCl3 cr"
+  },
+  {
+   "species": "FeS",
+   "state": "s",
+   "dfH_kJ_per_mol": -100.0,
+   "page": "2-179",
+   "as_printed": "Fe1.000S iron-rich pyrrhotite alpha (troilite) cr"
+  },
+  {
+   "species": "FePO4",
+   "state": "s",
+   "dfH_kJ_per_mol": -1297.5,
+   "page": "2-180",
+   "as_printed": "FePO4 cr"
+  },
+  {
+   "species": "Mn+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -220.75,
+   "page": "2-191",
+   "as_printed": "Mn2+ ao"
+  },
+  {
+   "species": "MnO2",
+   "state": "s",
+   "dfH_kJ_per_mol": -520.03,
+   "page": "2-191",
+   "as_printed": "MnO2 cr"
+  },
+  {
+   "species": "MnO4-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -541.4,
+   "page": "2-191",
+   "as_printed": "MnO4- ao"
+  },
+  {
+   "species": "Mn3O4",
+   "state": "s",
+   "dfH_kJ_per_mol": -1387.8,
+   "page": "2-191",
+   "as_printed": "Mn3O4 cr"
+  },
+  {
+   "species": "Mn(OH)2",
+   "state": "s",
+   "dfH_kJ_per_mol": -695.4,
+   "page": "2-191",
+   "as_printed": "Mn(OH)2 precipitated am (amorphous)"
+  },
+  {
+   "species": "Cr+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -143.5,
+   "page": "2-197",
+   "as_printed": "Cr2+ ao"
+  },
+  {
+   "species": "CrO4-2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -881.15,
+   "page": "2-197",
+   "as_printed": "CrO4 2- ao"
+  },
+  {
+   "species": "Cr2O3",
+   "state": "s",
+   "dfH_kJ_per_mol": -1139.7,
+   "page": "2-197",
+   "as_printed": "Cr2O3 cr"
+  },
+  {
+   "species": "Cr2O7-2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -1490.3,
+   "page": "2-197",
+   "as_printed": "Cr2O7 2- ao"
+  },
+  {
+   "species": "[Cr(H2O)6]+3",
+   "state": "aq",
+   "dfH_kJ_per_mol": -1999.1,
+   "page": "2-198",
+   "as_printed": "(Cr(H2O)6)3+ aq; Cr3+(aq) derived as this minus 6 H2O(l)"
+  },
+  {
+   "species": "Ni+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -54.0,
+   "page": "2-166",
+   "as_printed": "Ni2+ ao"
+  },
+  {
+   "species": "NiO",
+   "state": "s",
+   "dfH_kJ_per_mol": -239.7,
+   "page": "2-166",
+   "as_printed": "NiO cr"
+  },
+  {
+   "species": "Ni(OH)2",
+   "state": "s",
+   "dfH_kJ_per_mol": -529.7,
+   "page": "2-166",
+   "as_printed": "Ni(OH)2 cr"
+  },
+  {
+   "species": "CuO",
+   "state": "s",
+   "dfH_kJ_per_mol": -157.3,
+   "page": "2-154",
+   "as_printed": "CuO cr"
+  },
+  {
+   "species": "Cu(OH)2",
+   "state": "s",
+   "dfH_kJ_per_mol": -449.8,
+   "page": "2-154",
+   "as_printed": "Cu(OH)2 cr"
+  },
+  {
+   "species": "CuCl2",
+   "state": "s",
+   "dfH_kJ_per_mol": -220.1,
+   "page": "2-154",
+   "as_printed": "CuCl2 cr"
+  },
+  {
+   "species": "CuI",
+   "state": "s",
+   "dfH_kJ_per_mol": -67.8,
+   "page": "2-155",
+   "as_printed": "CuI cr"
+  },
+  {
+   "species": "CuS",
+   "state": "s",
+   "dfH_kJ_per_mol": -53.1,
+   "page": "2-155",
+   "as_printed": "CuS cr"
+  },
+  {
+   "species": "Cu2S",
+   "state": "s",
+   "dfH_kJ_per_mol": -79.5,
+   "page": "2-155",
+   "as_printed": "Cu2S alpha cr"
+  },
+  {
+   "species": "Ag2O",
+   "state": "s",
+   "dfH_kJ_per_mol": -31.05,
+   "page": "2-160",
+   "as_printed": "Ag2O cr"
+  },
+  {
+   "species": "AgBr",
+   "state": "s",
+   "dfH_kJ_per_mol": -100.37,
+   "page": "2-160",
+   "as_printed": "AgBr cr"
+  },
+  {
+   "species": "AgI",
+   "state": "s",
+   "dfH_kJ_per_mol": -61.84,
+   "page": "2-161",
+   "as_printed": "AgI cr"
+  },
+  {
+   "species": "Ag2S",
+   "state": "s",
+   "dfH_kJ_per_mol": -32.59,
+   "page": "2-161",
+   "as_printed": "Ag2S alpha, orthorhombic cr"
+  },
+  {
+   "species": "AgNO3",
+   "state": "s",
+   "dfH_kJ_per_mol": -124.39,
+   "page": "2-161",
+   "as_printed": "AgNO3 cr"
+  },
+  {
+   "species": "Ag2CO3",
+   "state": "s",
+   "dfH_kJ_per_mol": -505.8,
+   "page": "2-162",
+   "as_printed": "Ag2CO3 cr"
+  },
+  {
+   "species": "AgSCN",
+   "state": "s",
+   "dfH_kJ_per_mol": 87.9,
+   "page": "2-163",
+   "as_printed": "AgSCN thiocyanate cr"
+  },
+  {
+   "species": "Zn(OH)2",
+   "state": "s",
+   "dfH_kJ_per_mol": -642.2,
+   "page": "2-138",
+   "as_printed": "Zn(OH)2 precipitated cr4"
+  },
+  {
+   "species": "ZnCl2",
+   "state": "s",
+   "dfH_kJ_per_mol": -415.05,
+   "page": "2-138",
+   "as_printed": "ZnCl2 cr"
+  },
+  {
+   "species": "ZnS",
+   "state": "s",
+   "dfH_kJ_per_mol": -205.98,
+   "page": "2-139",
+   "as_printed": "ZnS sphalerite cr2 (stable form at 25 C)"
+  },
+  {
+   "species": "Zn3(PO4)2",
+   "state": "s",
+   "dfH_kJ_per_mol": -2892.4,
+   "page": "2-142",
+   "as_printed": "Zn3(PO4)2 cr"
+  },
+  {
+   "species": "ZnCO3",
+   "state": "s",
+   "dfH_kJ_per_mol": -812.78,
+   "page": "2-142",
+   "as_printed": "ZnCO3 cr"
+  },
+  {
+   "species": "PbO",
+   "state": "s",
+   "dfH_kJ_per_mol": -218.99,
+   "page": "2-119",
+   "as_printed": "PbO red cr2 (stable form at 25 C)"
+  },
+  {
+   "species": "Pb(OH)2",
+   "state": "s",
+   "dfH_kJ_per_mol": -515.9,
+   "page": "2-119",
+   "as_printed": "Pb(OH)2 precipitated cr2"
+  },
+  {
+   "species": "PbCl2",
+   "state": "s",
+   "dfH_kJ_per_mol": -359.41,
+   "page": "2-119",
+   "as_printed": "PbCl2 cr"
+  },
+  {
+   "species": "PbBr2",
+   "state": "s",
+   "dfH_kJ_per_mol": -278.7,
+   "page": "2-119",
+   "as_printed": "PbBr2 cr"
+  },
+  {
+   "species": "PbI2",
+   "state": "s",
+   "dfH_kJ_per_mol": -175.48,
+   "page": "2-120",
+   "as_printed": "PbI2 cr"
+  },
+  {
+   "species": "PbS",
+   "state": "s",
+   "dfH_kJ_per_mol": -100.4,
+   "page": "2-120",
+   "as_printed": "PbS cr"
+  },
+  {
+   "species": "PbCO3",
+   "state": "s",
+   "dfH_kJ_per_mol": -699.1,
+   "page": "2-121",
+   "as_printed": "PbCO3 cr"
+  },
+  {
+   "species": "AlO2-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -930.9,
+   "page": "2-127",
+   "as_printed": "AlO2- ao"
+  },
+  {
+   "species": "Al(OH)3",
+   "state": "s",
+   "dfH_kJ_per_mol": -1276.0,
+   "page": "2-127",
+   "as_printed": "Al(OH)3 am (amorphous, freshly precipitated)"
+  },
+  {
+   "species": "AlCl3",
+   "state": "s",
+   "dfH_kJ_per_mol": -704.2,
+   "page": "2-128",
+   "as_printed": "AlCl3 cr"
+  },
+  {
+   "species": "AlBr3",
+   "state": "s",
+   "dfH_kJ_per_mol": -527.2,
+   "page": "2-128",
+   "as_printed": "AlBr3 cr"
+  },
+  {
+   "species": "AlI3",
+   "state": "s",
+   "dfH_kJ_per_mol": -313.8,
+   "page": "2-128",
+   "as_printed": "AlI3 cr"
+  },
+  {
+   "species": "Al2S3",
+   "state": "s",
+   "dfH_kJ_per_mol": -724.0,
+   "page": "2-129",
+   "as_printed": "Al2S3 cr"
+  },
+  {
+   "species": "Mg(OH)2",
+   "state": "s",
+   "dfH_kJ_per_mol": -924.54,
+   "page": "2-260",
+   "as_printed": "Mg(OH)2 cr"
+  },
+  {
+   "species": "MgCl2",
+   "state": "s",
+   "dfH_kJ_per_mol": -641.32,
+   "page": "2-260",
+   "as_printed": "MgCl2 cr"
+  },
+  {
+   "species": "MgBr2",
+   "state": "s",
+   "dfH_kJ_per_mol": -524.3,
+   "page": "2-262",
+   "as_printed": "MgBr2 cr"
+  },
+  {
+   "species": "MgS",
+   "state": "s",
+   "dfH_kJ_per_mol": -346.0,
+   "page": "2-262",
+   "as_printed": "MgS cr"
+  },
+  {
+   "species": "MgSO4",
+   "state": "s",
+   "dfH_kJ_per_mol": -1284.9,
+   "page": "2-262",
+   "as_printed": "MgSO4 cr"
+  },
+  {
+   "species": "Mg3N2",
+   "state": "s",
+   "dfH_kJ_per_mol": -460.7,
+   "page": "2-263",
+   "as_printed": "Mg3N2 cr"
+  },
+  {
+   "species": "Mg3(PO4)2",
+   "state": "s",
+   "dfH_kJ_per_mol": -3780.7,
+   "page": "2-264",
+   "as_printed": "Mg3(PO4)2 cr"
+  },
+  {
+   "species": "MgCO3",
+   "state": "s",
+   "dfH_kJ_per_mol": -1095.8,
+   "page": "2-264",
+   "as_printed": "MgCO3 magnesite cr"
+  },
+  {
+   "species": "Ca(OH)2",
+   "state": "s",
+   "dfH_kJ_per_mol": -986.09,
+   "page": "2-267",
+   "as_printed": "Ca(OH)2 cr"
+  },
+  {
+   "species": "CaF2",
+   "state": "s",
+   "dfH_kJ_per_mol": -1219.6,
+   "page": "2-267",
+   "as_printed": "CaF2 cr"
+  },
+  {
+   "species": "CaCl2",
+   "state": "s",
+   "dfH_kJ_per_mol": -795.8,
+   "page": "2-267",
+   "as_printed": "CaCl2 cr"
+  },
+  {
+   "species": "CaSO4",
+   "state": "s",
+   "dfH_kJ_per_mol": -1434.11,
+   "page": "2-269",
+   "as_printed": "CaSO4 insoluble, anhydrite cr"
+  },
+  {
+   "species": "Ca3(PO4)2",
+   "state": "s",
+   "dfH_kJ_per_mol": -4120.8,
+   "page": "2-271",
+   "as_printed": "Ca3(PO4)2 beta, low temp. form cr"
+  },
+  {
+   "species": "CaCO3",
+   "state": "s",
+   "dfH_kJ_per_mol": -1206.92,
+   "page": "2-272",
+   "as_printed": "CaCO3 calcite cr"
+  },
+  {
+   "species": "Ba+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -537.64,
+   "page": "2-282",
+   "as_printed": "Ba2+ ao"
+  },
+  {
+   "species": "BaO",
+   "state": "s",
+   "dfH_kJ_per_mol": -553.5,
+   "page": "2-282",
+   "as_printed": "BaO cr"
+  },
+  {
+   "species": "Ba(OH)2",
+   "state": "s",
+   "dfH_kJ_per_mol": -944.7,
+   "page": "2-282",
+   "as_printed": "Ba(OH)2 cr"
+  },
+  {
+   "species": "BaSO4",
+   "state": "s",
+   "dfH_kJ_per_mol": -1473.2,
+   "page": "2-284",
+   "as_printed": "BaSO4 cr"
+  },
+  {
+   "species": "BaCO3",
+   "state": "s",
+   "dfH_kJ_per_mol": -1216.3,
+   "page": "2-286",
+   "as_printed": "BaCO3 witherite cr"
+  },
+  {
+   "species": "Ba3(PO4)2",
+   "state": "s",
+   "dfH_kJ_per_mol": -4092.0,
+   "page": "2-285",
+   "as_printed": "Ba3(PO4)2 colloidal cr"
+  },
+  {
+   "species": "Li2O",
+   "state": "s",
+   "dfH_kJ_per_mol": -597.94,
+   "page": "2-290",
+   "as_printed": "Li2O cr"
+  },
+  {
+   "species": "LiOH",
+   "state": "s",
+   "dfH_kJ_per_mol": -484.93,
+   "page": "2-290",
+   "as_printed": "LiOH cr"
+  },
+  {
+   "species": "Li3N",
+   "state": "s",
+   "dfH_kJ_per_mol": -164.4,
+   "page": "2-295",
+   "as_printed": "Li3N cr"
+  },
+  {
+   "species": "Na2O",
+   "state": "s",
+   "dfH_kJ_per_mol": -414.22,
+   "page": "2-299",
+   "as_printed": "Na2O cr"
+  },
+  {
+   "species": "Na2O2",
+   "state": "s",
+   "dfH_kJ_per_mol": -510.87,
+   "page": "2-299",
+   "as_printed": "Na2O2 cr"
+  },
+  {
+   "species": "NaOH",
+   "state": "s",
+   "dfH_kJ_per_mol": -425.609,
+   "page": "2-299",
+   "as_printed": "NaOH cr"
+  },
+  {
+   "species": "NaCl",
+   "state": "s",
+   "dfH_kJ_per_mol": -411.153,
+   "page": "2-301",
+   "as_printed": "NaCl cr"
+  },
+  {
+   "species": "Na2CO3",
+   "state": "s",
+   "dfH_kJ_per_mol": -1130.68,
+   "page": "2-313",
+   "as_printed": "Na2CO3 cr"
+  },
+  {
+   "species": "NaHCO3",
+   "state": "s",
+   "dfH_kJ_per_mol": -950.81,
+   "page": "2-314",
+   "as_printed": "NaHCO3 cr"
+  },
+  {
+   "species": "CH3COONa",
+   "state": "s",
+   "dfH_kJ_per_mol": -708.81,
+   "page": "2-315",
+   "as_printed": "NaCH3CO2 acetate cr"
+  },
+  {
+   "species": "KO2",
+   "state": "s",
+   "dfH_kJ_per_mol": -284.93,
+   "page": "2-328",
+   "as_printed": "KO2 cr"
+  },
+  {
+   "species": "KOH",
+   "state": "s",
+   "dfH_kJ_per_mol": -424.764,
+   "page": "2-328",
+   "as_printed": "KOH cr"
+  },
+  {
+   "species": "KCl",
+   "state": "s",
+   "dfH_kJ_per_mol": -436.747,
+   "page": "2-330",
+   "as_printed": "KCl cr"
+  },
+  {
+   "species": "KI",
+   "state": "s",
+   "dfH_kJ_per_mol": -327.9,
+   "page": "2-333",
+   "as_printed": "KI cr"
+  },
+  {
+   "species": "KNO2",
+   "state": "s",
+   "dfH_kJ_per_mol": -369.82,
+   "page": "2-338",
+   "as_printed": "KNO2 rhombic cr"
+  },
+  {
+   "species": "KNO3",
+   "state": "s",
+   "dfH_kJ_per_mol": -494.63,
+   "page": "2-338",
+   "as_printed": "KNO3 cr"
+  },
+  {
+   "species": "KMnO4",
+   "state": "s",
+   "dfH_kJ_per_mol": -837.2,
+   "page": "2-349",
+   "as_printed": "KMnO4 cr"
+  },
+  {
+   "species": "K2Cr2O7",
+   "state": "s",
+   "dfH_kJ_per_mol": -2061.5,
+   "page": "2-350",
+   "as_printed": "K2Cr2O7 cr"
+  },
+  {
+   "species": "I2",
+   "state": "aq",
+   "dfH_kJ_per_mol": 22.6,
+   "page": "2-52",
+   "as_printed": "I2 ao"
+  },
+  {
+   "species": "O3",
+   "state": "g",
+   "dfH_kJ_per_mol": 142.7,
+   "page": "2-37",
+   "as_printed": "O3 g"
+  },
+  {
+   "species": "H2O2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -191.17,
+   "page": "2-38",
+   "as_printed": "H2O2 ao"
+  },
+  {
+   "species": "ClO-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -107.1,
+   "page": "2-47",
+   "as_printed": "ClO- ao"
+  },
+  {
+   "species": "HClO",
+   "state": "aq",
+   "dfH_kJ_per_mol": -120.9,
+   "page": "2-48",
+   "as_printed": "HClO ao"
+  },
+  {
+   "species": "Br2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -2.59,
+   "page": "2-50",
+   "as_printed": "Br2 ao"
+  },
+  {
+   "species": "S-2",
+   "state": "aq",
+   "dfH_kJ_per_mol": 33.1,
+   "page": "2-56",
+   "as_printed": "S2- ao"
+  },
+  {
+   "species": "SO3",
+   "state": "g",
+   "dfH_kJ_per_mol": -395.72,
+   "page": "2-57",
+   "as_printed": "SO3 g"
+  },
+  {
+   "species": "SO3-2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -635.5,
+   "page": "2-57",
+   "as_printed": "SO3 2- ao"
+  },
+  {
+   "species": "S2O3-2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -648.5,
+   "page": "2-57",
+   "as_printed": "S2O3 2- ao"
+  },
+  {
+   "species": "S4O6-2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -1224.2,
+   "page": "2-57",
+   "as_printed": "S4O6 2- ao"
+  },
+  {
+   "species": "H2SO3",
+   "state": "aq",
+   "dfH_kJ_per_mol": -608.81,
+   "page": "2-57",
+   "as_printed": "H2SO3 ao (equivalent to SO2(ao) + H2O(l))"
+  },
+  {
+   "species": "H2SO4",
+   "state": "l",
+   "dfH_kJ_per_mol": -813.989,
+   "page": "2-58",
+   "as_printed": "H2SO4 l"
+  },
+  {
+   "species": "HNO3",
+   "state": "l",
+   "dfH_kJ_per_mol": -174.1,
+   "page": "2-65",
+   "as_printed": "HNO3 l"
+  },
+  {
+   "species": "HNO3",
+   "state": "g",
+   "dfH_kJ_per_mol": -135.06,
+   "page": "2-65",
+   "as_printed": "HNO3 g"
+  },
+  {
+   "species": "NH4NO3",
+   "state": "s",
+   "dfH_kJ_per_mol": -365.56,
+   "page": "2-66",
+   "as_printed": "NH4NO3 ammonium nitrate cr"
+  },
+  {
+   "species": "NH4Cl",
+   "state": "s",
+   "dfH_kJ_per_mol": -314.43,
+   "page": "2-68",
+   "as_printed": "NH4Cl cr"
+  },
+  {
+   "species": "NO",
+   "state": "g",
+   "dfH_kJ_per_mol": 90.25,
+   "page": "2-64",
+   "as_printed": "NO g"
+  },
+  {
+   "species": "NO2",
+   "state": "g",
+   "dfH_kJ_per_mol": 33.18,
+   "page": "2-64",
+   "as_printed": "NO2 g"
+  },
+  {
+   "species": "NO2-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -104.6,
+   "page": "2-64",
+   "as_printed": "NO2- ao"
+  },
+  {
+   "species": "NH3",
+   "state": "aq",
+   "dfH_kJ_per_mol": -80.29,
+   "page": "2-64",
+   "as_printed": "NH3 ao"
+  },
+  {
+   "species": "H3PO4",
+   "state": "aq",
+   "dfH_kJ_per_mol": -1288.34,
+   "page": "2-74",
+   "as_printed": "H3PO4 ao"
+  },
+  {
+   "species": "PCl3",
+   "state": "l",
+   "dfH_kJ_per_mol": -319.7,
+   "page": "2-75",
+   "as_printed": "PCl3 l"
+  },
+  {
+   "species": "PO4-3",
+   "state": "aq",
+   "dfH_kJ_per_mol": -1277.4,
+   "page": "2-73",
+   "as_printed": "PO4 3- ao"
+  },
+  {
+   "species": "P4O10",
+   "state": "s",
+   "dfH_kJ_per_mol": -2984.0,
+   "page": "2-73",
+   "as_printed": "P4O10 hexagonal cr; P2O5 taken as half of P4O10"
+  },
+  {
+   "species": "CH4",
+   "state": "g",
+   "dfH_kJ_per_mol": -74.81,
+   "page": "2-83",
+   "as_printed": "CH4 g"
+  },
+  {
+   "species": "HCHO",
+   "state": "g",
+   "dfH_kJ_per_mol": -108.57,
+   "page": "2-83",
+   "as_printed": "HCHO g"
+  },
+  {
+   "species": "H2CO3",
+   "state": "aq",
+   "dfH_kJ_per_mol": -699.65,
+   "page": "2-84",
+   "as_printed": "H2CO3 ao (equivalent to CO2(ao) + H2O(l))"
+  },
+  {
+   "species": "CH3OH",
+   "state": "l",
+   "dfH_kJ_per_mol": -238.66,
+   "page": "2-84",
+   "as_printed": "CH3OH methanol l"
+  },
+  {
+   "species": "CH3Cl",
+   "state": "g",
+   "dfH_kJ_per_mol": -80.83,
+   "page": "2-86",
+   "as_printed": "CH3Cl g"
+  },
+  {
+   "species": "SCN-",
+   "state": "aq",
+   "dfH_kJ_per_mol": 76.44,
+   "page": "2-92",
+   "as_printed": "SCN- thiocyanate ion ao"
+  },
+  {
+   "species": "C2H2",
+   "state": "g",
+   "dfH_kJ_per_mol": 226.73,
+   "page": "2-92",
+   "as_printed": "C2H2 g"
+  },
+  {
+   "species": "C2H4",
+   "state": "g",
+   "dfH_kJ_per_mol": 52.26,
+   "page": "2-93",
+   "as_printed": "C2H4 g"
+  },
+  {
+   "species": "C2H6",
+   "state": "g",
+   "dfH_kJ_per_mol": -84.68,
+   "page": "2-93",
+   "as_printed": "C2H6 g"
+  },
+  {
+   "species": "CH3COO-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -486.01,
+   "page": "2-93",
+   "as_printed": "CH3COO- acetate ao"
+  },
+  {
+   "species": "CH3CHO",
+   "state": "g",
+   "dfH_kJ_per_mol": -166.19,
+   "page": "2-93",
+   "as_printed": "CH3CHO acetaldehyde g2"
+  },
+  {
+   "species": "CH3COOH",
+   "state": "l",
+   "dfH_kJ_per_mol": -484.5,
+   "page": "2-93",
+   "as_printed": "CH3COOH acetic acid l"
+  },
+  {
+   "species": "CH3COOH",
+   "state": "aq",
+   "dfH_kJ_per_mol": -485.76,
+   "page": "2-93",
+   "as_printed": "CH3COOH ao"
+  },
+  {
+   "species": "C2H5OH",
+   "state": "l",
+   "dfH_kJ_per_mol": -277.69,
+   "page": "2-95",
+   "as_printed": "C2H5OH ethanol l"
+  },
+  {
+   "species": "C2H5OH",
+   "state": "aq",
+   "dfH_kJ_per_mol": -288.3,
+   "page": "2-95",
+   "as_printed": "C2H5OH ao"
+  },
+  {
+   "species": "C2H3Cl",
+   "state": "g",
+   "dfH_kJ_per_mol": 35.6,
+   "page": "2-98",
+   "as_printed": "CH2CHCl vinyl chloride g"
+  },
+  {
+   "species": "C2H5Cl",
+   "state": "g",
+   "dfH_kJ_per_mol": -112.17,
+   "page": "2-98",
+   "as_printed": "C2H5Cl ethyl chloride g"
+  },
+  {
+   "species": "C2H4Cl2",
+   "state": "l",
+   "dfH_kJ_per_mol": -165.23,
+   "page": "2-98",
+   "as_printed": "CH2ClCH2Cl 1,2-dichloroethane l2"
+  },
+  {
+   "species": "C2H5Br",
+   "state": "l",
+   "dfH_kJ_per_mol": -92.01,
+   "page": "2-101",
+   "as_printed": "C2H5Br ethyl bromide l"
+  },
+  {
+   "species": "C2H4Br2",
+   "state": "l",
+   "dfH_kJ_per_mol": -81.2,
+   "page": "2-101",
+   "as_printed": "CH2BrCH2Br 1,2-dibromoethane l2"
+  },
+  {
+   "species": "HF",
+   "state": "aq",
+   "dfH_kJ_per_mol": -320.08,
+   "page": "2-45",
+   "as_printed": "HF ao (undissociated; weak acid)"
+  }
+ ]
+}

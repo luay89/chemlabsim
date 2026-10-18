@@ -1,0 +1,915 @@
+{
+ "source": "CODATA Key Values for Thermodynamics (Cox, J. D.; Wagman, D. D.; Medvedev, V. A.; Hemisphere, New York, 1989)",
+ "url": "https://www.codata.info/resources/databases/key1.html",
+ "retrieved": "2026-10-18",
+ "page_sha256": "88049de2c7700bf44d233dacee019ac70c9b46ad280596270ebb3d5d0235d460",
+ "notes": "Standard enthalpy of formation at 298.15 K, standard pressure 1 bar, kJ/mol. Extracted by extract_codata.py; states as printed (cr, l, g, aq).",
+ "values": [
+  {
+   "substance": "Ag",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Ag",
+   "state": "g",
+   "dfH_kJ_per_mol": 284.9,
+   "uncertainty_kJ_per_mol": 0.8
+  },
+  {
+   "substance": "Ag+",
+   "state": "aq",
+   "dfH_kJ_per_mol": 105.79,
+   "uncertainty_kJ_per_mol": 0.08
+  },
+  {
+   "substance": "AgCl",
+   "state": "cr",
+   "dfH_kJ_per_mol": -127.01,
+   "uncertainty_kJ_per_mol": 0.05
+  },
+  {
+   "substance": "Al",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Al",
+   "state": "g",
+   "dfH_kJ_per_mol": 330.0,
+   "uncertainty_kJ_per_mol": 4.0
+  },
+  {
+   "substance": "Al+3",
+   "state": "aq",
+   "dfH_kJ_per_mol": -538.4,
+   "uncertainty_kJ_per_mol": 1.5
+  },
+  {
+   "substance": "AlF3",
+   "state": "cr",
+   "dfH_kJ_per_mol": -1510.4,
+   "uncertainty_kJ_per_mol": 1.3
+  },
+  {
+   "substance": "Al2O3",
+   "state": "cr,corundum",
+   "dfH_kJ_per_mol": -1675.7,
+   "uncertainty_kJ_per_mol": 1.3
+  },
+  {
+   "substance": "Ar",
+   "state": "g",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "B",
+   "state": "cr,rhombic",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "B",
+   "state": "g",
+   "dfH_kJ_per_mol": 565.0,
+   "uncertainty_kJ_per_mol": 5.0
+  },
+  {
+   "substance": "BF3",
+   "state": "g",
+   "dfH_kJ_per_mol": -1136.0,
+   "uncertainty_kJ_per_mol": 0.8
+  },
+  {
+   "substance": "B2O3",
+   "state": "cr",
+   "dfH_kJ_per_mol": -1273.5,
+   "uncertainty_kJ_per_mol": 1.4
+  },
+  {
+   "substance": "Be",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Be",
+   "state": "g",
+   "dfH_kJ_per_mol": 324.0,
+   "uncertainty_kJ_per_mol": 5.0
+  },
+  {
+   "substance": "BeO",
+   "state": "cr",
+   "dfH_kJ_per_mol": -609.4,
+   "uncertainty_kJ_per_mol": 2.5
+  },
+  {
+   "substance": "Br",
+   "state": "g",
+   "dfH_kJ_per_mol": 111.87,
+   "uncertainty_kJ_per_mol": 0.12
+  },
+  {
+   "substance": "Br-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -121.41,
+   "uncertainty_kJ_per_mol": 0.15
+  },
+  {
+   "substance": "Br2",
+   "state": "l",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Br2",
+   "state": "g",
+   "dfH_kJ_per_mol": 30.91,
+   "uncertainty_kJ_per_mol": 0.11
+  },
+  {
+   "substance": "C",
+   "state": "cr,graphite",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "C",
+   "state": "g",
+   "dfH_kJ_per_mol": 716.68,
+   "uncertainty_kJ_per_mol": 0.45
+  },
+  {
+   "substance": "CO",
+   "state": "g",
+   "dfH_kJ_per_mol": -110.53,
+   "uncertainty_kJ_per_mol": 0.17
+  },
+  {
+   "substance": "CO2",
+   "state": "g",
+   "dfH_kJ_per_mol": -393.51,
+   "uncertainty_kJ_per_mol": 0.13
+  },
+  {
+   "substance": "CO2",
+   "state": "aq,undissoc.",
+   "dfH_kJ_per_mol": -413.26,
+   "uncertainty_kJ_per_mol": 0.2
+  },
+  {
+   "substance": "CO3-2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -675.23,
+   "uncertainty_kJ_per_mol": 0.25
+  },
+  {
+   "substance": "Ca",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Ca",
+   "state": "g",
+   "dfH_kJ_per_mol": 177.8,
+   "uncertainty_kJ_per_mol": 0.8
+  },
+  {
+   "substance": "Ca+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -543.0,
+   "uncertainty_kJ_per_mol": 1.0
+  },
+  {
+   "substance": "CaO",
+   "state": "cr",
+   "dfH_kJ_per_mol": -634.92,
+   "uncertainty_kJ_per_mol": 0.9
+  },
+  {
+   "substance": "Cd",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Cd",
+   "state": "g",
+   "dfH_kJ_per_mol": 111.8,
+   "uncertainty_kJ_per_mol": 0.2
+  },
+  {
+   "substance": "Cd+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -75.92,
+   "uncertainty_kJ_per_mol": 0.6
+  },
+  {
+   "substance": "CdO",
+   "state": "cr",
+   "dfH_kJ_per_mol": -258.35,
+   "uncertainty_kJ_per_mol": 0.4
+  },
+  {
+   "substance": "CdSO4 8/3H2O",
+   "state": "cr",
+   "dfH_kJ_per_mol": -1729.3,
+   "uncertainty_kJ_per_mol": 0.8
+  },
+  {
+   "substance": "Cl",
+   "state": "g",
+   "dfH_kJ_per_mol": 121.301,
+   "uncertainty_kJ_per_mol": 0.008
+  },
+  {
+   "substance": "Cl-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -167.08,
+   "uncertainty_kJ_per_mol": 0.1
+  },
+  {
+   "substance": "ClO4-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -128.1,
+   "uncertainty_kJ_per_mol": 0.4
+  },
+  {
+   "substance": "Cl2",
+   "state": "g",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Cs",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Cs",
+   "state": "g",
+   "dfH_kJ_per_mol": 76.5,
+   "uncertainty_kJ_per_mol": 1.0
+  },
+  {
+   "substance": "Cs+",
+   "state": "aq",
+   "dfH_kJ_per_mol": -258.0,
+   "uncertainty_kJ_per_mol": 0.5
+  },
+  {
+   "substance": "Cu",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Cu",
+   "state": "g",
+   "dfH_kJ_per_mol": 337.4,
+   "uncertainty_kJ_per_mol": 1.2
+  },
+  {
+   "substance": "Cu+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": 64.9,
+   "uncertainty_kJ_per_mol": 1.0
+  },
+  {
+   "substance": "CuSO4",
+   "state": "cr",
+   "dfH_kJ_per_mol": -771.4,
+   "uncertainty_kJ_per_mol": 1.2
+  },
+  {
+   "substance": "F",
+   "state": "g",
+   "dfH_kJ_per_mol": 79.38,
+   "uncertainty_kJ_per_mol": 0.3
+  },
+  {
+   "substance": "F-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -335.35,
+   "uncertainty_kJ_per_mol": 0.65
+  },
+  {
+   "substance": "F2",
+   "state": "g",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Ge",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Ge",
+   "state": "g",
+   "dfH_kJ_per_mol": 372.0,
+   "uncertainty_kJ_per_mol": 3.0
+  },
+  {
+   "substance": "GeF4",
+   "state": "g",
+   "dfH_kJ_per_mol": -1190.2,
+   "uncertainty_kJ_per_mol": 0.5
+  },
+  {
+   "substance": "GeO2",
+   "state": "cr,tetragonal",
+   "dfH_kJ_per_mol": -580.0,
+   "uncertainty_kJ_per_mol": 1.0
+  },
+  {
+   "substance": "H",
+   "state": "g",
+   "dfH_kJ_per_mol": 217.998,
+   "uncertainty_kJ_per_mol": 0.006
+  },
+  {
+   "substance": "H+",
+   "state": "aq",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "HBr",
+   "state": "g",
+   "dfH_kJ_per_mol": -36.29,
+   "uncertainty_kJ_per_mol": 0.16
+  },
+  {
+   "substance": "HCO3-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -689.93,
+   "uncertainty_kJ_per_mol": 2.0
+  },
+  {
+   "substance": "HCl",
+   "state": "g",
+   "dfH_kJ_per_mol": -92.31,
+   "uncertainty_kJ_per_mol": 0.1
+  },
+  {
+   "substance": "HF",
+   "state": "g",
+   "dfH_kJ_per_mol": -273.3,
+   "uncertainty_kJ_per_mol": 0.7
+  },
+  {
+   "substance": "HI",
+   "state": "g",
+   "dfH_kJ_per_mol": 26.5,
+   "uncertainty_kJ_per_mol": 0.1
+  },
+  {
+   "substance": "HPO4-2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -1299.0,
+   "uncertainty_kJ_per_mol": 1.5
+  },
+  {
+   "substance": "HS-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -16.3,
+   "uncertainty_kJ_per_mol": 1.5
+  },
+  {
+   "substance": "HSO4-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -886.9,
+   "uncertainty_kJ_per_mol": 1.0
+  },
+  {
+   "substance": "H2",
+   "state": "g",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "H2O",
+   "state": "l",
+   "dfH_kJ_per_mol": -285.83,
+   "uncertainty_kJ_per_mol": 0.04
+  },
+  {
+   "substance": "H2O",
+   "state": "g",
+   "dfH_kJ_per_mol": -241.826,
+   "uncertainty_kJ_per_mol": 0.04
+  },
+  {
+   "substance": "H2PO4-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -1302.6,
+   "uncertainty_kJ_per_mol": 1.5
+  },
+  {
+   "substance": "H2S",
+   "state": "g",
+   "dfH_kJ_per_mol": -20.6,
+   "uncertainty_kJ_per_mol": 0.5
+  },
+  {
+   "substance": "H2S",
+   "state": "aq,undissoc.",
+   "dfH_kJ_per_mol": -38.6,
+   "uncertainty_kJ_per_mol": 1.5
+  },
+  {
+   "substance": "H3BO3",
+   "state": "cr",
+   "dfH_kJ_per_mol": -1094.8,
+   "uncertainty_kJ_per_mol": 0.8
+  },
+  {
+   "substance": "H3BO3",
+   "state": "aq,undissoc.",
+   "dfH_kJ_per_mol": -1072.8,
+   "uncertainty_kJ_per_mol": 0.8
+  },
+  {
+   "substance": "He",
+   "state": "g",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Hg",
+   "state": "l",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Hg",
+   "state": "g",
+   "dfH_kJ_per_mol": 61.38,
+   "uncertainty_kJ_per_mol": 0.04
+  },
+  {
+   "substance": "Hg+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": 170.21,
+   "uncertainty_kJ_per_mol": 0.2
+  },
+  {
+   "substance": "HgO",
+   "state": "cr,red",
+   "dfH_kJ_per_mol": -90.79,
+   "uncertainty_kJ_per_mol": 0.12
+  },
+  {
+   "substance": "Hg2+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": 166.87,
+   "uncertainty_kJ_per_mol": 0.5
+  },
+  {
+   "substance": "Hg2Cl2",
+   "state": "cr",
+   "dfH_kJ_per_mol": -265.37,
+   "uncertainty_kJ_per_mol": 0.4
+  },
+  {
+   "substance": "Hg2SO4",
+   "state": "cr",
+   "dfH_kJ_per_mol": -743.09,
+   "uncertainty_kJ_per_mol": 0.4
+  },
+  {
+   "substance": "I",
+   "state": "g",
+   "dfH_kJ_per_mol": 106.76,
+   "uncertainty_kJ_per_mol": 0.04
+  },
+  {
+   "substance": "I-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -56.78,
+   "uncertainty_kJ_per_mol": 0.05
+  },
+  {
+   "substance": "I2",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "I2",
+   "state": "g",
+   "dfH_kJ_per_mol": 62.42,
+   "uncertainty_kJ_per_mol": 0.08
+  },
+  {
+   "substance": "K",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "K",
+   "state": "g",
+   "dfH_kJ_per_mol": 89.0,
+   "uncertainty_kJ_per_mol": 0.8
+  },
+  {
+   "substance": "K+",
+   "state": "aq",
+   "dfH_kJ_per_mol": -252.14,
+   "uncertainty_kJ_per_mol": 0.08
+  },
+  {
+   "substance": "Kr",
+   "state": "g",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Li",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Li",
+   "state": "g",
+   "dfH_kJ_per_mol": 159.3,
+   "uncertainty_kJ_per_mol": 1.0
+  },
+  {
+   "substance": "Li+",
+   "state": "aq",
+   "dfH_kJ_per_mol": -278.47,
+   "uncertainty_kJ_per_mol": 0.08
+  },
+  {
+   "substance": "Mg",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Mg",
+   "state": "g",
+   "dfH_kJ_per_mol": 147.1,
+   "uncertainty_kJ_per_mol": 0.8
+  },
+  {
+   "substance": "Mg+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -467.0,
+   "uncertainty_kJ_per_mol": 0.6
+  },
+  {
+   "substance": "MgF2",
+   "state": "cr",
+   "dfH_kJ_per_mol": -1124.2,
+   "uncertainty_kJ_per_mol": 1.2
+  },
+  {
+   "substance": "MgO",
+   "state": "cr",
+   "dfH_kJ_per_mol": -601.6,
+   "uncertainty_kJ_per_mol": 0.3
+  },
+  {
+   "substance": "N",
+   "state": "g",
+   "dfH_kJ_per_mol": 472.68,
+   "uncertainty_kJ_per_mol": 0.4
+  },
+  {
+   "substance": "NH3",
+   "state": "g",
+   "dfH_kJ_per_mol": -45.94,
+   "uncertainty_kJ_per_mol": 0.35
+  },
+  {
+   "substance": "NH4+",
+   "state": "aq",
+   "dfH_kJ_per_mol": -133.26,
+   "uncertainty_kJ_per_mol": 0.25
+  },
+  {
+   "substance": "NO3-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -206.85,
+   "uncertainty_kJ_per_mol": 0.4
+  },
+  {
+   "substance": "N2",
+   "state": "g",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Na",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Na",
+   "state": "g",
+   "dfH_kJ_per_mol": 107.5,
+   "uncertainty_kJ_per_mol": 0.7
+  },
+  {
+   "substance": "Na+",
+   "state": "aq",
+   "dfH_kJ_per_mol": -240.34,
+   "uncertainty_kJ_per_mol": 0.06
+  },
+  {
+   "substance": "Ne",
+   "state": "g",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "O",
+   "state": "g",
+   "dfH_kJ_per_mol": 249.18,
+   "uncertainty_kJ_per_mol": 0.1
+  },
+  {
+   "substance": "OH-",
+   "state": "aq",
+   "dfH_kJ_per_mol": -230.015,
+   "uncertainty_kJ_per_mol": 0.04
+  },
+  {
+   "substance": "O2",
+   "state": "g",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "P",
+   "state": "cr,white",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "P",
+   "state": "g",
+   "dfH_kJ_per_mol": 316.5,
+   "uncertainty_kJ_per_mol": 1.0
+  },
+  {
+   "substance": "P2",
+   "state": "g",
+   "dfH_kJ_per_mol": 144.0,
+   "uncertainty_kJ_per_mol": 2.0
+  },
+  {
+   "substance": "P4",
+   "state": "g",
+   "dfH_kJ_per_mol": 58.9,
+   "uncertainty_kJ_per_mol": 0.3
+  },
+  {
+   "substance": "Pb",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Pb",
+   "state": "g",
+   "dfH_kJ_per_mol": 195.2,
+   "uncertainty_kJ_per_mol": 0.8
+  },
+  {
+   "substance": "Pb+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": 0.92,
+   "uncertainty_kJ_per_mol": 0.25
+  },
+  {
+   "substance": "PbSO4",
+   "state": "cr",
+   "dfH_kJ_per_mol": -919.97,
+   "uncertainty_kJ_per_mol": 0.4
+  },
+  {
+   "substance": "Rb",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Rb",
+   "state": "g",
+   "dfH_kJ_per_mol": 80.9,
+   "uncertainty_kJ_per_mol": 0.8
+  },
+  {
+   "substance": "Rb+",
+   "state": "aq",
+   "dfH_kJ_per_mol": -251.12,
+   "uncertainty_kJ_per_mol": 0.1
+  },
+  {
+   "substance": "S",
+   "state": "cr,rhombic",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "S",
+   "state": "g",
+   "dfH_kJ_per_mol": 277.17,
+   "uncertainty_kJ_per_mol": 0.15
+  },
+  {
+   "substance": "SO2",
+   "state": "g",
+   "dfH_kJ_per_mol": -296.81,
+   "uncertainty_kJ_per_mol": 0.2
+  },
+  {
+   "substance": "SO4-2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -909.34,
+   "uncertainty_kJ_per_mol": 0.4
+  },
+  {
+   "substance": "S2",
+   "state": "g",
+   "dfH_kJ_per_mol": 128.6,
+   "uncertainty_kJ_per_mol": 0.3
+  },
+  {
+   "substance": "Si",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Si",
+   "state": "g",
+   "dfH_kJ_per_mol": 450.0,
+   "uncertainty_kJ_per_mol": 8.0
+  },
+  {
+   "substance": "SiF4",
+   "state": "g",
+   "dfH_kJ_per_mol": -1615.0,
+   "uncertainty_kJ_per_mol": 0.8
+  },
+  {
+   "substance": "SiO2",
+   "state": "cr,alpha quartz",
+   "dfH_kJ_per_mol": -910.7,
+   "uncertainty_kJ_per_mol": 1.0
+  },
+  {
+   "substance": "Sn",
+   "state": "cr,white",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Sn",
+   "state": "g",
+   "dfH_kJ_per_mol": 301.2,
+   "uncertainty_kJ_per_mol": 1.5
+  },
+  {
+   "substance": "Sn+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -8.9,
+   "uncertainty_kJ_per_mol": 1.0
+  },
+  {
+   "substance": "SnO",
+   "state": "cr,tetragonal",
+   "dfH_kJ_per_mol": -280.71,
+   "uncertainty_kJ_per_mol": 0.2
+  },
+  {
+   "substance": "SnO2",
+   "state": "cr,tetragonal",
+   "dfH_kJ_per_mol": -577.63,
+   "uncertainty_kJ_per_mol": 0.2
+  },
+  {
+   "substance": "Th",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Th",
+   "state": "g",
+   "dfH_kJ_per_mol": 602.0,
+   "uncertainty_kJ_per_mol": 6.0
+  },
+  {
+   "substance": "ThO2",
+   "state": "cr",
+   "dfH_kJ_per_mol": -1226.4,
+   "uncertainty_kJ_per_mol": 3.5
+  },
+  {
+   "substance": "Ti",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Ti",
+   "state": "g",
+   "dfH_kJ_per_mol": 473.0,
+   "uncertainty_kJ_per_mol": 3.0
+  },
+  {
+   "substance": "TiCl4",
+   "state": "g",
+   "dfH_kJ_per_mol": -763.2,
+   "uncertainty_kJ_per_mol": 3.0
+  },
+  {
+   "substance": "TiO2",
+   "state": "cr,rutile",
+   "dfH_kJ_per_mol": -944.0,
+   "uncertainty_kJ_per_mol": 0.8
+  },
+  {
+   "substance": "U",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "U",
+   "state": "g",
+   "dfH_kJ_per_mol": 533.0,
+   "uncertainty_kJ_per_mol": 8.0
+  },
+  {
+   "substance": "UO2",
+   "state": "cr",
+   "dfH_kJ_per_mol": -1085.0,
+   "uncertainty_kJ_per_mol": 1.0
+  },
+  {
+   "substance": "UO2+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -1019.0,
+   "uncertainty_kJ_per_mol": 1.5
+  },
+  {
+   "substance": "UO3",
+   "state": "cr,gamma",
+   "dfH_kJ_per_mol": -1223.8,
+   "uncertainty_kJ_per_mol": 1.2
+  },
+  {
+   "substance": "U3O8",
+   "state": "cr",
+   "dfH_kJ_per_mol": -3574.8,
+   "uncertainty_kJ_per_mol": 2.5
+  },
+  {
+   "substance": "Xe",
+   "state": "g",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Zn",
+   "state": "cr",
+   "dfH_kJ_per_mol": 0.0,
+   "uncertainty_kJ_per_mol": 0.0
+  },
+  {
+   "substance": "Zn",
+   "state": "g",
+   "dfH_kJ_per_mol": 130.4,
+   "uncertainty_kJ_per_mol": 0.4
+  },
+  {
+   "substance": "Zn+2",
+   "state": "aq",
+   "dfH_kJ_per_mol": -153.39,
+   "uncertainty_kJ_per_mol": 0.2
+  },
+  {
+   "substance": "ZnO",
+   "state": "cr",
+   "dfH_kJ_per_mol": -350.46,
+   "uncertainty_kJ_per_mol": 0.27
+  }
+ ]
+}

@@ -113,6 +113,15 @@ def load():
     return raw, json.loads(raw)["reactions"]
 
 
+def save(reactions):
+    """Write reactions.json in its stored layout (one indented block per reaction, ASCII escapes)."""
+    blocks = ["  " + json.dumps(r, indent=2, ensure_ascii=True).replace("\n", "\n  ") for r in reactions]
+    out = '{\n"reactions": [\n' + ",\n".join(blocks) + "\n]\n}\n"
+    json.loads(out)
+    with open(SRC, "w", encoding="utf-8") as f:
+        f.write(out)
+
+
 def check(reactions, strict_from=None):
     """Returns (errors, warnings). Entries at index >= strict_from must also balance."""
     errors, warnings = [], []

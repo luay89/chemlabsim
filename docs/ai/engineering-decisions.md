@@ -157,6 +157,19 @@ Status: accepted (open to review)
 - Descriptive element texts (uses, occurrence) are quoted verbatim from the U.S. DOE labs' pages as PubChem lists them, each with its link. They are not summarised, so nothing is reworded into a claim the source did not make.
 - Safety uses only the EU harmonised classification (CLP Annex VI), shown per classified form. Industry notifications are not used because they vary between notifiers. A missing entry is never shown as "safe".
 
+### 2026-10-18: Reaction enthalpies from sourced formation enthalpies
+
+Status: accepted (open to review)
+
+- **One number per reaction, by Hess's law:** `enthalpyKJPerMol` is ΔH°rxn at 25 °C per mol of reaction as written, = Σν·ΔfH°(products) − Σν·ΔfH°(reactants), each species in the state the equation gives. It is written by `tools/reactions/enthalpy_005.py`, never typed by hand. `enthalpySource` names the tables; a reaction with any missing ΔfH° gets 0, an empty source and `enthalpyMissing` naming the species. Nothing is estimated.
+- **Sources, first match wins:** CODATA Key Values 1989 → NBS Tables 1982 → NIST-JANAF 1998 (liquids at 25 °C) → NIST WebBook (organics above C2). The NBS PDF is a scan; every NBS value was read from its page image (page cited), OCR was only used to find the page. Snapshots live in `tools/thermo/`.
+- **Aqueous species:** strong electrolytes are the sum of their ions (the NBS "ai" convention); weak acids, NH3 and molecular solutes are the undissociated species (`tools/thermo/aqueous_species.py`, one explicit line per species). H2SO4 is fully ionised by that convention. Two derived values are written out in the tool: Cr³⁺ from the hexaaqua ion, P2O5 as half of P4O10.
+- **Two heats are kept apart:**
+  - The live simulation's model vessel stays driven by the record's observed ΔT (`Thermometry.ModelVesselEnthalpyKJ`), so the 3D effects (glow, steam, boiling) are unchanged and remain "estimated".
+  - The sourced ΔH° is used only for calculations from the student's amounts (`Calorimetry.TryReaction`) and for display (Result panel, assistant).
+- **Calculated temperature for any reaction in water:** ΔT = −ΔH°·ξ / (V·ρ·c), with the neutralisation assumptions. Refused, with the reason shown, for heated reactions, electrolysis, a liquid other than water, H2SO4 (its heat of dilution at bench strength is ≈ 22 kJ/mol, NBS p. 2-58), and results that would boil or freeze the water. Strong acid + strong base keeps the existing `TryNeutralisation` path; both routes give the same −55.8 kJ/mol.
+- **Data corrections found by the sign check:** 10 room-temperature reactions in solution stored a small warming although ΔH° is endothermic (e.g. vinegar + baking soda, +30.9 kJ/mol). Their observed ΔT sign was turned to a fall (`TEMPERATURE_SIGN_FIX` in the tool). Heated reactions, electrolysis and concentrated acids keep theirs.
+
 ## Decision Update Rules
 
 - Add a new dated entry when a meaningful architectural or process choice changes.

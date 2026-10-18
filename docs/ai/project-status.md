@@ -1,6 +1,6 @@
 # Project Status
 
-Last reviewed: `2026-10-14`
+Last reviewed: `2026-10-18`
 
 ## High-Level Summary
 
@@ -78,7 +78,7 @@ Stage 5 acceptance gate passed on 2026-10-15 (EditMode 312/312; LinuxPreview tou
 
 Known limits:
 
-- reaction enthalpy exists for 1 of 422 reactions, so most temperatures are estimates; needs a sourced ΔHf° dataset
+- ~~reaction enthalpy exists for 1 of 422 reactions~~ — superseded 2026-10-18: 394 of 422 have a sourced ΔH° (see "Reaction enthalpies" below)
 - the 3D animation runs in stoichiometric proportions, not the student's amounts (stated in the panel)
 - gas volumes, salt hydrolysis, buffers and weak acid + base pH are not modelled
 - not yet tested on a real Android device
@@ -169,6 +169,25 @@ Known limits:
   - Mid-grey satin hot-plate casing; it had been the brightest object in view.
   - Lip highlight ring on the beaker.
   - Meniscus line that follows the liquid surface.
+
+## Reaction enthalpies (2026-10-18, branch `android/reaction-enthalpy`, stacked on PR #10)
+
+- **394 of 422 reactions** now carry a standard reaction enthalpy ΔH° (25 °C, per mol of reaction as written) by Hess's law; before, 1 had a hand-typed value.
+  - Written by `tools/reactions/enthalpy_005.py` from source snapshots in `tools/thermo/`: CODATA Key Values 1989 (151 species), NBS Tables 1982 (137 values, each read from the scanned page and cited by page), NIST-JANAF 1998 (3 liquids), NIST WebBook (12 organics, selection rule stated in the file).
+  - The other 28 say which ΔfH° is missing (CuCO3, complexes such as Fe(SCN)²⁺ and [Cu(NH3)4]²⁺, phosphates of Ag/Cu/Pb, NiCO3, CaSO3, soap, phenolphthalein, alkoxides, liquid CaSiO3, NH2Cl, (C2H4)n, sucrose in solution).
+  - Checks against textbook values: neutralisation −55.8, NaOH dissolving −44.7, NH4NO3 dissolving +25.4, AgCl precipitation −65.7, 2 Mg + O2 −1203.2, ethanol combustion −1234.8 kJ/mol.
+- **Thermometer:** any reaction in water with a sourced ΔH° now shows a temperature *calculated* from the student's amounts (ΔT = −ΔH°·ξ/(V·ρ·c), no heat loss), captioned "calculated from ΔH° and your amounts". Refused with the reason for heated reactions, electrolysis, liquids other than water, H2SO4 (heat of dilution) and results outside 0–100 °C. Neutralisation keeps its own path and caption.
+  - Examples: 1 g Zn + 50 mL 0.1 M CuSO4 → +5.2 °C; 5 g NH4NO3 in 50 mL water → −7.6 °C; 0.5 g Mg + 10 mL 1 M HCl → +55.8 °C.
+- **Result tab:** a "Reaction heat" section shows ΔH° (exo/endothermic), the heat for the student's amounts, the temperature change or why it is not calculated, and the sources. The assistant quotes ΔH° when it is sourced.
+- **3D effects unchanged:** the model vessel still uses the observed ΔT (`Thermometry.ModelVesselEnthalpyKJ`); only rxn_106 (debug-only, hand-typed −300) changed from that path.
+- **Data fix:** 10 room-temperature reactions stored a small warming although ΔH° is endothermic (vinegar + baking soda, NaHCO3 + acids, thiosulfate + HCl …); their observed ΔT now falls.
+- Verified: EditMode 371/371; LinuxPreview tours on desktop and 20:9 phone, 82 screenshots each, 0 exceptions, 110/110 UI checks each (new: ΔH°, heat and calculated temperature for Mg + HCl and AgNO3 + NaCl); Linux and Android builds. The tour now waits for a steady thermometer before reading it (fixes the flaky boiling check). Not tested on a device.
+
+Known limits:
+
+- ΔH° is the standard value (ideal dilute solutions, 25 °C); heats of dilution and mixing at bench strength are not modelled (the reason H2SO4 is refused for temperatures).
+- Reactions written with concentrated reagents (e.g. KMnO4 + conc. HCl) use the dilute standard states, so their ΔH° may differ in sign from what a concentrated mix does.
+- The 3D effects still follow the observed ΔT, not the calculated temperature.
 
 ## Data Status
 

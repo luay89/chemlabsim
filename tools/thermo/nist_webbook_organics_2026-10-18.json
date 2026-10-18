@@ -1,0 +1,139 @@
+{
+ "source": "NIST Chemistry WebBook, NIST Standard Reference Database 69 (Linstrom and Mallard, eds.), condensed phase thermochemistry",
+ "retrieved": "2026-10-18",
+ "selection_rule": "The value marked 'Review' when the page has one; otherwise the first ΔfH° row the WebBook lists. The cited reference is the WebBook's.",
+ "values": [
+  {
+   "species": "C6H6",
+   "state": "l",
+   "name": "Benzene",
+   "dfH_kJ_per_mol": 49.0,
+   "uncertainty_kJ_per_mol": 0.9,
+   "method": "Review",
+   "reference": "Roux, Temprado, et al., 2008",
+   "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C71432&Mask=2&Units=SI",
+   "page_sha256": "0c689022bd2e25f0e169147380662cc8e2fd7e75937c90f6926b4f3cad1206d5"
+  },
+  {
+   "species": "C6H5Br",
+   "state": "l",
+   "name": "Benzene, bromo-",
+   "dfH_kJ_per_mol": 58.6,
+   "uncertainty_kJ_per_mol": null,
+   "method": "Cm",
+   "reference": "Holm, 1973",
+   "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108861&Mask=2&Units=SI",
+   "page_sha256": "10158994a06c5323ee39fcb230f360dff9be319be7534189e3b8909aa5255eaa"
+  },
+  {
+   "species": "C6H12",
+   "state": "l",
+   "name": "Cyclohexane",
+   "dfH_kJ_per_mol": -157.7,
+   "uncertainty_kJ_per_mol": 1.8,
+   "method": "Ccb",
+   "reference": "Spitzer and Huffman, 1947",
+   "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C110827&Mask=2&Units=SI",
+   "page_sha256": "85f8f264013dcd1e96e83ab48372ba56c1829509a6c720544de25b797ff47378"
+  },
+  {
+   "species": "C8H18",
+   "state": "l",
+   "name": "Octane",
+   "dfH_kJ_per_mol": -250.3,
+   "uncertainty_kJ_per_mol": 1.8,
+   "method": "Ccb",
+   "reference": "Good, 1972",
+   "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C111659&Mask=2&Units=SI",
+   "page_sha256": "99773b6c68780397c0f5ad10629eea1d5ca97fe310e3117ad41ea4d6a16ce4bd"
+  },
+  {
+   "species": "C10H22",
+   "state": "l",
+   "name": "Decane",
+   "dfH_kJ_per_mol": -301.0,
+   "uncertainty_kJ_per_mol": 1.1,
+   "method": "Ccb",
+   "reference": "Prosen and Rossini, 1945",
+   "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C124185&Mask=2&Units=SI",
+   "page_sha256": "5aaf7f889831205a27d740c21d0e1ca37875310fb618a0dc7f19a0db8420473b"
+  },
+  {
+   "species": "CH3COOC2H5",
+   "state": "l",
+   "name": "Ethyl Acetate",
+   "dfH_kJ_per_mol": -480.57,
+   "uncertainty_kJ_per_mol": 0.79,
+   "method": "Cm",
+   "reference": "Wiberg, Crocker, et al., 1991",
+   "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C141786&Mask=2&Units=SI",
+   "page_sha256": "2bb776bffc01d74d6373093f972719012eaefde1716abea637eafd9d6b666ef4"
+  },
+  {
+   "species": "CH3COOCH3",
+   "state": "l",
+   "name": "Acetic acid, methyl ester",
+   "dfH_kJ_per_mol": -445.89,
+   "uncertainty_kJ_per_mol": null,
+   "method": "Ccr",
+   "reference": "Hall and Baldt, 1971",
+   "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C79209&Mask=2&Units=SI",
+   "page_sha256": "848e7b383e3366b0f7a415f55b275afabd9240dab9e3527734757083e94eed1a"
+  },
+  {
+   "species": "CH3COCH3",
+   "state": "l",
+   "name": "Acetone",
+   "dfH_kJ_per_mol": -249.4,
+   "uncertainty_kJ_per_mol": 0.63,
+   "method": "Cm",
+   "reference": "Wiberg, Crocker, et al., 1991",
+   "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C67641&Mask=2&Units=SI",
+   "page_sha256": "8e825ce4831bf319e99bda3dc2a12a5217f68b69a9b5384f127359f11d96766b"
+  },
+  {
+   "species": "C6H5NO2",
+   "state": "l",
+   "name": "Benzene, nitro-",
+   "dfH_kJ_per_mol": 12.5,
+   "uncertainty_kJ_per_mol": 0.54,
+   "method": "Ccb",
+   "reference": "Lebedeva, Katin, et al., 1971",
+   "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C98953&Mask=2&Units=SI",
+   "page_sha256": "4959b1fc30f05b096cf31e416dac9d916187edfb8a8d1b07d8b12a78e799d608"
+  },
+  {
+   "species": "C3H5(OH)3",
+   "state": "l",
+   "name": "Glycerin",
+   "dfH_kJ_per_mol": -669.6,
+   "uncertainty_kJ_per_mol": 0.6,
+   "method": "Ccb",
+   "reference": "Bastos, Nilsson, et al., 1988",
+   "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C56815&Mask=2&Units=SI",
+   "page_sha256": "bd8e7422b0f8008aedf666ad4afe54daa23d84f67f621fcf19eede702baab2a7"
+  },
+  {
+   "species": "C12H22O11",
+   "state": "s",
+   "name": "Sucrose",
+   "dfH_kJ_per_mol": -2221.2,
+   "uncertainty_kJ_per_mol": null,
+   "method": "Ccb",
+   "reference": "Clarke and Stegeman, 1939",
+   "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C57501&Mask=2&Units=SI",
+   "page_sha256": "bb9bc614bb7e8d4a0b533200e41cca06b599e5f02ac9ec6d0aa485f3d93d2b01"
+  },
+  {
+   "species": "C6H12O6",
+   "state": "s",
+   "name": "alpha-D-Glucopyranose",
+   "dfH_kJ_per_mol": -1274.5,
+   "uncertainty_kJ_per_mol": null,
+   "method": "Ccb",
+   "reference": "Huffman and Fox, 1938",
+   "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C492626&Mask=2&Units=SI",
+   "page_sha256": "3c2634c19a85d29c7bd0eb033e6e7d2d275ebd3d73a655a079b4c81efb4d2c84"
+  }
+ ]
+}
