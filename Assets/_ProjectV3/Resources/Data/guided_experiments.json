@@ -1,389 +1,506 @@
 {
   "experiments": [
     {
-      "id": "exp_acid_base_001",
-      "titleKey": "guidedExp_title_acidBase",
-      "descriptionKey": "guidedExp_desc_acidBase",
+      "id": "learn_neutralisation",
+      "title": "Acid meets base",
+      "summary": "Mix hydrochloric acid with sodium hydroxide and watch the thermometer: neutralisation gives out heat.",
       "category": "Acid-Base",
       "difficultyLevel": 1,
-      "estimatedMinutes": 5,
-      "prerequisiteExperimentId": null,
-      "requiredReagents": ["HCl", "NaOH"],
-      "rewardSkillPoints": 50,
-      "achievementId": "ach_first_neutralization",
+      "estimatedMinutes": 3,
+      "requiredReagents": [
+        "HCl",
+        "NaOH"
+      ],
       "steps": [
         {
-          "stepNumber": 1,
-          "instructionKey": "guidedExp_step1_acidBase",
-          "hintKey": "guidedExp_hint1_acidBase",
-          "actionType": "SelectReagents",
-          "isOptional": false,
-          "expectedObservations": ["HCl selected", "NaOH selected"],
+          "instruction": "Choose HCl (hydrochloric acid) as reagent A and NaOH (sodium hydroxide) as reagent B.",
+          "hint": "Type the formula into the search box next to each reagent.",
+          "action": "SelectReagents",
           "validation": {
-            "expectedReagents": ["HCl", "NaOH"]
-          }
+            "expectedReagents": [
+              "HCl",
+              "NaOH"
+            ]
+          },
+          "observe": "Look at the pH meter: the acid in the beaker reads about pH 0.",
+          "explanation": "An acid gives H⁺ ions to the water; the more H⁺, the lower the pH."
         },
         {
-          "stepNumber": 2,
-          "instructionKey": "guidedExp_step2_acidBase",
-          "hintKey": "guidedExp_hint2_acidBase",
-          "actionType": "SetMedium",
-          "isOptional": false,
-          "expectedObservations": ["Medium set to Neutral"],
+          "instruction": "Press Mix to pour the base into the acid.",
+          "hint": "Mix is the big blue button under the controls.",
+          "action": "Mix",
           "validation": {
-            "requiredMedium": "Neutral"
-          }
+            "expectedReagents": [
+              "HCl",
+              "NaOH"
+            ],
+            "expectedReactionId": "rxn_001",
+            "expectedResultStatus": "Success"
+          },
+          "observe": "The thermometer climbs a few degrees, and the pH moves towards 7.",
+          "explanation": "H⁺ from the acid and OH⁻ from the base join into water: H⁺ + OH⁻ → H₂O. Forming these bonds gives out 55.8 kJ for every mole of water, so the solution warms up."
         },
         {
-          "stepNumber": 3,
-          "instructionKey": "guidedExp_step3_acidBase",
-          "hintKey": "guidedExp_hint3_acidBase",
-          "actionType": "SetTemperature",
-          "isOptional": false,
-          "expectedObservations": ["Temperature above 25°C"],
-          "validation": {
-            "minTemperature": 25.0
-          }
-        },
-        {
-          "stepNumber": 4,
-          "instructionKey": "guidedExp_step4_acidBase",
-          "hintKey": "guidedExp_hint4_acidBase",
-          "actionType": "Mix",
-          "isOptional": false,
-          "expectedObservations": ["Reaction produces NaCl and H₂O"],
-          "validation": {
-            "expectedResultStatus": "COMPLETE"
-          }
-        },
-        {
-          "stepNumber": 5,
-          "instructionKey": "guidedExp_step5_acidBase",
-          "hintKey": "guidedExp_hint5_acidBase",
-          "actionType": "AnswerQuestion",
-          "isOptional": false,
-          "expectedObservations": [],
-          "validation": null
+          "instruction": "Open the Result tab and find “Reaction heat”.",
+          "hint": "It is below the theoretical yield.",
+          "action": "Observe",
+          "observe": "ΔH° is negative: the reaction is exothermic.",
+          "explanation": "A negative ΔH° means the products hold less energy than the reactants; the difference leaves as heat into the water. The temperature change is worked out from your amounts."
         }
       ],
-      "evaluation": {
-        "perfectScoreThreshold": 0.9,
-        "passingScoreThreshold": 0.5,
-        "criteria": [
-          { "nameKey": "criterion_correctReagents", "weight": 0.25, "descriptionKey": "criterion_desc_correctReagents" },
-          { "nameKey": "criterion_correctMedium", "weight": 0.2, "descriptionKey": "criterion_desc_correctMedium" },
-          { "nameKey": "criterion_correctTemp", "weight": 0.2, "descriptionKey": "criterion_desc_correctTemp" },
-          { "nameKey": "criterion_successfulReaction", "weight": 0.25, "descriptionKey": "criterion_desc_successfulReaction" },
-          { "nameKey": "criterion_quiz", "weight": 0.1, "descriptionKey": "criterion_desc_quiz" }
-        ]
-      }
+      "conclusion": "Acid + base → salt + water. Neutralisation is exothermic: it warms the solution, and the pH moves towards 7."
     },
     {
-      "id": "exp_catalyst_001",
-      "titleKey": "guidedExp_title_catalyst",
-      "descriptionKey": "guidedExp_desc_catalyst",
-      "category": "Catalysis",
-      "difficultyLevel": 2,
-      "estimatedMinutes": 8,
-      "prerequisiteExperimentId": "exp_acid_base_001",
-      "requiredReagents": ["H2O2", "KI"],
-      "rewardSkillPoints": 75,
-      "achievementId": "ach_catalyst_master",
-      "steps": [
-        {
-          "stepNumber": 1,
-          "instructionKey": "guidedExp_step1_catalyst",
-          "hintKey": "guidedExp_hint1_catalyst",
-          "actionType": "SelectReagents",
-          "isOptional": false,
-          "expectedObservations": ["H₂O₂ selected", "KI selected"],
-          "validation": {
-            "expectedReagents": ["H2O2", "KI"]
-          }
-        },
-        {
-          "stepNumber": 2,
-          "instructionKey": "guidedExp_step2_catalyst",
-          "hintKey": "guidedExp_hint2_catalyst",
-          "actionType": "SetTemperature",
-          "isOptional": false,
-          "expectedObservations": ["Temperature below 30°C"],
-          "validation": {
-            "maxTemperature": 30.0
-          }
-        },
-        {
-          "stepNumber": 3,
-          "instructionKey": "guidedExp_step3_catalyst",
-          "hintKey": "guidedExp_hint3_catalyst",
-          "actionType": "ToggleCatalyst",
-          "isOptional": false,
-          "expectedObservations": ["Catalyst added"],
-          "validation": {
-            "requireCatalyst": true
-          }
-        },
-        {
-          "stepNumber": 4,
-          "instructionKey": "guidedExp_step4_catalyst",
-          "hintKey": "guidedExp_hint4_catalyst",
-          "actionType": "Mix",
-          "isOptional": false,
-          "expectedObservations": ["Reaction accelerated by catalyst"],
-          "validation": {
-            "expectedResultStatus": "COMPLETE"
-          }
-        },
-        {
-          "stepNumber": 5,
-          "instructionKey": "guidedExp_step5_catalyst",
-          "hintKey": "guidedExp_hint5_catalyst",
-          "actionType": "AnswerQuestion",
-          "isOptional": false,
-          "expectedObservations": [],
-          "validation": null
-        }
-      ],
-      "evaluation": {
-        "perfectScoreThreshold": 0.9,
-        "passingScoreThreshold": 0.5,
-        "criteria": [
-          { "nameKey": "criterion_correctReagents", "weight": 0.2, "descriptionKey": "criterion_desc_correctReagents" },
-          { "nameKey": "criterion_temperature", "weight": 0.15, "descriptionKey": "criterion_desc_temperature" },
-          { "nameKey": "criterion_catalystUsage", "weight": 0.3, "descriptionKey": "criterion_desc_catalystUsage" },
-          { "nameKey": "criterion_successfulReaction", "weight": 0.25, "descriptionKey": "criterion_desc_successfulReaction" },
-          { "nameKey": "criterion_quiz", "weight": 0.1, "descriptionKey": "criterion_desc_quiz" }
-        ]
-      }
-    },
-    {
-      "id": "exp_precipitation_001",
-      "titleKey": "guidedExp_title_precipitation",
-      "descriptionKey": "guidedExp_desc_precipitation",
+      "id": "learn_precipitate",
+      "title": "A solid from two liquids",
+      "summary": "Two clear solutions make a white solid: silver chloride.",
       "category": "Precipitation",
+      "difficultyLevel": 1,
+      "estimatedMinutes": 3,
+      "requiredReagents": [
+        "AgNO3",
+        "NaCl"
+      ],
+      "steps": [
+        {
+          "instruction": "Choose AgNO3 (silver nitrate) and NaCl (sodium chloride, table salt).",
+          "hint": "Both are colourless solutions.",
+          "action": "SelectReagents",
+          "validation": {
+            "expectedReagents": [
+              "AgNO3",
+              "NaCl"
+            ]
+          },
+          "observe": "Both bottles hold clear, colourless solutions.",
+          "explanation": "Each solution is full of ions moving freely: Ag⁺ and NO₃⁻ in one, Na⁺ and Cl⁻ in the other."
+        },
+        {
+          "instruction": "Press Mix.",
+          "hint": "Watch the beaker closely as the second solution is poured in.",
+          "action": "Mix",
+          "validation": {
+            "expectedReagents": [
+              "AgNO3",
+              "NaCl"
+            ],
+            "expectedReactionId": "rxn_006",
+            "expectedResultStatus": "Success"
+          },
+          "observe": "The liquid turns cloudy white, then a white solid settles to the bottom.",
+          "explanation": "Ag⁺ and Cl⁻ meet and form AgCl, which does not dissolve in water. It comes out of the solution as a solid: a precipitate. Na⁺ and NO₃⁻ stay dissolved — they are spectator ions."
+        }
+      ],
+      "conclusion": "When two ions that form an insoluble compound meet, a precipitate appears. The ions that stay dissolved are spectator ions."
+    },
+    {
+      "id": "learn_metal_acid",
+      "title": "Bubbles of hydrogen",
+      "summary": "Zinc dissolves in acid and gives off hydrogen gas — and grinding makes it faster.",
+      "category": "Gas",
       "difficultyLevel": 2,
-      "estimatedMinutes": 7,
-      "prerequisiteExperimentId": "exp_acid_base_001",
-      "requiredReagents": ["AgNO3", "NaCl"],
-      "rewardSkillPoints": 75,
-      "achievementId": "ach_precipitate",
+      "estimatedMinutes": 4,
+      "prerequisiteExperimentId": "learn_neutralisation",
+      "requiredReagents": [
+        "Zn",
+        "HCl"
+      ],
       "steps": [
         {
-          "stepNumber": 1,
-          "instructionKey": "guidedExp_step1_precip",
-          "hintKey": "guidedExp_hint1_precip",
-          "actionType": "SelectReagents",
-          "isOptional": false,
-          "expectedObservations": ["AgNO₃ selected", "NaCl selected"],
+          "instruction": "Choose Zn (zinc) and HCl (hydrochloric acid).",
+          "hint": "Zinc is a grey metal; HCl is the acid from the first experiment.",
+          "action": "SelectReagents",
           "validation": {
-            "expectedReagents": ["AgNO3", "NaCl"]
-          }
+            "expectedReagents": [
+              "Zn",
+              "HCl"
+            ]
+          },
+          "observe": "The zinc lies in the beaker as a grey solid.",
+          "explanation": "Only the surface of a solid can touch the acid."
         },
         {
-          "stepNumber": 2,
-          "instructionKey": "guidedExp_step2_precip",
-          "hintKey": "guidedExp_hint2_precip",
-          "actionType": "SetStirring",
-          "isOptional": false,
-          "expectedObservations": ["Stirring set high"],
+          "instruction": "Set Grinding to at least 50%.",
+          "hint": "Grinding is the third slider under Conditions.",
+          "action": "SetGrinding",
           "validation": {
-            "minStirring": 0.5
-          }
+            "minGrinding": 0.5
+          },
+          "observe": "Ground zinc is a fine powder with much more surface.",
+          "explanation": "More surface means more zinc atoms touching the acid at once, so the reaction runs faster."
         },
         {
-          "stepNumber": 3,
-          "instructionKey": "guidedExp_step3_precip",
-          "hintKey": "guidedExp_hint3_precip",
-          "actionType": "Mix",
-          "isOptional": false,
-          "expectedObservations": ["White precipitate of AgCl forms"],
+          "instruction": "Press Mix.",
+          "hint": "Watch for bubbles rising from the metal.",
+          "action": "Mix",
           "validation": {
-            "expectedResultStatus": "COMPLETE"
-          }
-        },
-        {
-          "stepNumber": 4,
-          "instructionKey": "guidedExp_step4_precip",
-          "hintKey": "guidedExp_hint4_precip",
-          "actionType": "Observe",
-          "isOptional": false,
-          "expectedObservations": ["Precipitate visible in flask"],
-          "validation": null
+            "expectedReagents": [
+              "Zn",
+              "HCl"
+            ],
+            "minGrinding": 0.5,
+            "expectedReactionId": "rxn_005",
+            "expectedResultStatus": "Success"
+          },
+          "observe": "Bubbles stream up from the zinc, and the thermometer rises.",
+          "explanation": "Zinc is more reactive than hydrogen, so it pushes hydrogen out of the acid: Zn + 2HCl → ZnCl₂ + H₂. The bubbles are hydrogen gas."
         }
       ],
-      "evaluation": {
-        "perfectScoreThreshold": 0.9,
-        "passingScoreThreshold": 0.5,
-        "criteria": [
-          { "nameKey": "criterion_correctReagents", "weight": 0.3, "descriptionKey": "criterion_desc_correctReagents" },
-          { "nameKey": "criterion_stirring", "weight": 0.2, "descriptionKey": "criterion_desc_stirring" },
-          { "nameKey": "criterion_successfulReaction", "weight": 0.3, "descriptionKey": "criterion_desc_successfulReaction" },
-          { "nameKey": "criterion_observation", "weight": 0.2, "descriptionKey": "criterion_desc_observation" }
-        ]
-      }
+      "conclusion": "Reactive metals + acid → salt + hydrogen. Grinding a solid increases its surface area and speeds the reaction up."
     },
     {
-      "id": "exp_gas_001",
-      "titleKey": "guidedExp_title_gas",
-      "descriptionKey": "guidedExp_desc_gas",
-      "category": "Gas Formation",
-      "difficultyLevel": 3,
-      "estimatedMinutes": 10,
-      "prerequisiteExperimentId": "exp_acid_base_001",
-      "requiredReagents": ["Zn", "HCl"],
-      "rewardSkillPoints": 100,
-      "achievementId": "ach_gas_collector",
+      "id": "learn_cold_pack",
+      "title": "A reaction that gets cold",
+      "summary": "Dissolving ammonium nitrate takes heat from the water — this is how instant cold packs work.",
+      "category": "Energy",
+      "difficultyLevel": 2,
+      "estimatedMinutes": 3,
+      "prerequisiteExperimentId": "learn_neutralisation",
+      "requiredReagents": [
+        "NH4NO3",
+        "H2O"
+      ],
       "steps": [
         {
-          "stepNumber": 1,
-          "instructionKey": "guidedExp_step1_gas",
-          "hintKey": "guidedExp_hint1_gas",
-          "actionType": "SelectReagents",
-          "isOptional": false,
-          "expectedObservations": ["Zinc selected", "HCl selected"],
+          "instruction": "Choose NH4NO3 (ammonium nitrate) and H2O (water).",
+          "hint": "Ammonium nitrate is a white solid.",
+          "action": "SelectReagents",
           "validation": {
-            "expectedReagents": ["Zn", "HCl"]
-          }
+            "expectedReagents": [
+              "NH4NO3",
+              "H2O"
+            ]
+          },
+          "observe": "Note the thermometer before you mix.",
+          "explanation": "To see a temperature change you need a starting value."
         },
         {
-          "stepNumber": 2,
-          "instructionKey": "guidedExp_step2_gas",
-          "hintKey": "guidedExp_hint2_gas",
-          "actionType": "SetTemperature",
-          "isOptional": false,
-          "expectedObservations": ["Temperature above 30°C for faster reaction"],
+          "instruction": "Set Grinding to at least 50%.",
+          "hint": "Grinding is the third slider under Conditions.",
+          "action": "SetGrinding",
           "validation": {
-            "minTemperature": 30.0
-          }
+            "minGrinding": 0.5
+          },
+          "observe": "The crystals are now a fine powder.",
+          "explanation": "A powder dissolves much faster than large crystals, because more of its surface touches the water."
         },
         {
-          "stepNumber": 3,
-          "instructionKey": "guidedExp_step3_gas",
-          "hintKey": "guidedExp_hint3_gas",
-          "actionType": "Mix",
-          "isOptional": false,
-          "expectedObservations": ["Hydrogen gas bubbles (H₂) released"],
+          "instruction": "Press Mix.",
+          "hint": "Keep your eyes on the thermometer.",
+          "action": "Mix",
           "validation": {
-            "expectedResultStatus": "COMPLETE"
-          }
-        },
-        {
-          "stepNumber": 4,
-          "instructionKey": "guidedExp_step4_gas",
-          "hintKey": "guidedExp_hint4_gas",
-          "actionType": "Observe",
-          "isOptional": false,
-          "expectedObservations": ["Gas evolution visible"],
-          "validation": null
-        },
-        {
-          "stepNumber": 5,
-          "instructionKey": "guidedExp_step5_gas",
-          "hintKey": "guidedExp_hint5_gas",
-          "actionType": "AnswerQuestion",
-          "isOptional": false,
-          "expectedObservations": [],
-          "validation": null
+            "expectedReagents": [
+              "NH4NO3",
+              "H2O"
+            ],
+            "minGrinding": 0.5,
+            "expectedReactionId": "rxn_040",
+            "expectedResultStatus": "Success"
+          },
+          "observe": "The solid dissolves and the temperature falls.",
+          "explanation": "Pulling the ions of the crystal apart needs more energy than the water gives back when it surrounds them. That energy comes from the water itself, so it cools down. ΔH° is positive: endothermic."
         }
       ],
-      "evaluation": {
-        "perfectScoreThreshold": 0.9,
-        "passingScoreThreshold": 0.5,
-        "criteria": [
-          { "nameKey": "criterion_correctReagents", "weight": 0.25, "descriptionKey": "criterion_desc_correctReagents" },
-          { "nameKey": "criterion_temperature", "weight": 0.2, "descriptionKey": "criterion_desc_temperature" },
-          { "nameKey": "criterion_successfulReaction", "weight": 0.3, "descriptionKey": "criterion_desc_successfulReaction" },
-          { "nameKey": "criterion_observation", "weight": 0.15, "descriptionKey": "criterion_desc_observation" },
-          { "nameKey": "criterion_quiz", "weight": 0.1, "descriptionKey": "criterion_desc_quiz" }
-        ]
-      }
+      "conclusion": "Some processes take in heat (endothermic, ΔH° > 0). The surroundings get colder — that is why the cold pack feels cold."
     },
     {
-      "id": "exp_temperature_effect_001",
-      "titleKey": "guidedExp_title_tempEffect",
-      "descriptionKey": "guidedExp_desc_tempEffect",
-      "category": "Thermodynamics",
-      "difficultyLevel": 3,
-      "estimatedMinutes": 12,
-      "prerequisiteExperimentId": "exp_acid_base_001",
-      "requiredReagents": ["CaCO3", "HCl"],
-      "rewardSkillPoints": 100,
-      "achievementId": "ach_temp_master",
+      "id": "learn_displacement",
+      "title": "Iron pushes out copper",
+      "summary": "Iron in blue copper sulfate solution becomes coated with copper.",
+      "category": "Redox",
+      "difficultyLevel": 2,
+      "estimatedMinutes": 3,
+      "prerequisiteExperimentId": "learn_metal_acid",
+      "requiredReagents": [
+        "Fe",
+        "CuSO4"
+      ],
       "steps": [
         {
-          "stepNumber": 1,
-          "instructionKey": "guidedExp_step1_temp",
-          "hintKey": "guidedExp_hint1_temp",
-          "actionType": "SelectReagents",
-          "isOptional": false,
-          "expectedObservations": ["CaCO₃ selected", "HCl selected"],
+          "instruction": "Choose Fe (iron) and CuSO4 (copper(II) sulfate).",
+          "hint": "Copper sulfate solution is blue.",
+          "action": "SelectReagents",
           "validation": {
-            "expectedReagents": ["CaCO3", "HCl"]
-          }
+            "expectedReagents": [
+              "Fe",
+              "CuSO4"
+            ]
+          },
+          "observe": "The solution is blue because of Cu²⁺ ions.",
+          "explanation": "The colour belongs to the dissolved copper ions."
         },
         {
-          "stepNumber": 2,
-          "instructionKey": "guidedExp_step2_temp",
-          "hintKey": "guidedExp_hint2_temp",
-          "actionType": "SetTemperature",
-          "isOptional": false,
-          "expectedObservations": ["Set temperature low (< 25°C)"],
+          "instruction": "Set Grinding to at least 50%.",
+          "hint": "Iron is a solid too: more surface, faster reaction.",
+          "action": "SetGrinding",
           "validation": {
-            "maxTemperature": 25.0
-          }
+            "minGrinding": 0.5
+          },
+          "observe": "The iron is now a fine powder.",
+          "explanation": "A powder exposes far more iron to the copper ions than a lump."
         },
         {
-          "stepNumber": 3,
-          "instructionKey": "guidedExp_step3_temp",
-          "hintKey": "guidedExp_hint3_temp",
-          "actionType": "Mix",
-          "isOptional": false,
-          "expectedObservations": ["Observe slow reaction rate"],
-          "validation": {}
-        },
-        {
-          "stepNumber": 4,
-          "instructionKey": "guidedExp_step4_temp",
-          "hintKey": "guidedExp_hint4_temp",
-          "actionType": "SetTemperature",
-          "isOptional": false,
-          "expectedObservations": ["Increase temperature to > 50°C"],
+          "instruction": "Press Mix.",
+          "hint": "Watch the colour of the liquid and the metal.",
+          "action": "Mix",
           "validation": {
-            "minTemperature": 50.0
-          }
-        },
-        {
-          "stepNumber": 5,
-          "instructionKey": "guidedExp_step5_temp",
-          "hintKey": "guidedExp_hint5_temp",
-          "actionType": "Mix",
-          "isOptional": false,
-          "expectedObservations": ["Reaction rate increases significantly"],
-          "validation": {
-            "expectedResultStatus": "COMPLETE"
-          }
-        },
-        {
-          "stepNumber": 6,
-          "instructionKey": "guidedExp_step6_temp",
-          "hintKey": "guidedExp_hint6_temp",
-          "actionType": "AnswerQuestion",
-          "isOptional": false,
-          "expectedObservations": ["Understand temperature effect on reaction rate"],
-          "validation": null
+            "expectedReagents": [
+              "Fe",
+              "CuSO4"
+            ],
+            "minGrinding": 0.5,
+            "expectedReactionId": "rxn_018",
+            "expectedResultStatus": "Success"
+          },
+          "observe": "Reddish copper forms and the blue colour fades.",
+          "explanation": "Iron is more reactive than copper. It gives two electrons to each Cu²⁺ ion and goes into solution as Fe²⁺: Fe + CuSO₄ → FeSO₄ + Cu. Fewer Cu²⁺ ions means a paler blue."
         }
       ],
-      "evaluation": {
-        "perfectScoreThreshold": 0.9,
-        "passingScoreThreshold": 0.5,
-        "criteria": [
-          { "nameKey": "criterion_correctReagents", "weight": 0.15, "descriptionKey": "criterion_desc_correctReagents" },
-          { "nameKey": "criterion_lowTemp", "weight": 0.2, "descriptionKey": "criterion_desc_lowTemp" },
-          { "nameKey": "criterion_highTemp", "weight": 0.25, "descriptionKey": "criterion_desc_highTemp" },
-          { "nameKey": "criterion_comparison", "weight": 0.25, "descriptionKey": "criterion_desc_comparison" },
-          { "nameKey": "criterion_quiz", "weight": 0.15, "descriptionKey": "criterion_desc_quiz" }
-        ]
-      }
+      "conclusion": "A more reactive metal displaces a less reactive one from its salt. Electrons move from the more reactive metal to the ions of the less reactive one."
+    },
+    {
+      "id": "learn_catalyst",
+      "title": "What a catalyst does",
+      "summary": "Hydrogen peroxide hardly changes on its own — with a catalyst it foams with oxygen.",
+      "category": "Rate",
+      "difficultyLevel": 2,
+      "estimatedMinutes": 4,
+      "requiredReagents": [
+        "H2O2"
+      ],
+      "steps": [
+        {
+          "instruction": "Choose H2O2 (hydrogen peroxide) as reagent A and nothing as reagent B.",
+          "hint": "Set reagent B to “-” at the top of its list.",
+          "action": "SelectReagents",
+          "validation": {
+            "expectedReagents": [
+              "H2O2"
+            ]
+          },
+          "observe": "Only hydrogen peroxide is in the beaker.",
+          "explanation": "This experiment tests one substance on its own."
+        },
+        {
+          "instruction": "Make sure the catalyst is off, then press Mix.",
+          "hint": "“Use Catalyst” is below the sliders.",
+          "action": "Mix",
+          "validation": {
+            "expectedReagents": [
+              "H2O2"
+            ],
+            "catalyst": 0,
+            "expectedResultStatus": "Fail"
+          },
+          "observe": "Nothing visible happens.",
+          "explanation": "H₂O₂ does break down into water and oxygen, but so slowly that you cannot see it: too few molecules have enough energy to react."
+        },
+        {
+          "instruction": "Switch the catalyst on.",
+          "hint": "Tick “Use Catalyst”.",
+          "action": "ToggleCatalyst",
+          "validation": {
+            "catalyst": 1
+          },
+          "observe": "The settings are the same except for the catalyst.",
+          "explanation": "Changing only one thing at a time makes the test fair."
+        },
+        {
+          "instruction": "Press Mix again.",
+          "hint": "Watch the foam.",
+          "action": "Mix",
+          "validation": {
+            "expectedReagents": [
+              "H2O2"
+            ],
+            "catalyst": 1,
+            "expectedReactionId": "rxn_101",
+            "expectedResultStatus": "Success"
+          },
+          "observe": "Oxygen bubbles out fast and the beaker foams.",
+          "explanation": "The catalyst gives the reaction an easier path with a lower activation energy, so many more molecules can react. It is not used up: 2H₂O₂ → 2H₂O + O₂."
+        }
+      ],
+      "conclusion": "A catalyst speeds up a reaction by lowering its activation energy, and is not used up."
+    },
+    {
+      "id": "learn_activation",
+      "title": "Why some reactions need a flame",
+      "summary": "Magnesium does not burn at room temperature — heat it and it burns with a dazzling white light.",
+      "category": "Energy",
+      "difficultyLevel": 3,
+      "estimatedMinutes": 4,
+      "prerequisiteExperimentId": "learn_catalyst",
+      "requiredReagents": [
+        "Mg",
+        "O2"
+      ],
+      "steps": [
+        {
+          "instruction": "Choose Mg (magnesium) and O2 (oxygen). Keep the temperature at 25 °C.",
+          "hint": "The temperature slider is under Conditions.",
+          "action": "SelectReagents",
+          "validation": {
+            "expectedReagents": [
+              "Mg",
+              "O2"
+            ],
+            "maxTemperature": 30
+          },
+          "observe": "Magnesium sits in oxygen at room temperature.",
+          "explanation": "Magnesium and oxygen together hold a lot of stored chemical energy."
+        },
+        {
+          "instruction": "Press Mix.",
+          "hint": "Will anything happen?",
+          "action": "Mix",
+          "validation": {
+            "expectedReagents": [
+              "Mg",
+              "O2"
+            ],
+            "maxTemperature": 30,
+            "expectedResultStatus": "Fail"
+          },
+          "observe": "Nothing happens.",
+          "explanation": "The reaction gives out a lot of energy, but first the bonds must start to break. That first push is the activation energy, and at 25 °C there is not enough."
+        },
+        {
+          "instruction": "Raise the temperature to at least 500 °C and set Grinding to at least 50%.",
+          "hint": "Drag the temperature slider to the right; grinding is the third slider.",
+          "action": "SetTemperature",
+          "validation": {
+            "minTemperature": 500,
+            "minGrinding": 0.5
+          },
+          "observe": "The hot plate glows, and the magnesium is a fine powder.",
+          "explanation": "Heating gives the particles the energy they need to start reacting; a powder has far more surface touching the oxygen than a lump."
+        },
+        {
+          "instruction": "Press Mix.",
+          "hint": "Never look straight at burning magnesium in a real lab!",
+          "action": "Mix",
+          "validation": {
+            "expectedReagents": [
+              "Mg",
+              "O2"
+            ],
+            "minTemperature": 500,
+            "minGrinding": 0.5,
+            "expectedReactionId": "rxn_004",
+            "expectedResultStatus": "Success"
+          },
+          "observe": "A brilliant white flame, and white magnesium oxide is left.",
+          "explanation": "Once started, the burning keeps itself going: 2Mg + O₂ → 2MgO gives out 1203 kJ, far more than the activation energy."
+        }
+      ],
+      "conclusion": "Even strongly exothermic reactions need an activation energy to start. Heat (or a catalyst) gets them over that barrier."
+    },
+    {
+      "id": "learn_decomposition",
+      "title": "Breaking down with heat",
+      "summary": "Baking soda splits into new substances when it is heated strongly.",
+      "category": "Decomposition",
+      "difficultyLevel": 3,
+      "estimatedMinutes": 3,
+      "prerequisiteExperimentId": "learn_activation",
+      "requiredReagents": [
+        "NaHCO3"
+      ],
+      "steps": [
+        {
+          "instruction": "Choose NaHCO3 (sodium hydrogen carbonate, baking soda) as reagent A and nothing as reagent B.",
+          "hint": "Set reagent B to “-”.",
+          "action": "SelectReagents",
+          "validation": {
+            "expectedReagents": [
+              "NaHCO3"
+            ]
+          },
+          "observe": "A white powder on its own.",
+          "explanation": "One substance can react by itself if it is given enough energy."
+        },
+        {
+          "instruction": "Raise the temperature to at least 300 °C and set Grinding to at least 50%.",
+          "hint": "Drag the temperature slider to the right; grinding is the third slider.",
+          "action": "SetTemperature",
+          "validation": {
+            "minTemperature": 300,
+            "minGrinding": 0.5
+          },
+          "observe": "The hot plate heats the fine powder.",
+          "explanation": "Baking soda starts to break down above about 270 °C in this lab; a fine powder heats through evenly."
+        },
+        {
+          "instruction": "Press Mix to start heating.",
+          "hint": "Watch for gas and steam.",
+          "action": "Mix",
+          "validation": {
+            "expectedReagents": [
+              "NaHCO3"
+            ],
+            "minTemperature": 300,
+            "minGrinding": 0.5,
+            "expectedReactionId": "rxn_028",
+            "expectedResultStatus": "Success"
+          },
+          "observe": "Gas and steam leave the powder; a white solid remains.",
+          "explanation": "2NaHCO₃ → Na₂CO₃ + H₂O + CO₂. The CO₂ is why baking soda makes cakes rise. Breaking it down takes in heat (ΔH° > 0), so it only goes on while it is heated."
+        }
+      ],
+      "conclusion": "Thermal decomposition: heat breaks one substance into simpler ones. It is endothermic, so it needs a steady supply of heat."
+    },
+    {
+      "id": "learn_electrolysis",
+      "title": "Splitting water with electricity",
+      "summary": "An electric current splits water into hydrogen and oxygen — twice as much hydrogen.",
+      "category": "Electrochemistry",
+      "difficultyLevel": 3,
+      "estimatedMinutes": 4,
+      "prerequisiteExperimentId": "learn_decomposition",
+      "requiredReagents": [
+        "H2O"
+      ],
+      "steps": [
+        {
+          "instruction": "Choose H2O (water) as reagent A and nothing as reagent B.",
+          "hint": "Set reagent B to “-”.",
+          "action": "SelectReagents",
+          "validation": {
+            "expectedReagents": [
+              "H2O"
+            ]
+          },
+          "observe": "Only water in the beaker.",
+          "explanation": "Water is very stable: heating it to 100 °C only makes it boil, not split."
+        },
+        {
+          "instruction": "Switch the electric current (DC) on.",
+          "hint": "“Electric current (DC)” is under the catalyst switch.",
+          "action": "ToggleCurrent",
+          "validation": {
+            "current": 1
+          },
+          "observe": "Two graphite electrodes dip into the water.",
+          "explanation": "The current supplies the energy that heat cannot easily give."
+        },
+        {
+          "instruction": "Press Mix.",
+          "hint": "Compare the bubbles at the two electrodes.",
+          "action": "Mix",
+          "validation": {
+            "expectedReagents": [
+              "H2O"
+            ],
+            "current": 1,
+            "expectedReactionId": "rxn_107",
+            "expectedResultStatus": "Success"
+          },
+          "observe": "Bubbles at both electrodes — about twice as many at one of them.",
+          "explanation": "2H₂O → 2H₂ + O₂. Hydrogen forms at the negative electrode (cathode), oxygen at the positive one (anode). The equation gives 2 H₂ for every O₂, so twice the gas at the cathode."
+        }
+      ],
+      "conclusion": "Electrolysis uses electrical energy to drive a reaction that would not happen by itself. Water splits 2 : 1 into hydrogen and oxygen."
     }
   ]
 }

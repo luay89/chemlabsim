@@ -10,6 +10,7 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using ChemLabSimV3.Views;
+using ChemLabSimV3.Views.Bench3D;
 using ChemLabSimV3.Views.Layout;
 using TMPro;
 using UnityEngine;
@@ -44,11 +45,13 @@ namespace ChemLabSimV3.DebugTools
             "magnesium_acid_amounts|Mg|HCl|Neutral|25|0.6|0.6|0|0|0.5|10|" +
                 "panel~Limiting reactant: <b>HCl</b>;panel~10.08 mg;phv=--;phc~not supported;labelA~0.5 g;labelB~10 mL;vol=10 mL;" +
                 // ΔH° = −467.0 kJ/mol; ξ = 5 mmol in 10 mL → 0.005 × 467 000 / (10 × 4.184) = 55.8 K.
-                "panel~ΔH° = −467 kJ per mol of reaction;panel~2.335 kJ given out;tc~calculated from ΔH° and your amounts;tv=80.8 °C",
+                "panel~ΔH° = −467 kJ per mol of reaction;panel~2.335 kJ given out;tc~calculated from ΔH° and your amounts;tv=80.8 °C;beaker=80.8 held",
             "silver_chloride|AgNO3|NaCl|Neutral|25|0.6|0.5|0|0|25|25|" +
                 "panel~Exact proportions;panel~= 0.358 g;phv=--;phc~AgNO3 is not a strong acid or base;labelA~0.1 M bench stock;vol=50 mL;" +
                 // ΔH° = −65.72 kJ/mol; 2.5 mmol in 50 mL → +0.79 K.
                 "panel~ΔH° = −65.72 kJ per mol of reaction;panel~Sources: CODATA Key Values 1989;tc~calculated from ΔH° and your amounts;tv=25.8 °C",
+            // Endothermic: the calculated cooling drives the condensation on the beaker.
+            "cold_pack|NH4NO3|H2O|Neutral|25|0.5|0.6|0|0|||tc~calculated from ΔH° and your amounts;panel~endothermic: takes in heat;beaker=9.8 held",
             "copper_hydroxide|CuSO4|NaOH|Basic|25|0.6|0.5|0",
             "lead_iodide|KI|Pb(NO3)2|Neutral|25|0.6|0.5|0",
             "zinc_acid|Zn|HCl|Acidic|25|0.6|0.6|0",
@@ -139,6 +142,8 @@ namespace ChemLabSimV3.DebugTools
             yield return FlameTour();
             yield return HeatingTour();
             yield return PeriodicTableTour();
+            yield return LearnTour();
+            yield return PredictTour();
 
             Click(GameObject.Find("AssistantTab")?.GetComponent<Button>());
             yield return new WaitForSeconds(0.6f);
@@ -330,6 +335,82 @@ namespace ChemLabSimV3.DebugTools
 
         // ── Periodic table ─────────────────────────────────────────────
 
+        // Learn tab: the first guided experiment from start to finish, checked against the live controls.
+        private IEnumerator LearnTour()
+        {
+            ResetConditions();
+            Select("ReagentA", "Mg");
+            Select("ReagentB", "O2");
+            Click(GameObject.Find("LearnTab")?.GetComponent<Button>());
+            yield return new WaitForSeconds(0.8f);
+            yield return Capture("learn_list");
+            Verify("learn_list", "learnlist~learn_neutralisation: Acid-Base;learnlist~learn_electrolysis: Electrochemistry");
+
+            var learn = FindObjectOfType<LearnView>(true);
+            learn.Begin("learn_neutralisation");
+            yield return new WaitForSeconds(0.6f);
+            Verify("learn_step1_waiting", "learn~Acid meets base;learn~Step 1 of 3;learn~Waiting: choose HCl and NaOH");
+            Select("ReagentA", "HCl");
+            Select("ReagentB", "NaOH");
+            yield return new WaitForSeconds(0.8f);
+            yield return Capture("learn_step1_done");
+            Verify("learn_step1_done", "learn~✓ Done;learn~Look:;learn~about pH 0");
+
+            Click(GameObject.Find("LearnNext")?.GetComponent<Button>());
+            yield return new WaitForSeconds(0.4f);
+            Verify("learn_step2_waiting", "learn~Step 2 of 3;learn~Waiting: press Mix");
+            Click(FindObjectOfType<MixButtonView>()?.GetComponentInChildren<Button>(true));
+            yield return new WaitForSeconds(6f);
+            yield return Capture("learn_step2_done");
+            Verify("learn_step2_done", "learn~✓ Done;learn~55.8 kJ for every mole of water;tc~calculated from ΔH_neut");
+
+            Click(GameObject.Find("LearnNext")?.GetComponent<Button>());
+            yield return new WaitForSeconds(0.4f);
+            Verify("learn_step3", "learn~Step 3 of 3;learn~Look and read");
+            Click(GameObject.Find("LearnNext")?.GetComponent<Button>());
+            yield return new WaitForSeconds(0.6f);
+            yield return Capture("learn_complete");
+            Verify("learn_complete", "learn~Experiment complete;learn~Acid + base → salt + water");
+            Click(GameObject.Find("LearnNext")?.GetComponent<Button>());
+            yield return new WaitForSeconds(0.6f);
+            Verify("learn_list_done", "learnlist~learn_neutralisation: Acid-Base  ·  ●○○○○  ·  about 3 min  ·  <color=#4DD980>✓ done");
+        }
+
+        // Predict: answer for HCl + NaOH (25 + 25 mL), mix, and read the comparison.
+        private IEnumerator PredictTour()
+        {
+            ResetConditions();
+            Select("ReagentA", "HCl");
+            Select("ReagentB", "NaOH");
+            SetAmount("ReagentAAmountRow", "25");
+            SetAmount("ReagentBAmountRow", "25");
+            yield return new WaitForSeconds(0.6f);
+            Click(GameObject.Find("PredictButton")?.GetComponent<Button>());
+            yield return new WaitForSeconds(0.6f);
+            var predict = FindObjectOfType<PredictView>(true);
+            predict.Answer(0, false, false);
+            yield return new WaitForSeconds(0.4f);
+            yield return Capture("predict_questions");
+            Verify("predict_open", "predict~what do you think will happen");
+            Click(GameObject.Find("PredictMix")?.GetComponent<Button>());
+            yield return new WaitForSeconds(5.5f);
+            yield return Capture("predict_result");
+            Verify("predict_result", "predict~3 of 3 right;predict~calculated from your amounts: +6.7 °C;predict~no product is a gas");
+            Click(GameObject.Find("PredictClose")?.GetComponent<Button>());
+            yield return new WaitForSeconds(0.4f);
+        }
+
+        private static void ResetConditions()
+        {
+            Select("ReagentC", null);
+            Select("ReagentD", null);
+            SetSlider<TemperatureSliderView>(25f);
+            SetSlider<StirringSliderView>(0.5f);
+            SetSlider<GrindingSliderView>(0.5f);
+            SetCatalyst(false);
+            SetCurrent(false);
+        }
+
         private IEnumerator PeriodicTableTour()
         {
             Click(GameObject.Find("PeriodicTableButton")?.GetComponent<Button>());
@@ -408,6 +489,11 @@ namespace ChemLabSimV3.DebugTools
                 case "ptopen": var pt = FindObjectOfType<PeriodicTableView>(true); return pt == null ? null : pt.IsOpen ? "yes" : "no";
                 case "ra":     return FindObjectsOfType<ReagentDropdownView>(true).FirstOrDefault(v => v.name.StartsWith("ReagentA"))?.GetSelectedValue();
                 case "volc":   return CardLine("VolumeTag", 2);
+                case "learn":  return FindObjectOfType<LearnView>(true)?.StepText;
+                case "learnlist": return FindObjectOfType<LearnView>(true)?.ListText;
+                case "predict": return FindObjectOfType<PredictView>(true)?.CardText;
+                case "beaker": var bench = FindObjectOfType<LabBench3D>(); return bench == null ? null
+                    : bench.BeakerTemperatureC.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + (bench.HeatFromAmounts ? " held" : "");
                 default:       return null;
             }
         }

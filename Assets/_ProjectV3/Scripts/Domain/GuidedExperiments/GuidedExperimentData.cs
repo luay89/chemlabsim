@@ -1,124 +1,115 @@
-// ChemLabSim v3 — Guided Experiment Data Models
-// Pure C# — no Unity dependencies.
-// Defines the structure for step-by-step guided lab experiments.
+// ChemLabSim v3 — Guided experiment data (Resources/Data/guided_experiments.json)
+// Pure C# — no Unity dependencies. Serializable fields so JsonUtility can read the file.
+// The texts are English-first and stored with the experiment; every step is checked against the
+// live lab state (LabSnapshot), never against a score.
 
+using System;
 using System.Collections.Generic;
 
 namespace ChemLabSimV3.Domain.GuidedExperiments
 {
-    /// <summary>
-    /// Defines a complete guided experiment.
-    /// </summary>
+    [Serializable]
+    public class GuidedExperimentCatalog
+    {
+        public List<GuidedExperimentDef> experiments = new List<GuidedExperimentDef>();
+    }
+
+    /// <summary>A complete guided experiment.</summary>
+    [Serializable]
     public class GuidedExperimentDef
     {
-        public string Id { get; set; }
-        public string TitleKey { get; set; }          // Localization key
-        public string DescriptionKey { get; set; }    // Localization key
-        public string Category { get; set; }          // e.g. "Acid-Base", "Precipitation", "Gas Formation"
-        public int DifficultyLevel { get; set; }      // 1-5
-        public int EstimatedMinutes { get; set; }
-        public string PrerequisiteExperimentId { get; set; } // null if none
-        public List<string> RequiredReagents { get; set; }   // Reagent IDs needed
-        public List<ExperimentStep> Steps { get; set; }
-        public ExperimentEvaluation Evaluation { get; set; }
-        public int RewardSkillPoints { get; set; }
-        public string AchievementId { get; set; }     // Unlock on completion
+        public string id;
+        public string title;
+        public string summary;            // what the student will find out
+        public string category;           // e.g. "Acid-Base", "Precipitation", "Gas"
+        public int difficultyLevel = 1;   // 1-5
+        public int estimatedMinutes = 3;
+        public string prerequisiteExperimentId;
+        public List<string> requiredReagents = new List<string>();
+        public List<ExperimentStep> steps = new List<ExperimentStep>();
+        public string conclusion;         // what the student has learned
     }
 
-    /// <summary>
-    /// A single step within a guided experiment.
-    /// </summary>
+    /// <summary>A single step: what to do, how it is checked, and what to look at once it is done.</summary>
+    [Serializable]
     public class ExperimentStep
     {
-        public int StepNumber { get; set; }
-        public string InstructionKey { get; set; }       // Localization key for what to do
-        public string HintKey { get; set; }              // Localization key for hint
-        public StepActionType ActionType { get; set; }
-        public StepValidation Validation { get; set; }
-        public bool IsOptional { get; set; }             // Can be skipped
-        public List<string> ExpectedObservations { get; set; } // What student should see
+        public string instruction;
+        public string hint;
+        public string action;             // a StepActionType name (JsonUtility reads enums as numbers)
+        public StepValidation validation = new StepValidation();
+        public string observe;            // what to look at once the step is done
+        public string explanation;        // why it happens
+
+        /// <summary>The action, or Observe when the name is unknown (a step is never silently skipped).</summary>
+        public StepActionType ActionType
+        {
+            get => Enum.TryParse(action, out StepActionType t) ? t : StepActionType.Observe;
+            set => action = value.ToString();
+        }
     }
 
-    /// <summary>
-    /// Type of action the student must perform.
-    /// </summary>
+    /// <summary>Type of action the student must perform.</summary>
     public enum StepActionType
     {
-        SelectReagents,      // Choose specific reagents
-        SetTemperature,      // Adjust temperature slider
-        SetStirring,         // Adjust stirring
-        SetGrinding,         // Adjust grinding
-        SetMedium,           // Choose medium (Neutral/Acidic/Basic)
-        ToggleCatalyst,      // Add catalyst
-        Mix,                 // Press Mix button
-        Observe,             // Just observe the result
-        AnswerQuestion,      // Answer a quiz question
-        AddReagent,          // Add more reagent
-        Complete             // Final step
+        SelectReagents,   // reagents as listed (order does not matter)
+        SetTemperature,   // hot-plate temperature in range
+        SetGrinding,      // grinding at least a value
+        ToggleCatalyst,   // catalyst on/off as required
+        ToggleCurrent,    // DC current on/off as required
+        Mix,              // press Mix; the result must match
+        Observe           // read and press Next
     }
 
     /// <summary>
-    /// Validation rules for a step — what the system checks.
+    /// What the lab must show for the step to be done. Unset values are not checked: NaN for numbers,
+    /// empty for text, and −1 for the switches (0 = off, 1 = on).
     /// </summary>
+    [Serializable]
     public class StepValidation
     {
-        public float? MinTemperature { get; set; }
-        public float? MaxTemperature { get; set; }
-        public float? MinStirring { get; set; }
-        public float? MinGrinding { get; set; }
-        public string RequiredMedium { get; set; }
-        public bool? RequireCatalyst { get; set; }
-        public List<string> ExpectedReagents { get; set; }
-        public string ExpectedResultStatus { get; set; }  // "COMPLETE", "INCOMPLETE", any
-        public string CustomValidator { get; set; }        // Future: scriptable validator key
+        public List<string> expectedReagents = new List<string>();
+        public float minTemperature = float.NaN;
+        public float maxTemperature = float.NaN;
+        public float minGrinding = float.NaN;
+        public int catalyst = -1;
+        public int current = -1;
+        public string expectedReactionId;       // the mix must run this reaction
+        public string expectedResultStatus;     // "Success", "Partial", "Fail", "NotFound" or empty (any)
     }
 
-    /// <summary>
-    /// Defines how the experiment result is evaluated.
-    /// </summary>
-    public class ExperimentEvaluation
+    /// <summary>The lab state a step is checked against (built by the view from the live controls).</summary>
+    public struct LabSnapshot
     {
-        public float PerfectScoreThreshold { get; set; } = 0.9f;
-        public float PassingScoreThreshold { get; set; } = 0.5f;
-        public List<EvaluationCriterion> Criteria { get; set; }
+        public IReadOnlyList<string> Reagents;  // selected formulas, empty slots left out
+        public float TemperatureC;
+        public float Grinding;
+        public bool Catalyst;
+        public bool Current;
+
+        // Last mix since the step started (MixedSinceStepStart = false: no mix yet).
+        public bool MixedSinceStepStart;
+        public string LastReactionId;           // null when no reaction was found
+        public string LastResultStatus;         // "Success", "Partial", "Fail" or "NotFound"
     }
 
-    /// <summary>
-    /// A single scoring criterion.
-    /// </summary>
-    public class EvaluationCriterion
+    /// <summary>Outcome of checking a step: done, or what is still missing.</summary>
+    public struct StepCheck
     {
-        public string NameKey { get; set; }       // Localization key
-        public float Weight { get; set; }         // 0.0 - 1.0, sum should be 1.0
-        public string DescriptionKey { get; set; } // What was evaluated
+        public bool Done;
+        public string Waiting;                  // what is still missing (empty when done)
+
+        public static StepCheck Ok => new StepCheck { Done = true, Waiting = string.Empty };
+        public static StepCheck Wait(string why) => new StepCheck { Done = false, Waiting = why };
     }
 
-    /// <summary>
-    /// Runtime state of an in-progress experiment.
-    /// </summary>
+    /// <summary>Runtime state of an experiment in progress.</summary>
     public class ExperimentSession
     {
-        public string ExperimentId { get; set; }
-        public int CurrentStepIndex { get; set; }
-        public List<StepResult> StepResults { get; set; }
-        public float TotalScore { get; set; }
-        public bool IsCompleted { get; set; }
-        public bool IsPerfect { get; set; }
-        public System.DateTime StartedAt { get; set; }
-        public System.DateTime? CompletedAt { get; set; }
-        public Dictionary<string, object> StepData { get; set; }
-    }
-
-    /// <summary>
-    /// Result of a single step execution.
-    /// </summary>
-    public class StepResult
-    {
-        public int StepNumber { get; set; }
-        public bool Passed { get; set; }
-        public float Score { get; set; }
-        public string FeedbackKey { get; set; }   // Localization key for feedback
-        public bool HintUsed { get; set; }
-        public int AttemptsCount { get; set; }
+        public string ExperimentId;
+        public int CurrentStepIndex;
+        public bool IsCompleted;
+        public DateTime StartedAt;
+        public DateTime? CompletedAt;
     }
 }
