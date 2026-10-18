@@ -181,7 +181,7 @@ Known limits:
 - **Result tab:** a "Reaction heat" section shows ΔH° (exo/endothermic), the heat for the student's amounts, the temperature change or why it is not calculated, and the sources. The assistant quotes ΔH° when it is sourced.
 - **3D effects unchanged:** the model vessel still uses the observed ΔT (`Thermometry.ModelVesselEnthalpyKJ`); only rxn_106 (debug-only, hand-typed −300) changed from that path.
 - **Data fix:** 10 room-temperature reactions stored a small warming although ΔH° is endothermic (vinegar + baking soda, NaHCO3 + acids, thiosulfate + HCl …); their observed ΔT now falls.
-- Verified: see PR (EditMode, tours, builds).
+- Verified: EditMode 371/371; LinuxPreview tours on desktop and 20:9 phone, 82 screenshots each, 0 exceptions, 110/110 UI checks each (new: ΔH°, heat and calculated temperature for Mg + HCl and AgNO3 + NaCl); Linux and Android builds. The tour now waits for a steady thermometer before reading it (fixes the flaky boiling check). Not tested on a device.
 
 Known limits:
 
