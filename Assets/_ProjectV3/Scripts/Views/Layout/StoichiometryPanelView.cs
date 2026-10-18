@@ -1,9 +1,12 @@
 // ChemLabSim v3 — "Amounts & limiting reactant" panel (Result tab)
 // Shows what the engine computed from the student's amounts: moles of each reagent and
 // how they were obtained, which reactant limits (or that the proportions are exact), what is
-// left over, and the theoretical yield. When data is missing it says what is missing.
+// left over, the theoretical yield, and the reaction heat (ΔH° by Hess's law, the heat for these
+// amounts and, for a reaction in water, the temperature change). When data is missing it says
+// what is missing.
 // Display only: every number comes from StoichiometryEvaluatedEvent.
 
+using System;
 using System.Globalization;
 using System.Text;
 using ChemLabSimV3.Data;
@@ -60,10 +63,10 @@ namespace ChemLabSimV3.Views.Layout
         private void OnEvaluated(StoichiometryEvaluatedEvent e)
         {
             gameObject.SetActive(e.Evaluation != null);
-            if (e.Evaluation != null) body.text = Describe(e.Evaluation, e.Proceeded);
+            if (e.Evaluation != null) body.text = Describe(e.Evaluation, e.Proceeded, e.Reaction);
         }
 
-        public static string Describe(AmountEvaluation evaluation, bool proceeded = true)
+        public static string Describe(AmountEvaluation evaluation, bool proceeded = true, ReactionEntry reaction = null)
         {
             var sb = new StringBuilder();
             var stoich = evaluation.Stoichiometry;
@@ -109,9 +112,46 @@ namespace ChemLabSimV3.Views.Layout
                 sb.Append(double.IsNaN(p.TheoreticalGrams) ? "  (no molar mass)" : $"  = {Grams(p.TheoreticalGrams)}");
                 sb.Append('\n');
             }
+            if (reaction != null) AppendHeat(sb, reaction, evaluation);
             sb.Append("<size=85%><color=#9FB3C8>The 3D beaker animates the reaction in stoichiometric proportions; the numbers above use your amounts.</color></size>");
             return sb.ToString().TrimEnd();
         }
+
+        /// <summary>Reaction heat: ΔH° (Hess's law), the heat for the extent ξ, and the temperature change in water.</summary>
+        private static void AppendHeat(StringBuilder sb, ReactionEntry reaction, AmountEvaluation evaluation)
+        {
+            sb.Append("\n<b>Reaction heat</b>\n");
+            if (!Calorimetry.HasSourcedEnthalpy(reaction))
+            {
+                sb.Append("<color=#FFBD47>ΔH° not available: ").Append(Calorimetry.MissingEnthalpyReason(reaction)).Append("</color>\n\n");
+                return;
+            }
+            double dh = reaction.enthalpyKJPerMol;
+            sb.Append("ΔH° = ").Append(Signed(dh)).Append(" kJ per mol of reaction  ")
+              .Append(dh < 0 ? "<color=#FF9F6B>exothermic: gives out heat</color>" : "<color=#6BC5FF>endothermic: takes in heat</color>")
+              .Append('\n');
+
+            double extent = evaluation.Stoichiometry.Extent;
+            double q = Calorimetry.HeatReleasedKJ(reaction, extent);
+            sb.Append("For your amounts (ξ = ").Append(Moles(extent)).Append("): ")
+              .Append(Number(Math.Abs(q))).Append(q >= 0 ? " kJ given out" : " kJ taken in").Append('\n');
+
+            if (Calorimetry.TryReaction(reaction, evaluation, out double rise, out string why))
+            {
+                sb.Append("Temperature change: <b>").Append(Signed(rise)).Append(" °C</b> (calculated, no heat loss)");
+                if (!Calorimetry.StaysLiquid(25.0, rise, out string limit)) sb.Append("\n<color=#FFBD47>From 25 °C ").Append(limit).Append(".</color>");
+                sb.Append('\n');
+            }
+            else
+            {
+                sb.Append("<color=#9FB3C8>Temperature change not calculated: ").Append(why).Append(".</color>\n");
+            }
+            sb.Append("<size=85%><color=#9FB3C8>Hess's law: ΔH° = Σ ΔfH°(products) − Σ ΔfH°(reactants), standard values at 25 °C for dilute solutions. ")
+              .Append(reaction.enthalpySource.Replace("Hess's law from standard enthalpies of formation at 25 °C: ", "Sources: "))
+              .Append(".</color></size>\n\n");
+        }
+
+        private static string Signed(double v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Number(Math.Abs(v));
 
         private static string Role(LimitingReactantResult s, string formula)
         {
