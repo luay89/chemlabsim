@@ -107,6 +107,23 @@ Known limits:
 - The burette is mostly hidden behind the headline with the current camera.
 - Not tested on a real Android device.
 
+## Lab environment and graduated glassware (2026-10-15, branch `android/lab-glassware`, stacked on Stage 6)
+
+- The beaker is a 100 mL beaker. Its printed scale has marks every 10 mL and numbers every 20 mL, labelled "mL (approx.)".
+- Reagent B stands in a 50 mL graduated cylinder: marks every 1 mL, longer every 5 mL, numbers every 10 mL.
+- The burette is 50 mL and is read from 0 at the top.
+- All scales are generated from `GraduatedScale`, as one mesh plus number labels per vessel (`GlasswareScale`).
+- The liquid surface stands at the mark of the volume worked out from the amounts (`VesselVolume`):
+  - mL directly; V = n/c with the bottle concentration; V = m/ρ with the density;
+  - solids and gases add no liquid volume;
+  - a mixture's volume is additive;
+  - otherwise "unknown", shown with the reason and an illustrative level.
+- A tag next to the beaker reads the volume out. A precipitate settles inside the liquid without lifting its surface.
+- Changing reagents or amounts after a mix shows a fresh beaker, so no stale mixture remains.
+- During a titration the camera pulls back to show the burette on a retort stand, and the headline steps aside.
+- The back wall is now tiled and the bench top is a lighter epoxy surface.
+- Verified: EditMode 321/321; tours on desktop and phone, 71 screenshots each, 0 exceptions, 62/62 UI checks each (including the volume read-outs and the reset after changing amounts); Linux and Android builds.
+
 ## Data Status
 
 Primary JSON content:

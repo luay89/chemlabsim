@@ -11,6 +11,10 @@
 //   solution (aq / liquid present) → liquid column, precipitate, bubbles
 //   dry (solids + gases only)      → solid layer that turns into the solid product, no liquid
 //   molten (liquid product, ≥ 300 °C) → thin glowing melt (thermite)
+// Volume: the beaker is a 100 mL beaker with a printed scale (GraduatedScale, GlasswareScale);
+// the liquid surface stands at the mark of the volume worked out from the student's amounts
+// (VesselVolume) — reagent A before mixing, all reagents after — and a small tag reads it out.
+// When the volume cannot be worked out the level is illustrative and the tag says why.
 // It only listens to existing events (FxTriggeredEvent, ReactionEvaluatedEvent,
 // EnvironmentChangedEvent, EnvironmentFxChangedEvent, MaterialPreviewChangedEvent),
 // so no controller changes.
@@ -22,6 +26,7 @@ using UnityEngine.SceneManagement;
 using ChemLabSimV3.Controllers;
 using ChemLabSimV3.Data;
 using ChemLabSimV3.Engine;
+using ChemLabSimV3.Engine.Chemistry;
 using ChemLabSimV3.Events;
 using System.Collections.Generic;
 
@@ -40,6 +45,7 @@ namespace ChemLabSimV3.Views.Bench3D
         private const float InnerRadius = OuterRadius - Wall;
         private const float LiquidBottom = BaseThick + 0.003f;
         private const float MaxFill     = Height - BaseThick - 0.08f;   // world height available for contents
+        private const float BeakerMarkHeight = 0.80f;                   // height of the 100 mL mark above the inside bottom
 
         // ── Look ────────────────────────────────────────────────────────
         private static readonly Color Background   = new Color(0.018f, 0.022f, 0.032f);
@@ -98,6 +104,13 @@ namespace ChemLabSimV3.Views.Bench3D
         private Transform beakerRoot;
         private string shownReagentB;
         private Color flameColor = DefaultFlame;
+
+        // Volume in the beaker (from the amounts) and its read-out tag.
+        private GraduatedScale beakerScale;
+        private VolumeReading beakerVolume = VolumeReading.Unknown("no reagent yet");
+        private VolumeReading mixVolume = VolumeReading.Unknown("no mix yet");
+        private PinnedCards.Card volumeTag;
+        private string experimentSignature;
 
         // FxTriggeredEvent and ReactionEvaluatedEvent arrive in the same frame in either
         // order; the effect is applied on the next Update when both are known.
@@ -179,6 +192,23 @@ namespace ChemLabSimV3.Views.Bench3D
 
         // ── Scene construction ─────────────────────────────────────────
 
+        // Camera framings: the beaker close up, and a wider view during a titration so the burette
+        // above the beaker (up to y ≈ 2.1) is in the picture.
+        private static readonly Vector3 CameraHome = new Vector3(0f, 1.30f, -3.6f), CameraHomeTarget = new Vector3(0f, 0.52f, 0f);
+        private static readonly Vector3 CameraTitration = new Vector3(0f, 1.95f, -5.0f), CameraTitrationTarget = new Vector3(0f, 0.86f, 0f);
+        private float titrationView;   // 0 = home framing, 1 = titration framing
+
+        private void UpdateCameraFraming(float dt)
+        {
+            var cam = Camera.main;
+            float target = titrationShown ? 1f : 0f;
+            if (cam == null || Mathf.Approximately(titrationView, target)) return;
+            titrationView = Mathf.MoveTowards(titrationView, target, dt / 0.7f);
+            float k = Mathf.SmoothStep(0f, 1f, titrationView);
+            cam.transform.position = Vector3.Lerp(CameraHome, CameraTitration, k);
+            cam.transform.LookAt(Vector3.Lerp(CameraHomeTarget, CameraTitrationTarget, k));
+        }
+
         private void SetUpCameraAndLighting()
         {
             var cam = Camera.main;
@@ -188,8 +218,8 @@ namespace ChemLabSimV3.Views.Bench3D
                 cam.backgroundColor = Background;
                 cam.fieldOfView = 30f;
                 cam.nearClipPlane = 0.05f;
-                cam.transform.position = new Vector3(0f, 1.30f, -3.6f);
-                cam.transform.LookAt(new Vector3(0f, 0.52f, 0f));
+                cam.transform.position = CameraHome;
+                cam.transform.LookAt(CameraHomeTarget);
             }
 
             RenderSettings.skybox = null;
@@ -239,7 +269,8 @@ namespace ChemLabSimV3.Views.Bench3D
             table.transform.SetParent(transform, false);
             table.transform.localScale = new Vector3(8f, 0.1f, 4f);
             table.transform.position = new Vector3(0f, -0.05f - HotPlate.Height, 1f);   // the beaker stands on the hot plate
-            table.GetComponent<Renderer>().sharedMaterial = Bench3DMeshes.Lit(new Color(0.06f, 0.065f, 0.075f), 0.72f);
+            // Epoxy-resin lab bench: charcoal, satin — a step lighter than the wall so the bench reads.
+            table.GetComponent<Renderer>().sharedMaterial = Bench3DMeshes.Lit(new Color(0.085f, 0.09f, 0.10f), 0.6f);
             Destroy(table.GetComponent<Collider>());
 
             var wall = GameObject.CreatePrimitive(PrimitiveType.Quad);
@@ -247,7 +278,14 @@ namespace ChemLabSimV3.Views.Bench3D
             wall.transform.SetParent(transform, false);
             wall.transform.localScale = new Vector3(14f, 6f, 1f);
             wall.transform.position = new Vector3(0f, 2.5f, 3f);
-            wall.GetComponent<Renderer>().sharedMaterial = Bench3DMeshes.Lit(new Color(0.035f, 0.04f, 0.05f), 0.2f);
+            // Tiled lab wall (dark, so the glassware and labels stay the brightest things in view).
+            var wallMat = Bench3DMeshes.Lit(new Color(0.06f, 0.07f, 0.085f), 0.35f);
+            var tiles = Bench3DMeshes.TileTexture(64, 3);
+            wallMat.SetTexture("_BaseMap", tiles);
+            wallMat.SetTexture("_MainTex", tiles);
+            wallMat.SetTextureScale("_BaseMap", new Vector2(14f / 0.32f, 6f / 0.32f));
+            wallMat.SetTextureScale("_MainTex", new Vector2(14f / 0.32f, 6f / 0.32f));
+            wall.GetComponent<Renderer>().sharedMaterial = wallMat;
             Destroy(wall.GetComponent<Collider>());
         }
 
@@ -272,20 +310,15 @@ namespace ChemLabSimV3.Views.Bench3D
             glassFrontMat = Bench3DMeshes.Glass(GlassTint, 3010, CullMode.Back);
             AddRenderer(beaker, "GlassOuter", Bench3DMeshes.Build("GlassOuter", v, n, uv, t), glassFrontMat);
 
-            // Graduation marks on the side facing the camera.
-            var tickMat = Bench3DMeshes.Lit(new Color(0.9f, 0.92f, 0.95f), 0.3f);
-            for (int i = 1; i <= 5; i++)
+            // Printed volume scale on the side facing the camera: a 100 mL beaker, marks every
+            // 10 mL, numbers every 20 mL. Beaker marks are approximate.
+            beakerScale = GraduatedScale.Beaker100(BeakerMarkHeight);
+            GlasswareScale.Build(beaker, beakerScale, new GlasswareScale.Style
             {
-                var tick = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                tick.name = "Tick" + i;
-                tick.transform.SetParent(beaker, false);
-                tick.transform.localScale = new Vector3(i % 2 == 1 ? 0.10f : 0.06f, 0.006f, 0.004f);
-                tick.transform.localPosition = new Vector3(-0.12f, LiquidBottom + MaxFill * i / 6f, -OuterRadius * 0.97f);
-                tick.transform.localRotation = Quaternion.Euler(0f, -15f, 0f);
-                tick.GetComponent<Renderer>().sharedMaterial = tickMat;
-                tick.GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.Off;
-                Destroy(tick.GetComponent<Collider>());
-            }
+                Radius = OuterRadius, ZeroY = LiquidBottom, CentreDegrees = -22f,
+                MinorLength = 0.07f, MajorLength = 0.12f, MinorThickness = 0.006f, MajorThickness = 0.009f,
+                FontSize = 0.6f, UnitText = "mL (approx.)"
+            });
 
             // Liquid column (height 1, scaled on Y to the current fill).
             var liquidShader = Shader.Find("ChemLabSim/Liquid");
@@ -461,6 +494,30 @@ namespace ChemLabSimV3.Views.Bench3D
             electrodes.SetActive(currentOn);
             ShowReagentB(labInput != null ? labInput.CurrentInput.ReagentB : null);
             RefreshLabels();
+
+            // New reagents or amounts: the beaker shows the new reagent A (conditions alone do not reset it).
+            string signature = ExperimentSignature();
+            if (signature != experimentSignature && !titrationShown && (pourFlask == null || !pourFlask.Busy))
+            {
+                experimentSignature = signature;
+                PrepareFreshBeaker();
+                if (instruments != null) instruments.BeginExperiment(labInput != null ? labInput.CurrentInput.ReagentA : null);
+            }
+        }
+
+        private string ExperimentSignature()
+        {
+            if (labInput == null) labInput = FindObjectOfType<LabInputController>();
+            if (labInput == null) return string.Empty;
+            var sb = new System.Text.StringBuilder();
+            var input = labInput.CurrentInput;
+            var formulas = new[] { input.ReagentA, input.ReagentB, input.ReagentC, input.ReagentD };
+            for (int i = 0; i < formulas.Length; i++)
+            {
+                labInput.TryGetAmount(i, out double v, out string unit);
+                sb.Append(formulas[i]).Append(':').Append(v.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(unit).Append('|');
+            }
+            return sb.ToString();
         }
 
         private void BuildEquipment()
@@ -474,6 +531,11 @@ namespace ChemLabSimV3.Views.Bench3D
             cards = PinnedCards.Create(transform);
             instruments = LabInstruments.Create(transform, cards);
             LabTestRigs.Create(transform, soft);
+
+            // Volume read-out next to the liquid surface (moved with the level in Update).
+            volumeTag = cards.Add("VolumeTag", string.Empty, new Color(0.03f, 0.07f, 0.12f, 0.88f), beakerRoot,
+                                  new Vector3(OuterRadius, LiquidBottom, 0f), new Vector2(0f, 0.5f), new Vector2(10f, 0f), 150f, 17f);
+            volumeTag.Hidden = true;
 
             // Labels of the selected reagents: A in the beaker, B in the pouring flask.
             var labelTint = new Color(0.07f, 0.1f, 0.16f, 0.9f);
@@ -502,6 +564,8 @@ namespace ChemLabSimV3.Views.Bench3D
             card.Value.text = $"{ChemText.Formula(f)}  <size=70%><color=#B8C6D8>{name}</color></size>";
             bool hasAmount = labInput.TryGetAmount(slot, out double v, out string unit);
             card.Caption.text = LabelCaption(mat, hasAmount, v, unit);
+            if (slot == 1 && pourFlask != null && pourFlask.Overfull)
+                card.Caption.text += "\n<color=#FFBD47>more than the 50 mL cylinder holds</color>";
         }
 
         /// <summary>Second line of a reagent label: the amount and, for a solution, the bottle's concentration.</summary>
@@ -512,14 +576,17 @@ namespace ChemLabSimV3.Views.Bench3D
             return mat != null && mat.stockConcentrationM > 0f ? $"{amount}  ·  {mat.stockLabel}" : amount;
         }
 
-        /// <summary>Puts reagent B in the pouring flask, in its real state and colour.</summary>
+        /// <summary>Puts reagent B in the graduated cylinder, in its real state, colour and measured volume.</summary>
         private void ShowReagentB(string formula)
         {
-            if (pourFlask == null || pourFlask.Busy || formula == shownReagentB) return;
-            shownReagentB = formula;
+            if (pourFlask == null || pourFlask.Busy) return;
+            VolumeReading volume = TryAmount(1, formula, out var amountB) ? VesselVolume.Of(amountB) : VolumeReading.Unknown("no reagent B");
+            string shown = $"{formula}|{volume.Known}|{volume.Ml}";
+            if (shown == shownReagentB) return;
+            shownReagentB = shown;
             if (string.IsNullOrWhiteSpace(formula) || labInput == null)
             {
-                pourFlask.Set(PourFlask.Content.Empty, Color.clear);
+                pourFlask.Set(PourFlask.Content.Empty, Color.clear, volume);
                 return;
             }
 
@@ -527,11 +594,11 @@ namespace ChemLabSimV3.Views.Bench3D
             bool hasColour = TryParseHex(hex, out var c);
             string s = (state ?? string.Empty).Trim().ToLowerInvariant();
             if (s == "solid" || s == "s")
-                pourFlask.Set(PourFlask.Content.Powder, hasColour ? c : PowderColor);
+                pourFlask.Set(PourFlask.Content.Powder, hasColour ? c : PowderColor, volume);
             else if (s == "gas" || s == "g")
-                pourFlask.Set(PourFlask.Content.Gas, hasColour ? new Color(c.r, c.g, c.b, 0.25f) : new Color(0.9f, 0.92f, 0.95f, 0.06f));
+                pourFlask.Set(PourFlask.Content.Gas, hasColour ? new Color(c.r, c.g, c.b, 0.25f) : new Color(0.9f, 0.92f, 0.95f, 0.06f), volume);
             else
-                pourFlask.Set(PourFlask.Content.Liquid, hasColour ? new Color(c.r, c.g, c.b, 0.55f) : WaterColor);
+                pourFlask.Set(PourFlask.Content.Liquid, hasColour ? new Color(c.r, c.g, c.b, 0.55f) : WaterColor, volume);
         }
 
         /// <summary>What the pour adds to the beaker before the reaction itself takes over.</summary>
@@ -540,7 +607,8 @@ namespace ChemLabSimV3.Views.Bench3D
             switch (pourFlask.Holds)
             {
                 case PourFlask.Content.Liquid:
-                    liquidTarget = Mathf.Max(liquidLevel + 0.3f, 0.55f);
+                    beakerVolume = mixVolume;
+                    liquidTarget = LevelFor(mixVolume, Mathf.Max(liquidLevel + 0.3f, 0.55f));
                     liquidTargetColor = Color.Lerp(liquidColor, pourFlask.Colour, liquidLevel > 0.05f ? 0.5f : 1f);
                     break;
                 case PourFlask.Content.Powder:
@@ -617,6 +685,7 @@ namespace ChemLabSimV3.Views.Bench3D
         {
             previewState = e.State;
             previewHex = e.ColorHex;
+            experimentSignature = ExperimentSignature();
             PrepareFreshBeaker();
             if (instruments != null) instruments.BeginExperiment(e.Formula);   // new reagent A: new experiment
         }
@@ -631,6 +700,7 @@ namespace ChemLabSimV3.Views.Bench3D
             effervescence = 0;
             reactionDeltaC = 0f;
             SetPlating(0f);
+            beakerVolume = VolumeOfReagentA();
             SetIdle(previewState, previewHex);
             // The mix's results have already arrived; they are shown when the pour reaches the beaker.
             if (instruments != null) instruments.HideReaction();
@@ -654,7 +724,7 @@ namespace ChemLabSimV3.Views.Bench3D
 
             if (s == "solid" || s == "s")
             {
-                solidTarget = 0.10f;
+                solidTarget = 0.05f;   // a thin layer of powder (its height is illustrative, not a volume)
                 liquidTarget = 0f;
                 solidTargetColor = hasColor ? new Color(c.r, c.g, c.b, 1f) : PowderColor;
             }
@@ -666,9 +736,94 @@ namespace ChemLabSimV3.Views.Bench3D
             else
             {
                 solidTarget = 0f;
-                liquidTarget = 0.55f;
+                liquidTarget = LevelFor(beakerVolume, 0.55f);
                 liquidTargetColor = hasColor ? new Color(c.r, c.g, c.b, 0.55f) : WaterColor;
             }
+        }
+
+        // ── Volume ─────────────────────────────────────────────────────
+
+        // Text is rebuilt only when the volume (or whether there is liquid) changes.
+        private VolumeReading tagVolume;
+        private bool tagLiquid, tagValid;
+
+        private void UpdateVolumeTag()
+        {
+            if (volumeTag == null) return;
+            bool liquidShown = liquidLevel > 0.004f || liquidTarget > 0.004f;
+            bool changed = !tagValid || liquidShown != tagLiquid || beakerVolume.Known != tagVolume.Known
+                        || beakerVolume.Basis != tagVolume.Basis
+                        || (beakerVolume.Known && beakerVolume.Ml != tagVolume.Ml);
+            if (changed)
+            {
+                tagValid = true;
+                tagLiquid = liquidShown;
+                tagVolume = beakerVolume;
+                var text = VolumeTagText(liquidShown);
+                volumeTag.Hidden = text == null;
+                if (text != null)
+                {
+                    volumeTag.Value.text = text[0];
+                    volumeTag.Caption.text = text[1];
+                }
+            }
+            if (!volumeTag.Hidden)
+                volumeTag.LocalPoint = new Vector3(OuterRadius, LiquidBottom + liquidLevel * MaxFill, 0f);
+        }
+
+        /// <summary>The amount of reagent slot 0–3 as the engine receives it (same data, same helper).</summary>
+        private bool TryAmount(int slot, string formula, out ReagentAmountInput amount)
+        {
+            amount = default;
+            if (labInput == null || string.IsNullOrWhiteSpace(formula)) return false;
+            labInput.TryGetMaterial(formula.Trim(), out var mat);
+            labInput.TryGetAmount(slot, out double value, out string unit);
+            amount = LabInputController.AmountInputFor(formula.Trim(), mat, value, unit);
+            return true;
+        }
+
+        /// <summary>Volume of reagent A alone (the beaker before mixing).</summary>
+        private VolumeReading VolumeOfReagentA()
+        {
+            if (labInput == null) labInput = FindObjectOfType<LabInputController>();
+            return labInput != null && TryAmount(0, labInput.CurrentInput.ReagentA, out var a)
+                ? VesselVolume.Of(a) : VolumeReading.Unknown("no reagent A");
+        }
+
+        /// <summary>Volume of everything in the mix (volumes taken as additive).</summary>
+        private VolumeReading VolumeOfMix()
+        {
+            if (labInput == null) labInput = FindObjectOfType<LabInputController>();
+            if (labInput == null) return VolumeReading.Unknown("no reagents");
+            var input = labInput.CurrentInput;
+            var formulas = new[] { input.ReagentA, input.ReagentB, input.ReagentC, input.ReagentD };
+            var amounts = new List<ReagentAmountInput>();
+            for (int i = 0; i < formulas.Length; i++)
+                if (TryAmount(i, formulas[i], out var a)) amounts.Add(a);
+            return VesselVolume.Total(amounts);
+        }
+
+        /// <summary>Liquid height (fraction of MaxFill) for a volume; the fallback when it is not known.</summary>
+        private float LevelFor(VolumeReading v, float fallback)
+        {
+            if (!v.Known || beakerScale == null) return fallback;
+            return Mathf.Clamp01((float)(beakerScale.HeightOf(v.Ml) / MaxFill));
+        }
+
+        private double BrimMl => beakerScale != null ? beakerScale.CapacityMl * MaxFill / beakerScale.CapacityHeight : double.NaN;
+
+        /// <summary>Text of the volume tag for the beaker's liquid, or null to hide it.</summary>
+        private string[] VolumeTagText(bool liquidShown)
+        {
+            if (!liquidShown) return null;
+            if (!beakerVolume.Known)
+                return new[] { "? mL", "level not to scale: " + beakerVolume.Basis };
+            if (beakerVolume.Ml <= 0) return null;
+            string ml = beakerVolume.Ml.ToString(beakerVolume.Ml >= 10 ? "0" : "0.#", System.Globalization.CultureInfo.InvariantCulture);
+            string caption = beakerVolume.Basis;
+            if (beakerVolume.Ml > BrimMl) caption = $"more than the beaker holds (≈ {BrimMl:0} mL)";
+            else if (beakerScale.Exceeds(beakerVolume.Ml)) caption += " · above the 100 mL mark";
+            return new[] { $"{ml} mL", caption };
         }
 
         private void OnEnvironment(EnvironmentChangedEvent e)
@@ -683,7 +838,12 @@ namespace ChemLabSimV3.Views.Bench3D
             stirSpin = e.ShowVortex ? e.VortexSpinSpeed : 0f;
         }
 
-        private void OnReactionEvaluated(ReactionEvaluatedEvent e) => lastReaction = e.Input.reaction;
+        private void OnReactionEvaluated(ReactionEvaluatedEvent e)
+        {
+            lastReaction = e.Input.reaction;
+            mixVolume = VolumeOfMix();
+            experimentSignature = ExperimentSignature();
+        }
 
         // Titration: the beaker fills with the added titrant and takes the indicator's colour.
         private bool titrationShown;
@@ -694,13 +854,18 @@ namespace ChemLabSimV3.Views.Bench3D
             {
                 if (!titrationShown) return;
                 titrationShown = false;
-                if (!reacting && (pourFlask == null || !pourFlask.Busy)) SetIdle(previewState, previewHex);
+                if (!reacting && (pourFlask == null || !pourFlask.Busy))
+                {
+                    beakerVolume = VolumeOfReagentA();
+                    SetIdle(previewState, previewHex);
+                }
                 return;
             }
             titrationShown = true;
             SetIdle(previewState, previewHex);
-            double range = 2.0 * e.EquivalenceMl;
-            liquidTarget = Mathf.Lerp(0.45f, 0.85f, range > 0 ? Mathf.Clamp01((float)(e.Point.AddedMl / range)) : 0f);
+            beakerVolume = VolumeReading.Of(e.AnalyteMl + e.Point.AddedMl,
+                $"{e.AnalyteMl:0.##} mL + {e.Point.AddedMl:0.##} mL added (additive)");
+            liquidTarget = LevelFor(beakerVolume, 0.55f);
             if (e.Indicator >= 0 && e.Indicator < ChemLabSimV3.Engine.Chemistry.Indicators.All.Length)
             {
                 var c = ChemLabSimV3.Engine.Chemistry.Indicators.ColourAt(ChemLabSimV3.Engine.Chemistry.Indicators.All[e.Indicator], e.Point.Ph);
@@ -745,8 +910,9 @@ namespace ChemLabSimV3.Views.Bench3D
 
             if (phase == Phase.Solution)
             {
-                // The products end up as a solution in the beaker.
-                liquidTarget = Mathf.Max(liquidLevel, 0.6f);
+                // The products end up as a solution in the beaker; its volume is the mix's.
+                beakerVolume = mixVolume;
+                liquidTarget = LevelFor(mixVolume, Mathf.Max(liquidLevel, 0.6f));
                 solidTarget = 0f;
                 liquidTargetColor = hasColour ? new Color(target.r, target.g, target.b, 0.6f) : WaterColor;
             }
@@ -756,6 +922,7 @@ namespace ChemLabSimV3.Views.Bench3D
                 // (grey Mg → white MgO); with gaseous products only, the solid is used up.
                 // A dry reaction starts in a clean, dry vessel.
                 liquidTarget = phase == Phase.Molten ? 0.16f : 0f;
+                beakerVolume = VolumeReading.Of(0, "no liquid");   // a melt is not a measured volume
                 foamLevel = turbidity = turbidityTarget = 0f;
                 if (phase == Phase.Molten) liquidTargetColor = liquidColor = MoltenColor;
                 else liquidLevel = 0f;
@@ -836,13 +1003,20 @@ namespace ChemLabSimV3.Views.Bench3D
             frost       = Mathf.Max(0f, frost - dt / 25f);
 
             UpdateLiquid(temperatureC);
+            UpdateVolumeTag();
+            UpdateCameraFraming(Time.unscaledDeltaTime);
             UpdateParticles(temperatureC);
             UpdateGlassAndGlow(temperatureC, heatFade);
         }
 
         private void UpdateLiquid(float temperatureC)
         {
-            float total = Mathf.Clamp(solidLevel + liquidLevel + foamLevel, 0f, 1f);
+            // With liquid present its surface is the volume line: a precipitate settles inside the
+            // liquid (its own volume is not modelled), it does not lift the surface.
+            bool hasLiquid = liquidLevel > 0.004f;
+            float liquidBand = hasLiquid ? Mathf.Max(0f, liquidLevel - solidLevel) : 0f;
+            float body = hasLiquid ? Mathf.Max(liquidLevel, solidLevel) : solidLevel;
+            float total = Mathf.Clamp(body + foamLevel, 0f, 1f);
             float meshHeight = Mathf.Max(0.0005f, total * MaxFill);
             liquid.localScale = new Vector3(1f, meshHeight, 1f);
             liquid.gameObject.SetActive(total > 0.004f);
@@ -861,7 +1035,7 @@ namespace ChemLabSimV3.Views.Bench3D
             liquidMat.SetFloat("_ContainerBottomY", liquid.position.y);
             liquidMat.SetFloat("_ContainerHeight", meshHeight * transform.lossyScale.y);
             liquidMat.SetFloat("_SolidHeight", solidLevel * inv);
-            liquidMat.SetFloat("_LiquidHeight", liquidLevel * inv);
+            liquidMat.SetFloat("_LiquidHeight", liquidBand * inv);
             liquidMat.SetFloat("_FoamHeight", foamLevel * inv + 0.03f);
             liquidMat.SetColor("_LiquidColor", shownLiquid);
             liquidMat.SetColor("_TopColor", Color.Lerp(shownLiquid, Color.white, 0.25f));

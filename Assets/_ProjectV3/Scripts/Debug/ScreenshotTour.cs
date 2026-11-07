@@ -29,17 +29,22 @@ namespace ChemLabSimV3.DebugTools
         //                  phv=text    pH card value is exactly text      phc~text  pH caption contains text
         //                  tc~text     temperature caption contains text   tv=text  temperature value
         //                  labelA~text / labelB~text  reagent label caption contains text)
+        //                  vol=text    volume tag next to the beaker
+        //      | ready checks (optional, same syntax, read before Mix is pressed)
         //        Each check logs "[TourCheck] PASS|FAIL step: check"; the totals are logged at the end.
         private static readonly string[] Steps =
         {
             "neutralization|HCl|NaOH|Neutral|25|0.6|0.5|0",
             "neutralization_amounts|HCl|NaOH|Neutral|25|0.6|0.5|0|0|20|30|" +
                 "panel~Limiting reactant: <b>HCl</b>;panel~excess, 10 mmol left;panel~= 1.169 g;phv=13.30;" +
-                "phc~approx.;tc~calculated from ΔH_neut;tv=30.3 °C;labelA~20 mL  ·  1.0 M bench stock;labelB~30 mL  ·  1.0 M bench stock",
+                "phc~approx.;tc~calculated from ΔH_neut;tv=30.3 °C;labelA~20 mL  ·  1.0 M bench stock;labelB~30 mL  ·  1.0 M bench stock;" +
+                "vol=50 mL;volc~volumes taken as additive|" +
+                // Before mixing (right after the previous experiment's 25 + 25 mL): only reagent A, 20 mL.
+                "vol=20 mL;labelA~20 mL",
             "magnesium_acid_amounts|Mg|HCl|Neutral|25|0.6|0.6|0|0|0.5|10|" +
-                "panel~Limiting reactant: <b>HCl</b>;panel~10.08 mg;phv=--;phc~not supported;labelA~0.5 g;labelB~10 mL",
+                "panel~Limiting reactant: <b>HCl</b>;panel~10.08 mg;phv=--;phc~not supported;labelA~0.5 g;labelB~10 mL;vol=10 mL",
             "silver_chloride|AgNO3|NaCl|Neutral|25|0.6|0.5|0|0|25|25|" +
-                "panel~Exact proportions;panel~= 0.358 g;phv=--;phc~AgNO3 is not a strong acid or base;labelA~0.1 M bench stock",
+                "panel~Exact proportions;panel~= 0.358 g;phv=--;phc~AgNO3 is not a strong acid or base;labelA~0.1 M bench stock;vol=50 mL",
             "copper_hydroxide|CuSO4|NaOH|Basic|25|0.6|0.5|0",
             "lead_iodide|KI|Pb(NO3)2|Neutral|25|0.6|0.5|0",
             "zinc_acid|Zn|HCl|Acidic|25|0.6|0.6|0",
@@ -109,13 +114,20 @@ namespace ChemLabSimV3.DebugTools
                 }
                 yield return new WaitForSeconds(1f);
                 yield return Capture(p[0] + "_a_ready");
+                if (p.Length > 12) Verify(p[0] + "_ready", p[12]);
 
                 Click(FindObjectOfType<MixButtonView>()?.GetComponentInChildren<Button>(true));
                 yield return new WaitForSeconds(1.2f);
                 yield return Capture(p[0] + "_b_early");
                 yield return new WaitForSeconds(4f);
                 yield return Capture(p[0] + "_c_late");
-                if (p.Length > 11) Verify(p[0], p[11]);
+                if (p.Length > 11)
+                {
+                    // Like a student, read the instruments once they have settled: the probes ease
+                    // towards their value, and a slow frame during the pour can delay the reveal.
+                    yield return new WaitForSeconds(2f);
+                    Verify(p[0], p[11]);
+                }
             }
 
             yield return TitrationTour();
@@ -223,7 +235,7 @@ namespace ChemLabSimV3.DebugTools
             for (int i = 0; i < 5; i++) Click(GameObject.Find("Add1")?.GetComponent<Button>());
             yield return new WaitForSeconds(1.5f);
             yield return Capture("titration_d_25ml");
-            Verify("titration_25ml", "titr~pH <b>13.05</b>;titr~after the equivalence point;phv=13.05;titr~Phenolphthalein: <b>pink</b>");
+            Verify("titration_25ml", "titr~pH <b>13.05</b>;titr~after the equivalence point;phv=13.05;titr~Phenolphthalein: <b>pink</b>;vol=45 mL");
 
             // A weak acid is outside the model: no curve, a reason instead.
             Select("ReagentA", "CH3COOH");
@@ -285,6 +297,8 @@ namespace ChemLabSimV3.DebugTools
                 case "titr":   return FindObjectOfType<LabTestsView>(true)?.TitrationText;
                 case "tsetup": return Texts("TitrationPanel", "Setup");
                 case "flame":  return FindObjectOfType<LabTestsView>(true)?.FlameText;
+                case "vol":    return CardLine("VolumeTag", 1);
+                case "volc":   return CardLine("VolumeTag", 2);
                 default:       return null;
             }
         }

@@ -1,10 +1,13 @@
 // ChemLabSim v3 — the second reagent, poured into the beaker
-// A small beaker next to the main one holds reagent B in its real state and colour
-// (solution, liquid, powder or gas). On Mix it lifts, tilts over the beaker and pours:
-// a liquid stream, falling grains or a drifting gas — then goes back to its place.
+// A 50 mL graduated cylinder next to the beaker holds reagent B in its real state and colour
+// (solution, liquid, powder or gas). A liquid stands at the mark of its measured volume
+// (GraduatedScale; illustrative level when the volume cannot be worked out). On Mix it lifts,
+// tilts over the beaker and pours: a liquid stream, falling grains or a drifting gas — then
+// goes back to its place.
 
 using System;
 using System.Collections;
+using ChemLabSimV3.Engine.Chemistry;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -14,13 +17,23 @@ namespace ChemLabSimV3.Views.Bench3D
     {
         public enum Content { Empty, Liquid, Powder, Gas }
 
-        private const float Radius = 0.17f;
-        private const float FlaskHeight = 0.46f;
-        private const int Segments = 48;
+        // 50 mL graduated cylinder: tall and narrow, on a wider foot.
+        private const float Radius = 0.075f;
+        private const float InnerRadius = 0.068f;
+        private const float FlaskHeight = 0.74f;
+        private const float InnerBottom = 0.03f;          // glass base: zero volume is here
+        private const float CapacityHeight = 0.58f;       // the 50 mL mark above the inner bottom
+        private const float FootRadius = 0.14f;
+        private const int Segments = 40;
 
         private static readonly Vector3 Home = new Vector3(-0.82f, 0f, 0.15f);
-        private static readonly Vector3 PourPoint = new Vector3(-0.52f, 1.44f, 0f);   // lip ends just above the rim (1.10)
+        private static readonly Vector3 LipTarget = new Vector3(-0.15f, 1.17f, 0f);   // lip ends just above the beaker rim (1.10)
         private const float TiltDegrees = -108f;   // tips towards +x, over the beaker
+
+        // Where the cylinder's base must be so the tilted lip lands on LipTarget.
+        private static Vector3 PourPoint => LipTarget - Quaternion.Euler(0f, 0f, TiltDegrees) * new Vector3(Radius, FlaskHeight, 0f);
+
+        public static readonly GraduatedScale Scale = GraduatedScale.Cylinder50(CapacityHeight);
 
         private Transform body, fill;
         private Material fillMat;
@@ -32,6 +45,8 @@ namespace ChemLabSimV3.Views.Bench3D
         public bool Busy { get; private set; }
         public Content Holds => content;
         public Color Colour => colour;
+
+        public bool Overfull => volume.Known && volume.Ml > Scale.CapacityMl * (FlaskHeight - InnerBottom) / CapacityHeight;
 
         public static PourFlask Create(Transform parent, float standHeight, Texture2D bead, Texture2D soft)
         {
@@ -55,13 +70,25 @@ namespace ChemLabSimV3.Views.Bench3D
             var uv = new System.Collections.Generic.List<Vector2>(); var t = new System.Collections.Generic.List<int>();
             Bench3DMeshes.AddWall(v, n, uv, t, Radius, 0f, FlaskHeight, Segments, inward: false);
             Bench3DMeshes.AddRing(v, n, uv, t, 0f, Radius, 0f, Segments, up: false);
-            Bench3DMeshes.AddRing(v, n, uv, t, Radius * 0.9f, Radius, FlaskHeight, Segments, up: true);
+            Bench3DMeshes.AddRing(v, n, uv, t, InnerRadius, Radius, FlaskHeight, Segments, up: true);
+            // Foot: a short, wide disc the cylinder stands on.
+            Bench3DMeshes.AddWall(v, n, uv, t, FootRadius, 0f, 0.02f, Segments, inward: false);
+            Bench3DMeshes.AddRing(v, n, uv, t, Radius, FootRadius, 0.02f, Segments, up: true);
+            Bench3DMeshes.AddRing(v, n, uv, t, 0f, FootRadius, 0f, Segments, up: false);
             var glass = new GameObject("Glass");
             glass.transform.SetParent(body, false);
             glass.AddComponent<MeshFilter>().sharedMesh = Bench3DMeshes.Build("PourFlaskGlass", v, n, uv, t);
             var r = glass.AddComponent<MeshRenderer>();
-            r.sharedMaterial = Bench3DMeshes.Glass(new Color(0.10f, 0.12f, 0.14f, 0.12f), 3012, CullMode.Back);
+            r.sharedMaterial = Bench3DMeshes.Glass(new Color(0.12f, 0.14f, 0.17f, 0.16f), 3012, CullMode.Back);
             r.shadowCastingMode = ShadowCastingMode.Off;
+
+            // Printed scale: marks every 1 mL, longer every 5 mL, numbers every 10 mL.
+            GlasswareScale.Build(body, Scale, new GlasswareScale.Style
+            {
+                Radius = Radius, ZeroY = InnerBottom, CentreDegrees = 0f,
+                MinorLength = 0.035f, MajorLength = 0.06f, MinorThickness = 0.0028f, MajorThickness = 0.0045f,
+                FontSize = 0.42f, UnitText = "mL"
+            });
 
             var f = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             f.name = "Contents";
@@ -100,18 +127,35 @@ namespace ChemLabSimV3.Views.Bench3D
 
         private Material gasMaterial, beadMaterial;
 
-        /// <summary>Shows reagent B in the flask: what it is and how it looks.</summary>
-        public void Set(Content what, Color c)
+        /// <summary>The liquid stands at the mark of its volume; illustrative level when it is not known.</summary>
+        public static float LiquidHeight(VolumeReading v, float inside)
+        {
+            if (!v.Known) return inside * 0.6f;
+            return Mathf.Clamp((float)Scale.HeightOf(v.Ml), 0.0005f, inside - 0.005f);
+        }
+
+        private VolumeReading volume = VolumeReading.Unknown("not set");
+
+        /// <summary>Shows reagent B in the cylinder: what it is, how it looks and (for a liquid) how much.</summary>
+        public void Set(Content what, Color c, VolumeReading measured)
+        {
+            volume = measured;
+            Set(what, c);
+        }
+
+        private void Set(Content what, Color c)
         {
             content = what;
             colour = c;
             gameObject.SetActive(what != Content.Empty);
             if (what == Content.Empty) return;
 
-            float level = what == Content.Powder ? 0.22f : what == Content.Gas ? 0.92f : 0.6f;
-            float h = FlaskHeight * level;
-            fill.localScale = new Vector3(Radius * 1.86f, h * 0.5f, Radius * 1.86f);
-            fill.localPosition = new Vector3(0f, h * 0.5f + 0.004f, 0f);
+            float inside = FlaskHeight - InnerBottom;
+            float h = what == Content.Powder ? inside * 0.22f
+                    : what == Content.Gas ? inside * 0.92f
+                    : LiquidHeight(volume, inside);
+            fill.localScale = new Vector3(InnerRadius * 2f, h * 0.5f, InnerRadius * 2f);
+            fill.localPosition = new Vector3(0f, InnerBottom + h * 0.5f, 0f);
 
             Color shown = what switch
             {

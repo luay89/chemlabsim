@@ -83,15 +83,9 @@ namespace ChemLabSimV3.Views.Layout
         // A new reagent A starts a new experiment: the last reaction's headline no longer applies.
         private void OnNewReagent(MaterialPreviewChangedEvent e) => targetAlpha = 0f;
 
-        // Titration: the net ionic equation of every strong acid + strong base neutralisation.
-        private void OnTitration(TitrationUpdatedEvent e)
-        {
-            if (!e.Active || !e.Supported) { targetAlpha = 0f; return; }
-            if (e.Point.Region != Engine.Chemistry.TitrationRegion.Start) return;   // set up once, not on every addition
-            Show("TITRATION", LabTheme.Accent,
-                 $"{ChemText.Formula(e.Analyte)} titrated with {ChemText.Formula(e.Titrant)}",
-                 "H<sup>+</sup>(aq) + OH<sup>−</sup>(aq) → H<sub>2</sub>O(l)");
-        }
+        // Titration: the burette stands where the headline is drawn, so the headline steps aside;
+        // the titration panel names the reaction and its net ionic equation.
+        private void OnTitration(TitrationUpdatedEvent e) => targetAlpha = 0f;
 
         private void Update()
         {

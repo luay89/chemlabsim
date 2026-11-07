@@ -141,6 +141,25 @@ namespace ChemLabSimV3.Views.Bench3D
             return shader;
         }
 
+        /// <summary>One square wall tile: light face, darker grout of <paramref name="grout"/> pixels (tiles when repeated).</summary>
+        public static Texture2D TileTexture(int size, int grout)
+        {
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, true) { wrapMode = TextureWrapMode.Repeat, name = "WallTile" };
+            var pixels = new Color32[size * size];
+            for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                bool line = x < grout || y < grout;
+                // A faint bevel: tile faces are a touch lighter towards the top-left.
+                byte face = (byte)(235 - (x + y) * 12 / size);
+                byte v = line ? (byte)150 : face;
+                pixels[y * size + x] = new Color32(v, v, v, 255);
+            }
+            tex.SetPixels32(pixels);
+            tex.Apply(true);
+            return tex;
+        }
+
         /// <summary>Soft round sprite (white, alpha falls off to the edge).</summary>
         public static Texture2D SoftCircle(int size, float hardness)
         {
