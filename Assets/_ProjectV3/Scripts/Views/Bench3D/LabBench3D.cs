@@ -74,7 +74,7 @@ namespace ChemLabSimV3.Views.Bench3D
         private float reactionDeltaC;
         private int   effervescence;
         private bool  vapor, smokeOn, glowOn, foamOn, precipitateOn;
-        private float envSteamRate, envHeat, stirSpin;
+        private float envSteamRate, stirSpin;
         private float frost;
         private bool  flameOn;
 
@@ -88,6 +88,11 @@ namespace ChemLabSimV3.Views.Bench3D
         private bool currentOn, electrolysis;
         private float cathodeShare, anodeShare;   // gas split between the electrodes, from the equation
         private LabInputController labInput;
+
+        // Hot plate under the beaker, reagent B in its own flask, poured in on Mix.
+        private HotPlate hotPlate;
+        private PourFlask pourFlask;
+        private string shownReagentB;
         private Color flameColor = DefaultFlame;
 
         // FxTriggeredEvent and ReactionEvaluatedEvent arrive in the same frame in either
@@ -129,9 +134,17 @@ namespace ChemLabSimV3.Views.Bench3D
             BuildBeaker();
             BuildParticles();
             BuildElectrodes();
+            BuildEquipment();
             SetIdle("liquid", string.Empty);
             liquidLevel = liquidTarget;
             liquidColor = liquidTargetColor;
+        }
+
+        private void Start()
+        {
+            // Show the default reagent B as soon as the controllers have set up the inputs.
+            labInput = FindObjectOfType<LabInputController>();
+            if (labInput != null) ShowReagentB(labInput.CurrentInput.ReagentB);
         }
 
         private void OnEnable()
@@ -217,7 +230,7 @@ namespace ChemLabSimV3.Views.Bench3D
             table.name = "BenchTop";
             table.transform.SetParent(transform, false);
             table.transform.localScale = new Vector3(8f, 0.1f, 4f);
-            table.transform.position = new Vector3(0f, -0.05f, 1f);
+            table.transform.position = new Vector3(0f, -0.05f - HotPlate.Height, 1f);   // the beaker stands on the hot plate
             table.GetComponent<Renderer>().sharedMaterial = Bench3DMeshes.Lit(new Color(0.06f, 0.065f, 0.075f), 0.72f);
             Destroy(table.GetComponent<Collider>());
 
@@ -437,6 +450,56 @@ namespace ChemLabSimV3.Views.Bench3D
             if (labInput == null) labInput = FindObjectOfType<LabInputController>();
             currentOn = labInput != null && labInput.CurrentInput.HasElectricCurrent;
             electrodes.SetActive(currentOn);
+            ShowReagentB(labInput != null ? labInput.CurrentInput.ReagentB : null);
+        }
+
+        private void BuildEquipment()
+        {
+            var bead = Bench3DMeshes.SoftCircle(32, 0.75f);
+            var soft = Bench3DMeshes.SoftCircle(64, 0.1f);
+            hotPlate = HotPlate.Create(transform, soft);
+            hotPlate.transform.localPosition = new Vector3(0f, -HotPlate.Height, 0f);
+            hotPlate.TargetC = benchTemperatureC;
+            pourFlask = PourFlask.Create(transform, -HotPlate.Height, bead, soft);
+            LabAtmosphere.SetUp(Camera.main, transform, UnityEngine.Application.isMobilePlatform);
+        }
+
+        /// <summary>Puts reagent B in the pouring flask, in its real state and colour.</summary>
+        private void ShowReagentB(string formula)
+        {
+            if (pourFlask == null || pourFlask.Busy || formula == shownReagentB) return;
+            shownReagentB = formula;
+            if (string.IsNullOrWhiteSpace(formula) || labInput == null)
+            {
+                pourFlask.Set(PourFlask.Content.Empty, Color.clear);
+                return;
+            }
+
+            labInput.TryGetMaterialLook(formula.Trim(), out string state, out string hex);
+            bool hasColour = TryParseHex(hex, out var c);
+            string s = (state ?? string.Empty).Trim().ToLowerInvariant();
+            if (s == "solid" || s == "s")
+                pourFlask.Set(PourFlask.Content.Powder, hasColour ? c : PowderColor);
+            else if (s == "gas" || s == "g")
+                pourFlask.Set(PourFlask.Content.Gas, hasColour ? new Color(c.r, c.g, c.b, 0.25f) : new Color(0.9f, 0.92f, 0.95f, 0.06f));
+            else
+                pourFlask.Set(PourFlask.Content.Liquid, hasColour ? new Color(c.r, c.g, c.b, 0.55f) : WaterColor);
+        }
+
+        /// <summary>What the pour adds to the beaker before the reaction itself takes over.</summary>
+        private void AddPouredReagent()
+        {
+            switch (pourFlask.Holds)
+            {
+                case PourFlask.Content.Liquid:
+                    liquidTarget = Mathf.Max(liquidLevel + 0.3f, 0.55f);
+                    liquidTargetColor = Color.Lerp(liquidColor, pourFlask.Colour, liquidLevel > 0.05f ? 0.5f : 1f);
+                    break;
+                case PourFlask.Content.Powder:
+                    solidTarget = Mathf.Max(solidLevel, 0.06f);
+                    solidTargetColor = pourFlask.Colour;
+                    break;
+            }
         }
 
         private void SetFlameColor(Color c)
@@ -500,12 +563,22 @@ namespace ChemLabSimV3.Views.Bench3D
         // Picking a new reagent sets up a new experiment: the beaker shows the new reagent.
         private void OnMaterialPreview(MaterialPreviewChangedEvent e)
         {
+            previewState = e.State;
+            previewHex = e.ColorHex;
+            PrepareFreshBeaker();
+        }
+
+        private string previewState = "liquid", previewHex = string.Empty;
+
+        /// <summary>A clean beaker holding only reagent A, as at the start of every experiment.</summary>
+        private void PrepareFreshBeaker()
+        {
             reacting = false;
             precipitateOn = flameOn = glowOn = vapor = smokeOn = foamOn = false;
             effervescence = 0;
             reactionDeltaC = 0f;
             SetPlating(0f);
-            SetIdle(e.State, e.ColorHex);
+            SetIdle(previewState, previewHex);
 
             // A clean beaker right away: nothing from the previous experiment fades out slowly.
             solidLevel = solidTarget;
@@ -543,12 +616,15 @@ namespace ChemLabSimV3.Views.Bench3D
             }
         }
 
-        private void OnEnvironment(EnvironmentChangedEvent e) => benchTemperatureC = e.Temperature;
+        private void OnEnvironment(EnvironmentChangedEvent e)
+        {
+            benchTemperatureC = e.Temperature;
+            if (hotPlate != null) hotPlate.TargetC = e.Temperature;
+        }
 
         private void OnEnvironmentFx(EnvironmentFxChangedEvent e)
         {
             envSteamRate = e.SteamEmissionRate;
-            envHeat = e.HeatIntensity;
             stirSpin = e.ShowVortex ? e.VortexSpinSpeed : 0f;
         }
 
@@ -644,7 +720,17 @@ namespace ChemLabSimV3.Views.Bench3D
             if (fxPending)
             {
                 fxPending = false;
-                ApplyFx(pendingFx, lastReaction);
+                var fx = pendingFx;
+                var reaction = lastReaction;
+                // Every Mix starts from a clean beaker with reagent A; reagent B is poured in and
+                // the reaction starts as the stream reaches the beaker.
+                if (pourFlask != null && pourFlask.Holds != PourFlask.Content.Empty && !pourFlask.Busy)
+                {
+                    PrepareFreshBeaker();
+                    pourFlask.Pour(() => { AddPouredReagent(); ApplyFx(fx, reaction); }, null);
+                }
+                else
+                    ApplyFx(fx, reaction);
             }
 
             float dt = Time.deltaTime;
@@ -777,7 +863,7 @@ namespace ChemLabSimV3.Views.Bench3D
             // Only a clearly hot reaction glows; a few degrees of warming is felt, not seen.
             float reactionGlow = Mathf.InverseLerp(GlowStartC, GlowFullC, reactionDeltaC) * heatFade;
             if (glowOn) reactionGlow = Mathf.Max(reactionGlow, Mathf.Clamp01(1f - reactionTime / 6f));
-            float glow = Mathf.Max(reactionGlow, envHeat * 0.6f);
+            float glow = reactionGlow;   // heating from below is shown by the hot plate
 
             float burn = flameOn ? Mathf.Clamp01(1f - (reactionTime - 4f) / 4f) : 0f;
             glowLight.color = burn > 0f ? flameColor : HeatColor;

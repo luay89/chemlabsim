@@ -141,9 +141,54 @@ def electroplate(r):
     v["color_change"] = ion
 
 
+ACIDS = {"HCl", "HBr", "HI", "HF", "HNO3", "H2SO4", "H3PO4", "H2CO3", "HClO", "CH3COOH", "HCOOH", "H2S"}
+BASES = {"NaOH", "KOH", "LiOH", "Ca(OH)2", "Ba(OH)2", "Mg(OH)2", "Al(OH)3", "NH3", "NH4OH", "Na2CO3", "K2CO3"}
+
+
+def medium(r):
+    """A medium is only a real requirement when an extra acid/base is needed that the reagents
+    do not bring themselves (e.g. H2SO4 as catalyst in esterification). No reaction needs a
+    'Neutral' medium, and an acid among the reactants already makes the solution acidic."""
+    req = r.get("requiredMedium", "")
+    formulas = {c["formula"] for c in r["reactants"]}
+    if req == "Neutral" \
+            or (req == "Acidic" and formulas & ACIDS) \
+            or (req == "Basic" and formulas & BASES):
+        r["requiredMedium"] = ""
+
+
 # Reactions whose liquid colour comes from something the products list does not carry
 # (colloidal sulfur clouds the whole liquid, iodine-starch, ...).
 KEEP_LIQUID_COLOUR = {"rxn_044", "rxn_381", "rxn_284", "rxn_122", "rxn_135"}
+
+
+# What a student sees in the bottle (materials.json drives the beaker/flask previews).
+MATERIAL_COLOURS = {
+    "CuSO4": "#3D8FD6", "CuCl2": "#2E9E8F", "Cu(NO3)2": "#3D8FD6",
+    "FeSO4": "#B8D8A8", "FeCl2": "#B8D8A8", "FeCl3": "#C9A227", "Fe(NO3)3": "#C9A227",
+    "NiCl2": "#4CAF50", "MnSO4": "#F3D6DC", "KMnO4": "#7B1FA2",
+    "Cl2": "#C8D96F",   # pale yellow-green gas
+}
+
+
+def curate_materials():
+    """Realistic solution colours; a white 'colour' on a solution means colourless, not milky."""
+    path = tool.MATERIALS
+    with open(path, encoding="utf-8") as f:
+        raw = f.read()
+    materials = json.loads(raw)
+    items = materials if isinstance(materials, list) else materials["materials"]
+    for m in items:
+        state = (m.get("state") or m.get("default_state") or "").lower()
+        if m.get("formula") in MATERIAL_COLOURS:
+            m["color"] = MATERIAL_COLOURS[m["formula"]]
+        elif state in ("aqueous", "aq", "liquid", "l") and (m.get("color") or "").upper() in ("#FFFFFF", "#FFF"):
+            m["color"] = ""
+    out = json.dumps(materials, indent=2, ensure_ascii=False)
+    if out != raw:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(out)
+        print("materials.json colours updated")
 
 
 def write(reactions):
@@ -155,6 +200,7 @@ def write(reactions):
 
 
 def main():
+    curate_materials()
     _, reactions = tool.load()
     before = json.dumps(reactions, sort_keys=True)
     by_id = {r["id"]: r for r in reactions}
@@ -164,6 +210,7 @@ def main():
     for r in reactions:
         recolour(r)
         electroplate(r)
+        medium(r)
 
     errors, warnings = tool.check(reactions)
     for w in warnings:

@@ -3,7 +3,9 @@
   "rootNamespace": "ChemLabSimV3",
   "references": [
     "Unity.TextMeshPro",
-    "ChemLabSim.Core"
+    "ChemLabSim.Core",
+    "Unity.RenderPipelines.Core.Runtime",
+    "Unity.RenderPipelines.Universal.Runtime"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

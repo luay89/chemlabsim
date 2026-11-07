@@ -30,7 +30,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -105,7 +105,7 @@
     ],
     "producesGas": true,
     "activationTempC": 20,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -169,7 +169,7 @@
     ],
     "producesGas": false,
     "activationTempC": 30,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 10,
     "visual_effects": {
@@ -232,7 +232,7 @@
     ],
     "producesGas": false,
     "activationTempC": 473,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -305,7 +305,7 @@
     ],
     "producesGas": true,
     "activationTempC": 25,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -377,7 +377,7 @@
     ],
     "producesGas": false,
     "activationTempC": 20,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -452,7 +452,7 @@
     ],
     "producesGas": true,
     "activationTempC": 40,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 20,
     "visual_effects": {
@@ -524,7 +524,7 @@
     ],
     "producesGas": true,
     "activationTempC": 20,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -602,7 +602,7 @@
     ],
     "producesGas": true,
     "activationTempC": 25,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 8,
     "visual_effects": {
@@ -687,7 +687,7 @@
     ],
     "producesGas": true,
     "activationTempC": 22,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -774,7 +774,7 @@
     ],
     "producesGas": false,
     "activationTempC": 24,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -851,7 +851,7 @@
     ],
     "producesGas": true,
     "activationTempC": 28,
-    "requiredMedium": "Basic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -918,7 +918,7 @@
     ],
     "producesGas": false,
     "activationTempC": 20,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -990,7 +990,7 @@
     ],
     "producesGas": false,
     "activationTempC": 22,
-    "requiredMedium": "Basic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1062,7 +1062,7 @@
     ],
     "producesGas": false,
     "activationTempC": 20,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1134,7 +1134,7 @@
     ],
     "producesGas": false,
     "activationTempC": 20,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1205,7 +1205,7 @@
     ],
     "producesGas": true,
     "activationTempC": 22,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1277,7 +1277,7 @@
     ],
     "producesGas": false,
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1347,7 +1347,7 @@
     ],
     "producesGas": true,
     "activationTempC": 20,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1420,7 +1420,7 @@
     ],
     "producesGas": true,
     "activationTempC": 20,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1497,7 +1497,7 @@
     ],
     "producesGas": true,
     "activationTempC": 22,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1568,7 +1568,7 @@
     ],
     "producesGas": true,
     "activationTempC": 22,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1640,7 +1640,7 @@
     ],
     "producesGas": false,
     "activationTempC": 25,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1710,7 +1710,7 @@
     ],
     "producesGas": false,
     "activationTempC": 40,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1781,7 +1781,7 @@
     ],
     "producesGas": false,
     "activationTempC": 22,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1852,7 +1852,7 @@
     ],
     "producesGas": false,
     "activationTempC": 22,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1923,7 +1923,7 @@
     ],
     "producesGas": false,
     "activationTempC": 25,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -1993,7 +1993,7 @@
     ],
     "producesGas": true,
     "activationTempC": 270,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2067,7 +2067,7 @@
     ],
     "producesGas": true,
     "activationTempC": 30,
-    "requiredMedium": "Basic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2139,7 +2139,7 @@
     ],
     "producesGas": false,
     "activationTempC": 22,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2209,7 +2209,7 @@
     ],
     "producesGas": true,
     "activationTempC": 363,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2280,7 +2280,7 @@
     ],
     "producesGas": true,
     "activationTempC": 537,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2347,7 +2347,7 @@
     ],
     "producesGas": true,
     "activationTempC": 400,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2413,7 +2413,7 @@
     ],
     "producesGas": true,
     "activationTempC": 232,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2480,7 +2480,7 @@
     ],
     "producesGas": false,
     "activationTempC": 44,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2552,7 +2552,7 @@
     ],
     "producesGas": false,
     "activationTempC": 22,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2618,7 +2618,7 @@
     ],
     "producesGas": false,
     "activationTempC": 22,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2685,7 +2685,7 @@
     ],
     "producesGas": false,
     "activationTempC": 20,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2756,7 +2756,7 @@
     ],
     "producesGas": false,
     "activationTempC": 22,
-    "requiredMedium": "Basic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2828,7 +2828,7 @@
     ],
     "producesGas": false,
     "activationTempC": 20,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2900,7 +2900,7 @@
     ],
     "producesGas": false,
     "activationTempC": 20,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -2985,7 +2985,7 @@
     ],
     "producesGas": false,
     "activationTempC": 50,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -3059,7 +3059,7 @@
     ],
     "producesGas": false,
     "activationTempC": 22,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -3139,7 +3139,7 @@
     ],
     "producesGas": true,
     "activationTempC": 22,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -3210,7 +3210,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -3280,7 +3280,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -3350,7 +3350,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -3421,7 +3421,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -3491,7 +3491,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -3561,7 +3561,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -3630,7 +3630,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -3701,7 +3701,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -3773,7 +3773,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -3841,7 +3841,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -3912,7 +3912,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -3990,7 +3990,7 @@
     ],
     "producesGas": true,
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -4060,7 +4060,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -4131,7 +4131,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -4201,7 +4201,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -4273,7 +4273,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -4344,7 +4344,7 @@
     ],
     "producesGas": true,
     "activationTempC": 25,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -4415,7 +4415,7 @@
     ],
     "producesGas": true,
     "activationTempC": 30,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -4491,7 +4491,7 @@
     ],
     "producesGas": true,
     "activationTempC": 25,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -4561,7 +4561,7 @@
     ],
     "producesGas": true,
     "activationTempC": 35,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -4634,7 +4634,7 @@
     ],
     "producesGas": true,
     "activationTempC": 385,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -4708,7 +4708,7 @@
     ],
     "producesGas": true,
     "activationTempC": 305,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -4783,7 +4783,7 @@
     ],
     "producesGas": true,
     "activationTempC": 410,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 373,
     "visual_effects": {
@@ -4858,7 +4858,7 @@
     ],
     "producesGas": true,
     "activationTempC": 25,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -4937,7 +4937,7 @@
     ],
     "producesGas": true,
     "activationTempC": 30,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -5012,7 +5012,7 @@
     ],
     "producesGas": true,
     "activationTempC": 40,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -5090,7 +5090,7 @@
     ],
     "producesGas": true,
     "activationTempC": 25,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -5165,7 +5165,7 @@
     ],
     "producesGas": true,
     "activationTempC": 25,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -5239,7 +5239,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -5309,7 +5309,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -5379,7 +5379,7 @@
       }
     ],
     "activationTempC": 30,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -5445,7 +5445,7 @@
       }
     ],
     "activationTempC": 30,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -5508,7 +5508,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -5575,7 +5575,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -5642,7 +5642,7 @@
       }
     ],
     "activationTempC": 600,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 150,
     "producesGas": true,
@@ -5717,7 +5717,7 @@
     ],
     "producesGas": true,
     "activationTempC": 850,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 100,
     "visual_effects": {
@@ -5790,7 +5790,7 @@
       }
     ],
     "activationTempC": 30,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -5860,7 +5860,7 @@
       }
     ],
     "activationTempC": 60,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -5931,7 +5931,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -6001,7 +6001,7 @@
       }
     ],
     "activationTempC": 900,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -6078,7 +6078,7 @@
     ],
     "producesGas": true,
     "activationTempC": 25,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -6145,7 +6145,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Basic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -6218,7 +6218,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -6284,7 +6284,7 @@
       }
     ],
     "activationTempC": 200,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -6353,7 +6353,7 @@
     ],
     "producesGas": true,
     "activationTempC": 400,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -6426,7 +6426,7 @@
     ],
     "producesGas": true,
     "activationTempC": 700,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -6500,7 +6500,7 @@
     ],
     "producesGas": true,
     "activationTempC": 300,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -6570,7 +6570,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -6643,7 +6643,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -6715,7 +6715,7 @@
     ],
     "producesGas": true,
     "activationTempC": 240,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -6785,7 +6785,7 @@
     ],
     "producesGas": true,
     "activationTempC": 400,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -6855,7 +6855,7 @@
       }
     ],
     "activationTempC": 30,
-    "requiredMedium": "Basic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -6926,7 +6926,7 @@
     ],
     "producesGas": true,
     "activationTempC": 50,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -6998,7 +6998,7 @@
     ],
     "producesGas": true,
     "activationTempC": 50,
-    "requiredMedium": "Basic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -7070,7 +7070,7 @@
       }
     ],
     "activationTempC": 300,
-    "requiredMedium": "Basic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -7141,7 +7141,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -7209,7 +7209,7 @@
     ],
     "producesGas": true,
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 15,
     "visual_effects": {
@@ -7277,7 +7277,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -7345,7 +7345,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -7417,7 +7417,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "producesGas": false,
@@ -7495,7 +7495,7 @@
     ],
     "producesGas": true,
     "activationTempC": 20,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -7585,7 +7585,7 @@
     ],
     "producesGas": true,
     "activationTempC": 25,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -7660,7 +7660,7 @@
       }
     ],
     "activationTempC": 25,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -7712,7 +7712,7 @@
       }
     ],
     "activationTempC": 80,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 30,
     "visual_effects": {
@@ -7770,7 +7770,7 @@
       }
     ],
     "activationTempC": 200,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -7830,7 +7830,7 @@
       }
     ],
     "activationTempC": 60,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 20,
     "visual_effects": {
@@ -7901,7 +7901,7 @@
       }
     ],
     "activationTempC": 20,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -7957,7 +7957,7 @@
       }
     ],
     "activationTempC": 186,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 50,
     "visual_effects": {
@@ -8021,7 +8021,7 @@
       }
     ],
     "activationTempC": 15,
-    "requiredMedium": "Basic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -8195,7 +8195,7 @@
       }
     ],
     "activationTempC": 15,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -8261,7 +8261,7 @@
       }
     ],
     "activationTempC": 250,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 100,
     "visual_effects": {
@@ -8328,7 +8328,7 @@
       }
     ],
     "activationTempC": 40,
-    "requiredMedium": "Basic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -8379,7 +8379,7 @@
       }
     ],
     "activationTempC": 150,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 80,
     "visual_effects": {
@@ -8502,7 +8502,7 @@
       }
     ],
     "activationTempC": 801,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -8575,7 +8575,7 @@
       }
     ],
     "activationTempC": 20,
-    "requiredMedium": "Basic",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 5,
     "visual_effects": {
@@ -8636,7 +8636,7 @@
       }
     ],
     "activationTempC": 50,
-    "requiredMedium": "Acidic",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 20,
     "visual_effects": {
@@ -8698,7 +8698,7 @@
       }
     ],
     "activationTempC": 450,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 200,
     "visual_effects": {
@@ -8758,7 +8758,7 @@
       }
     ],
     "activationTempC": 500,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": true,
     "catalystDeltaTempC": 150,
     "visual_effects": {
@@ -8823,7 +8823,7 @@
       }
     ],
     "activationTempC": 60,
-    "requiredMedium": "Basic",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -8888,7 +8888,7 @@
       }
     ],
     "activationTempC": 350,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -8949,7 +8949,7 @@
       }
     ],
     "activationTempC": 15,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -9005,7 +9005,7 @@
       }
     ],
     "activationTempC": 15,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
@@ -9068,7 +9068,7 @@
     ],
     "producesGas": false,
     "activationTempC": 20,
-    "requiredMedium": "Neutral",
+    "requiredMedium": "",
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {

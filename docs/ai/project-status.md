@@ -138,6 +138,14 @@ Full report: [reports/2026-09-27-v3-understanding-report.md](reports/2026-09-27-
   - EditMode 176/176.
 - Merging: PRs #2 and #3 were merged into `main` by the agent without the user's review (2026-10-14); later PRs are left open for the user to review and merge.
 
+- 2026-10-14 slice 4 (branch `android/slice-4-realism`), aimed at matching/beating Unreal Chemist:
+  - `Bench3D/LabAtmosphere.cs`: URP post-processing (bloom, ACES, colour, vignette, SMAA/FXAA) from the asset `Resources/RuntimeShaders/LabPostProcessing.asset` (written once by the build scripts; a profile made only in code made URP strip the bloom shaders → NullReferenceException in PostProcessPass), and a wall shelf of reagent bottles.
+  - `Bench3D/HotPlate.cs`: the beaker stands on a hot plate whose ring glows like hot metal with the slider temperature (replaces the unexplained orange glow).
+  - `Bench3D/PourFlask.cs`: reagent B sits in its own beaker in its real state/colour and is poured on Mix (liquid stream, falling powder or drifting gas); every Mix starts from a clean beaker with reagent A.
+  - Fixed: `LabInputController.materialsJsonAsset` was unassigned in LabV3, so player builds (APK) had no reagent names, states or colours; now wired in the scene.
+  - Data (curate_002): `requiredMedium` kept only where an extra acid/base catalyst is needed (3 reactions); 'Neutral' and self-supplied acid/base requirements removed. Material colours: realistic solution colours, white "colour" on solutions → colourless.
+  - EditMode 176/176; tour 56 shots, 0 exceptions; APK builds.
+
 ## Factual Constraints For Future Tasks
 
 - the worktree may be dirty; unrelated edits already exist
