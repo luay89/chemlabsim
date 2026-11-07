@@ -6,10 +6,12 @@
 // reactions the stepper uses the observed temperature change of the reaction record
 // (temperature_delta), so that reading is an estimate. Without a running reaction the
 // thermometer shows the temperature set on the hot plate.
+// "Calculated" is used only where the energy balance is fully known from the student's amounts:
+// a strong acid + strong base neutralisation (Calorimetry), with its assumptions stated.
 
 namespace ChemLabSimV3.Engine.Chemistry
 {
-    public enum TemperatureBasis { SetPoint, Estimated, Simulated }
+    public enum TemperatureBasis { SetPoint, Estimated, Simulated, Calculated }
 
     public static class Thermometry
     {
@@ -24,6 +26,7 @@ namespace ChemLabSimV3.Engine.Chemistry
             switch (basis)
             {
                 case TemperatureBasis.Simulated:  return "simulated from ΔH (model vessel)";
+                case TemperatureBasis.Calculated: return "calculated from ΔH_neut and your volumes; no heat loss";
                 case TemperatureBasis.Estimated:  return "estimated from observed ΔT";
                 default:                          return "set on the hot plate";
             }

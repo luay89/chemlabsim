@@ -68,12 +68,29 @@ namespace ChemLabSimV3.Views.Layout
         {
             EventBus.Subscribe<ReactionEvaluatedEvent>(OnEvaluated);
             EventBus.Subscribe<ReactionNotFoundEvent>(OnNotFound);
+            EventBus.Subscribe<MaterialPreviewChangedEvent>(OnNewReagent);
+            EventBus.Subscribe<TitrationUpdatedEvent>(OnTitration);
         }
 
         private void OnDisable()
         {
             EventBus.Unsubscribe<ReactionEvaluatedEvent>(OnEvaluated);
             EventBus.Unsubscribe<ReactionNotFoundEvent>(OnNotFound);
+            EventBus.Unsubscribe<MaterialPreviewChangedEvent>(OnNewReagent);
+            EventBus.Unsubscribe<TitrationUpdatedEvent>(OnTitration);
+        }
+
+        // A new reagent A starts a new experiment: the last reaction's headline no longer applies.
+        private void OnNewReagent(MaterialPreviewChangedEvent e) => targetAlpha = 0f;
+
+        // Titration: the net ionic equation of every strong acid + strong base neutralisation.
+        private void OnTitration(TitrationUpdatedEvent e)
+        {
+            if (!e.Active || !e.Supported) { targetAlpha = 0f; return; }
+            if (e.Point.Region != Engine.Chemistry.TitrationRegion.Start) return;   // set up once, not on every addition
+            Show("TITRATION", LabTheme.Accent,
+                 $"{ChemText.Formula(e.Analyte)} titrated with {ChemText.Formula(e.Titrant)}",
+                 "H<sup>+</sup>(aq) + OH<sup>−</sup>(aq) → H<sub>2</sub>O(l)");
         }
 
         private void Update()

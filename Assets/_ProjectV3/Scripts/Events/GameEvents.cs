@@ -36,6 +36,29 @@ namespace ChemLabSimV3.Events
         public bool Complete;    // the engine ran it to completion (Success)
     }
 
+    /// <summary>
+    /// Stage 6 titration: the state after setting up or adding titrant. Active = false ends the
+    /// titration (the pH meter goes back to the beaker's experiment).
+    /// </summary>
+    public struct TitrationUpdatedEvent : IGameEvent
+    {
+        public bool Active;
+        public bool Supported;
+        public string Message;                          // reason when unsupported
+        public Engine.Chemistry.TitrationPoint Point;   // valid when Supported
+        public double EquivalenceMl;
+        public string Analyte;
+        public string Titrant;
+        public double AnalyteMl;
+        public int Indicator;                           // index in Indicators.All, −1 = none
+    }
+
+    /// <summary>Stage 6 flame test of reagent A.</summary>
+    public struct FlameTestEvent : IGameEvent
+    {
+        public Engine.Chemistry.FlameTestResult Result;
+    }
+
     /// <summary>Fired when the user's mix request cannot be matched to any known reaction.</summary>
     public struct ReactionNotFoundEvent : IGameEvent
     {

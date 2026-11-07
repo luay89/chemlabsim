@@ -104,6 +104,9 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
             Assert.That(o.PhValue, Is.EqualTo("13.30"));
             Assert.That(o.PhCaption, Is.EqualTo("calculated (approx., concentrated)"));
 
+            // Thermometer: 20 mmol of water formed in 50 mL → 20e-3 × 55 815 / (50 × 4.184) = 5.34 K, calculated.
+            Assert.That(LabInstruments.RiseAfterMix(o.Event), Is.EqualTo(0.020 * 55815.0 / (50 * 4.184)).Within(1e-3).Percent);
+
             // The reagent label under the beaker shows the bottle the amount was measured from.
             Assert.That(LabBench3D.LabelCaption(materials["HCl"], true, 20, "mL"), Is.EqualTo("20 mL  ·  1.0 M bench stock"));
         }
@@ -210,6 +213,7 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
             var o = Mix(25f, Amount("Mg", 0.5, "g"), Amount("O2", 0.05, "mol"));
             Assert.That(o.Event.Proceeded, Is.False);
             StringAssert.StartsWith("<color=#FFBD47>The reaction did not proceed", o.Panel);
+            Assert.That(double.IsNaN(LabInstruments.RiseAfterMix(o.Event)), Is.True);
             Assert.That(o.Ph.IsCalculated, Is.False);
             StringAssert.Contains("did not proceed", o.Ph.Basis);
         }
@@ -221,6 +225,7 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
             Assert.That(o.Ph.IsCalculated, Is.False);
             Assert.That(o.PhValue, Is.EqualTo("--"));
             StringAssert.StartsWith("not supported: AgNO3 is not a strong acid or base", o.PhCaption);
+            Assert.That(double.IsNaN(LabInstruments.RiseAfterMix(o.Event)), Is.True);   // no ΔH data → not calculated
         }
 
         [Test]

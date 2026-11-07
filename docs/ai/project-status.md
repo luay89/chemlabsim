@@ -83,6 +83,30 @@ Known limits:
 - gas volumes, salt hydrolysis, buffers and weak acid + base pH are not modelled
 - not yet tested on a real Android device
 
+## Stage 6 — titration and flame test (2026-10-15, branch `android/stage6-titration-flame`, stacked on Stage 5)
+
+Verified (latest run): EditMode 314/314; LinuxPreview tour on desktop and 20:9 phone, 71 screenshots each, 0 exceptions, 55/55 UI checks each (titration at 0, 15, 20 and 25 mL, the weak-acid refusal, flame tests for NaCl, CuSO4, LiOH and KMnO4, and stale-state clearing); Linux and Android builds.
+
+- Titration covers a strong acid with a strong base, in either order (`TitrationModel`, `LabTestsView`, `TitrationGraph`):
+  - live pH-vs-volume plot, equivalence volume, and region text;
+  - the pH probe reads the titration;
+  - weak acids, H2SO4, acid + acid and base + base are refused with a reason.
+- Flame test (`FlameTest`, `LabTestRigs`):
+  - sourced table of 7 colouring metals, plus Mg, Al and Zn with no colour;
+  - colours are illustrative and labelled as such;
+  - pure metals, compounds with no metal, mixed colouring ions and metals not in the table are unsupported.
+- Status: titration COMPLETE within the declared scope; flame test COMPLETE within the declared scope.
+
+- Calculated temperature (`Calorimetry`): for a strong acid + strong base neutralisation, from a mix with volumes or during a titration. ΔH = −55.815 kJ/mol from CODATA ΔfH° values, assuming no heat loss and water-like density and specific heat; labelled "calculated". Other reactions stay "estimated" or "simulated".
+
+- Indicators (`Indicators`, from the CRC table): phenolphthalein 8.2–10.0, bromothymol blue 6.0–7.6, methyl orange 3.1–4.4. They colour the beaker during a titration; colours inside a range are blended for illustration.
+
+Known limits:
+
+- No weak-acid curves.
+- The burette is mostly hidden behind the headline with the current camera.
+- Not tested on a real Android device.
+
 ## Data Status
 
 Primary JSON content:
