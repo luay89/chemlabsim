@@ -9,6 +9,11 @@ Deterministic and idempotent. Inputs (both in the repository):
   https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON .
   PubChem compiles these values from NIST, CRC and other references; it does not say
   for each value whether it was measured, so values are stored with status "listed".
+* tools/elements/pubchem_element_texts_2026-10-16.json (from extract_pubchem_texts.py)
+  Uses, natural occurrence and crustal/oceanic abundance as quoted by PubChem from Jefferson Lab
+  and Los Alamos National Laboratory (U.S. DOE), and the EU harmonised GHS classification
+  (Regulation (EC) No 1272/2008, Annex VI) of each classified form of the element. Quoted
+  verbatim with the source and link; nothing is summarised or rewritten.
 * Assets/_ProjectV3/Scripts/Engine/Chemistry/AtomicWeights.cs
   IUPAC CIAAW 2021 abridged standard atomic weights — the project's single table of
   atomic weights (used by MolarMass). Copied here, never re-typed, so the two cannot drift.
@@ -32,6 +37,7 @@ import sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SNAPSHOT = os.path.join(ROOT, "tools", "elements", "pubchem_periodictable_2026-10-15.json")
+TEXTS = os.path.join(ROOT, "tools", "elements", "pubchem_element_texts_2026-10-16.json")
 WEIGHTS = os.path.join(ROOT, "Assets", "_ProjectV3", "Scripts", "Engine", "Chemistry", "AtomicWeights.cs")
 OUT = os.path.join(ROOT, "Assets", "_ProjectV3", "Resources", "Data", "elements.json")
 
@@ -41,7 +47,23 @@ SOURCES = [
     {"id": "ciaaw_2021", "citation": "IUPAC CIAAW, Standard atomic weights of the elements 2021 (abridged), "
                                      "Pure Appl. Chem. 2022, 94(5), 573-600",
      "url": "https://www.ciaaw.org/atomic-weights.htm", "retrieved": "2026-10-15"},
+    {"id": "jlab", "citation": "Jefferson Lab (U.S. Department of Energy), It's Elemental — as quoted by PubChem",
+     "url": "https://education.jlab.org/itselemental/", "retrieved": "2026-10-16"},
+    {"id": "lanl", "citation": "Los Alamos National Laboratory (U.S. Department of Energy), Periodic Table — as quoted by PubChem",
+     "url": "https://periodic.lanl.gov/", "retrieved": "2026-10-16",
+     # Required by LANL's copyright notice (https://www.lanl.gov/resources/web-policies/copyright-legal.php,
+     # read 2026-10-17): "...provided that this Notice and any statement of authorship are reproduced on all copies."
+     "notice": "Unless otherwise indicated, this information has been authored by an employee or employees of the "
+               "Triad National Security, LLC, operator of the Los Alamos National Laboratory with the U.S. Department "
+               "of Energy. The U.S. Government has rights to use, reproduce, and distribute this information. The public "
+               "may copy and use this information without charge, provided that this Notice and any statement of "
+               "authorship are reproduced on all copies. Neither the Government nor Triad makes any warranty, express or "
+               "implied, or assumes any liability or responsibility for the use of this information."},
+    {"id": "eu_clp", "citation": "EU harmonised classification, Regulation (EC) No 1272/2008 (CLP) Annex VI — as listed by PubChem",
+     "url": "https://eur-lex.europa.eu/eli/reg/2008/1272/oj", "retrieved": "2026-10-16"},
 ]
+SOURCE_IDS = {"Jefferson Lab, U.S. Department of Energy": "jlab",
+              "Los Alamos National Laboratory, U.S. Department of Energy": "lanl"}
 
 CATEGORY = {
     "Alkali metal": "alkali_metal", "Alkaline earth metal": "alkaline_earth_metal",
@@ -70,9 +92,38 @@ ALLOTROPE_NOTES = {
 }
 
 
-def prop(status, value=0.0, text="", unit="", conditions="", source="", note=""):
+def prop(status, value=0.0, text="", unit="", conditions="", source="", note="", url=""):
     return {"status": status, "value": value, "text": text, "unit": unit,
-            "conditions": conditions, "source": source, "note": note}
+            "conditions": conditions, "source": source, "note": note, "url": url}
+
+
+def quoted(item, missing_note):
+    """A text quoted from a named source, or 'unknown' with the reason."""
+    if not item or item.get("source") not in SOURCE_IDS:
+        return prop("unknown", note=missing_note)
+    return prop("listed", text=item["text"], source=SOURCE_IDS[item["source"]], url=item.get("url", ""))
+
+
+def abundance(item, unit_note):
+    if not item or item.get("source") not in SOURCE_IDS:
+        return prop("unknown", note="Not listed by the source.")
+    if item["text"].strip().lower() == "not applicable":
+        return prop("not_applicable", note="The source lists it as not applicable: the element does not occur there.",
+                    source=SOURCE_IDS[item["source"]], url=item.get("url", ""))
+    return prop("listed", text=item["text"], conditions=unit_note, source=SOURCE_IDS[item["source"]], url=item.get("url", ""))
+
+
+def ghs(forms):
+    if not forms:
+        return prop("unknown", note="No EU harmonised classification (CLP Annex VI) was found for this element's PubChem "
+                                     "record. That does not mean it is safe: check the safety data sheet of the actual substance.")
+    lines = []
+    for f in forms:
+        lines.append(f"<b>{f['form']}</b>" + (f" — {f['signal']}" if f["signal"] else ""))
+        lines.extend(f"• {h}" for h in f["hazards"])
+    return prop("listed", text="\n".join(lines), source="eu_clp", url=forms[0].get("url", ""),
+                note="Hazard statements of each classified form (Annex VI note markers omitted). "
+                     "Not a safety data sheet; classification can differ for other forms.")
 
 
 def unknown(unit="", why="Not listed by the source."):
@@ -141,6 +192,7 @@ def physical(z, key, raw, unit, conditions):
 
 def build():
     snap = json.load(open(SNAPSHOT, encoding="utf-8"))["Table"]
+    texts = json.load(open(TEXTS, encoding="utf-8"))["elements"]
     cols = snap["Columns"]["Column"]
     weights = read_weights()
     elements = []
@@ -204,7 +256,11 @@ def build():
                                if ox else unknown(),
             "discovery": prop("listed", text="Known since antiquity" if year == "Ancient" else year, source="pubchem_pt")
                          if year else unknown(),
-            "occurrence": not_sourced(), "uses": not_sourced(), "safety": not_sourced(),
+            "occurrence": quoted(texts[str(z)]["occurrence"], "The source gives no text on where the element is found."),
+            "uses": quoted(texts[str(z)]["uses"], "The source gives no text on its uses."),
+            "safety": ghs(texts[str(z)]["safety"]),
+            "crustalAbundance": abundance(texts[str(z)]["crustal"], "estimated mass fraction in the Earth's crust"),
+            "oceanicAbundance": abundance(texts[str(z)]["oceanic"], "estimated concentration in seawater"),
         })
 
     elements.sort(key=lambda e: e["z"])

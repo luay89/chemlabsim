@@ -60,7 +60,8 @@ namespace ChemLabSimV3.Views.Bench3D
         private const float GlowFullC  = 80f;
 
         // ── Runtime objects ─────────────────────────────────────────────
-        private Transform liquid;
+        private Transform liquid, meniscus;
+        private Material meniscusMat;
         private Material liquidMat, glassBackMat, glassFrontMat;
         private ParticleSystem bubbles, steam, smoke, sparks, flame;
         private Light glowLight;
@@ -334,6 +335,20 @@ namespace ChemLabSimV3.Views.Bench3D
                 Debug.LogWarning("[LabBench3D] ChemLabSim/Liquid shader not found; using a plain transparent material.");
                 liquidMat = Bench3DMeshes.Glass(WaterColor, 3000, CullMode.Back);
             }
+            // Lip highlight: a thin unlit ring on the rim keeps the glass silhouette readable.
+            v.Clear(); n.Clear(); uv.Clear(); t.Clear();
+            Bench3DMeshes.AddRing(v, n, uv, t, InnerRadius - 0.002f, OuterRadius + 0.002f, Height + 0.001f, Segments, up: true);
+            var lipMat = Bench3DMeshes.Particle(Texture2D.whiteTexture, false, 3015);
+            lipMat.SetColor("_BaseColor", new Color(1f, 1f, 1f, 0.35f));
+            AddRenderer(beaker, "GlassLip", Bench3DMeshes.Build("GlassLip", v, n, uv, t), lipMat);
+
+            // Meniscus line: a thin band where the liquid meets the glass, moved with the level, so
+            // the surface can be read against the scale.
+            v.Clear(); n.Clear(); uv.Clear(); t.Clear();
+            Bench3DMeshes.AddWall(v, n, uv, t, InnerRadius - 0.003f, -0.004f, 0f, Segments, inward: false);
+            meniscusMat = Bench3DMeshes.Particle(Texture2D.whiteTexture, false, 3005);
+            meniscus = AddRenderer(beaker, "Meniscus", Bench3DMeshes.Build("Meniscus", v, n, uv, t), meniscusMat).transform;
+
             var liquidGo = AddRenderer(beaker, "Liquid", Bench3DMeshes.LiquidColumn(InnerRadius - 0.004f, Segments), liquidMat);
             liquidGo.GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.Off;
             liquid = liquidGo.transform;
@@ -1075,6 +1090,16 @@ namespace ChemLabSimV3.Views.Bench3D
             liquid.gameObject.SetActive(total > 0.004f);
 
             var shownLiquid = Color.Lerp(liquidColor, new Color(solidColor.r, solidColor.g, solidColor.b, 0.85f), turbidity * 0.8f);
+            if (meniscus != null)
+            {
+                meniscus.gameObject.SetActive(hasLiquid);
+                if (hasLiquid)
+                {
+                    meniscus.localPosition = new Vector3(0f, LiquidBottom + body * MaxFill, 0f);
+                    meniscusMat.SetColor("_BaseColor", new Color(Mathf.Lerp(shownLiquid.r, 1f, 0.55f), Mathf.Lerp(shownLiquid.g, 1f, 0.55f),
+                                                                 Mathf.Lerp(shownLiquid.b, 1f, 0.55f), 0.55f));
+                }
+            }
 
             if (!liquidShaderOk)
             {

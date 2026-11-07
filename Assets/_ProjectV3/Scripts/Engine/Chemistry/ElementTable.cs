@@ -26,6 +26,7 @@ namespace ChemLabSimV3.Engine.Chemistry
         public string conditions = string.Empty;
         public string source = string.Empty;
         public string note = string.Empty;
+        public string url = string.Empty;     // the source's page for this element, when there is one
 
         /// <summary>A number or a text the source gives (whatever its certainty).</summary>
         public bool HasValue => status == "standard" || status == "listed" || status == "predicted"
@@ -41,13 +42,14 @@ namespace ChemLabSimV3.Engine.Chemistry
         public ElementProperty standardAtomicWeight, referenceIsotopeMass, electronConfiguration,
                                stateAtRoomConditions, density, meltingPoint, boilingPoint, electronegativity,
                                firstIonizationEnergy, electronAffinity, atomicRadius, oxidationStates, discovery,
-                               occurrence, uses, safety;
+                               occurrence, uses, safety, crustalAbundance, oceanicAbundance;
     }
 
     [Serializable]
     public class ElementSource
     {
         public string id, citation, url, retrieved;
+        public string notice = string.Empty;   // a notice the source requires to be reproduced with its content
     }
 
     [Serializable]

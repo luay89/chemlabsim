@@ -283,8 +283,13 @@ namespace ChemLabSimV3.DebugTools
             yield return Capture("heating_a_warming");
             Verify("heating_warming", "heat~liquid;heat~heater on;heat~evaporation;tc~heating model");
 
-            // 50 mL of water reaches 99.97 °C after ~52 simulated seconds at 300 W (≈ 2.6 s here).
-            yield return new WaitForSeconds(5f);
+            // 50 mL of water reaches 99.97 °C after ~52 simulated seconds at 300 W (≈ 2.6 s here at
+            // normal frame rates). Wait for the model to say "boiling" (slow frames slow the simulated
+            // clock), then let the thermometer settle, as a student would, before reading it.
+            var tests = FindObjectOfType<LabTestsView>(true);
+            for (float t = 0f; t < 20f && (tests == null || !tests.HeatingText.Contains("boiling")); t += 0.25f)
+                yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(2.5f);
             yield return Capture("heating_b_boiling");
             Verify("heating_boiling", "heat~boiling;heat~100.0 °C;heat~latent;tv=100.0 °C;phv=--;phc~25 °C only;volc~liquid left");
 
