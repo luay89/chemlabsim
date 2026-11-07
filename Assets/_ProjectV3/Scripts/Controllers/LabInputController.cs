@@ -56,6 +56,11 @@ namespace ChemLabSimV3.Controllers
         // Built at runtime as a copy of the catalyst row (no scene change needed).
         private CatalystToggleView currentToggle;
 
+        // Amount rows under reagents A–D (built at runtime) and what the student typed.
+        private readonly ReagentAmountView[] amountViews = new ReagentAmountView[4];
+        private readonly double[] amountValues = { double.NaN, double.NaN, double.NaN, double.NaN };
+        private readonly string[] amountUnits = { "", "", "", "" };
+
         [Header("Actions")]
         [SerializeField] private MixButtonView mixButton;
 
@@ -115,9 +120,11 @@ namespace ChemLabSimV3.Controllers
             currentLanguageIndex = langService != null ? (int)langService.CurrentLanguage : 0;
 
             currentToggle = CreateElectricCurrentToggle();
+            CreateAmountRows();
             PopulateReagentOptions();
             SetDefaults();
             BindViews();
+            ConfigureAllAmounts();
 
             EventBus.Subscribe<LanguageChangedEvent>(OnLanguageChanged);
 
@@ -380,12 +387,109 @@ namespace ChemLabSimV3.Controllers
         private void OnReagentAChanged(string value)
         {
             inputState.ReagentA = value;
+            ConfigureAmount(0, value);
             NotifyInputChanged();
             PublishMaterialPreview();
         }
-        private void OnReagentBChanged(string value) { inputState.ReagentB = value; NotifyInputChanged(); }
-        private void OnReagentCChanged(string value) { inputState.ReagentC = value; NotifyInputChanged(); }
-        private void OnReagentDChanged(string value) { inputState.ReagentD = value; NotifyInputChanged(); }
+        private void OnReagentBChanged(string value) { inputState.ReagentB = value; ConfigureAmount(1, value); NotifyInputChanged(); }
+        private void OnReagentCChanged(string value) { inputState.ReagentC = value; ConfigureAmount(2, value); NotifyInputChanged(); }
+        private void OnReagentDChanged(string value) { inputState.ReagentD = value; ConfigureAmount(3, value); NotifyInputChanged(); }
+
+        // -- Amounts (Stage 5) ----------------------------------
+
+        private void CreateAmountRows()
+        {
+            var rows = new[] { reagentADropdown, reagentBDropdown, reagentCDropdown, reagentDDropdown };
+            for (int i = 0; i < rows.Length; i++)
+            {
+                if (rows[i] == null) continue;
+                int slot = i;
+                amountViews[i] = ReagentAmountView.Attach(rows[i]);
+                amountViews[i].OnAmountChanged += (value, unit) =>
+                {
+                    amountValues[slot] = value;
+                    amountUnits[slot] = unit;
+                    NotifyInputChanged();
+                };
+            }
+        }
+
+        private void ConfigureAllAmounts()
+        {
+            ConfigureAmount(0, inputState.ReagentA);
+            ConfigureAmount(1, inputState.ReagentB);
+            ConfigureAmount(2, inputState.ReagentC);
+            ConfigureAmount(3, inputState.ReagentD);
+        }
+
+        /// <summary>Units that make sense for the reagent's state, a starting amount and a note on its data.</summary>
+        private void ConfigureAmount(int slot, string formula)
+        {
+            var view = amountViews[slot];
+            if (string.IsNullOrWhiteSpace(formula) || !materialLookup.TryGetValue(formula.Trim(), out var mat) || mat == null)
+            {
+                amountValues[slot] = double.NaN;
+                amountUnits[slot] = string.Empty;
+                if (view != null) view.Configure(null, double.NaN, string.Empty);
+                return;
+            }
+
+            var state = Engine.Chemistry.SubstanceSpec.ParseState(mat.GetState());
+            var units = Engine.Chemistry.QuantityConverter.UnitsFor(state).Select(Engine.Chemistry.Quantity.Symbol).ToArray();
+            double start = state == Engine.Chemistry.MatterState.Aqueous ? 25.0
+                         : state == Engine.Chemistry.MatterState.Liquid ? 10.0
+                         : state == Engine.Chemistry.MatterState.Gas ? 0.05
+                         : 2.0;
+            amountValues[slot] = start;
+            amountUnits[slot] = units.Length > 0 ? units[0] : string.Empty;
+            if (view != null) view.Configure(units, start, AmountNote(mat, state));
+        }
+
+        private static string AmountNote(ChemicalMaterial mat, Engine.Chemistry.MatterState state)
+        {
+            switch (state)
+            {
+                case Engine.Chemistry.MatterState.Aqueous:
+                    return mat.stockConcentrationM > 0f ? mat.stockLabel : "no bottle concentration";
+                case Engine.Chemistry.MatterState.Liquid:
+                    return mat.densityGPerMl > 0f ? $"ρ {mat.densityGPerMl:0.###} g/mL" : "density unknown";
+                case Engine.Chemistry.MatterState.Gas:
+                    return "amount in mol";
+                default:
+                    var mm = Engine.Chemistry.MolarMass.Of(mat.formula);
+                    return mm.Success ? $"M {mm.GramsPerMole:0.##} g/mol" : "no molar mass";
+            }
+        }
+
+        /// <summary>The amounts of the selected reagents with the material data needed to convert them.</summary>
+        private List<ReagentAmountInput> BuildAmounts()
+        {
+            var formulas = new[] { inputState.ReagentA, inputState.ReagentB, inputState.ReagentC, inputState.ReagentD };
+            var list = new List<ReagentAmountInput>();
+            for (int i = 0; i < formulas.Length; i++)
+            {
+                if (string.IsNullOrWhiteSpace(formulas[i])) continue;
+                string f = formulas[i].Trim();
+                materialLookup.TryGetValue(f, out var mat);
+                list.Add(AmountInputFor(f, mat, amountValues[i], amountUnits[i]));
+            }
+            return list;
+        }
+
+        /// <summary>One reagent's amount with its material data (unknown material → no data, never defaults).</summary>
+        public static ReagentAmountInput AmountInputFor(string formula, ChemicalMaterial mat, double value, string unit)
+        {
+            return new ReagentAmountInput
+            {
+                Formula = formula,
+                Value = value,
+                Unit = unit,
+                State = mat != null ? mat.GetState() : string.Empty,
+                DensityGPerMl = mat != null ? mat.densityGPerMl : 0f,
+                StockConcentrationM = mat != null ? mat.stockConcentrationM : 0f,
+                StockLabel = mat != null ? mat.stockLabel : string.Empty
+            };
+        }
         private void OnMediumChanged(int index)      { inputState.MediumIndex = index; NotifyInputChanged(); }
         private void OnTemperatureChanged(float val)  { inputState.Temperature = val; NotifyInputChanged(); PublishEnvironment(); }
         private void OnStirringChanged(float val)     { inputState.Stirring = val; NotifyInputChanged(); PublishEnvironment(); }
@@ -444,6 +548,32 @@ namespace ChemLabSimV3.Controllers
                 return false;
             state = mat.GetState();
             colorHex = mat.color ?? string.Empty;
+            return true;
+        }
+
+        /// <summary>The material record of a reagent (read-only use).</summary>
+        public bool TryGetMaterial(string formula, out ChemicalMaterial material)
+        {
+            material = null;
+            return !string.IsNullOrEmpty(formula) && materialLookup.TryGetValue(formula.Trim(), out material) && material != null;
+        }
+
+        /// <summary>Amount typed for reagent slot 0–3 (A–D).</summary>
+        public bool TryGetAmount(int slot, out double value, out string unit)
+        {
+            value = slot >= 0 && slot < amountValues.Length ? amountValues[slot] : double.NaN;
+            unit = slot >= 0 && slot < amountUnits.Length ? amountUnits[slot] : string.Empty;
+            return !double.IsNaN(value) && !string.IsNullOrEmpty(unit);
+        }
+
+        /// <summary>Concentration of the reagent's bottle (mol/L), when it is a solution with a configured stock.</summary>
+        public bool TryGetStockConcentration(string formula, out double molar)
+        {
+            molar = double.NaN;
+            if (string.IsNullOrEmpty(formula) || !materialLookup.TryGetValue(formula, out var mat) || mat == null
+                || mat.stockConcentrationM <= 0f)
+                return false;
+            molar = mat.stockConcentrationM;
             return true;
         }
 
@@ -522,6 +652,7 @@ namespace ChemLabSimV3.Controllers
             }
 
             var request = inputState.ToMixRequest();
+            request.Amounts = BuildAmounts();
             Debug.Log($"[LabInputController] Mix → {string.Join(" + ", request.ReagentNames)} | Med={request.Medium} | T={request.Temperature}°C");
             reactionController.RequestMix(request);
         }

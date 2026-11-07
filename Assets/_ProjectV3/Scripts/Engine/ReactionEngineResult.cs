@@ -15,6 +15,9 @@ namespace ChemLabSimV3.Engine
         public PipelineResult Pipeline;
         public ConditionInput ConditionInput;
 
+        /// <summary>Moles, limiting reactant and theoretical yield from the student's amounts; null without amounts.</summary>
+        public Chemistry.AmountEvaluation Amounts;
+
         public bool Found => Output.Found;
     }
 }

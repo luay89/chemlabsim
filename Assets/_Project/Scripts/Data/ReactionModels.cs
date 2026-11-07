@@ -30,6 +30,11 @@ public class ReactionEntry
     public bool producesGas;
     public float activationTempC = 25f;
     public string requiredMedium;
+
+    // Water of an aqueous solution that takes part in the equation without being a selected
+    // reagent (e.g. 2 NaOH + 2 Al + 2 H2O → 2 NaAlO2 + 3 H2 stores solvent_water = 2).
+    // The solvent is always in large excess, so it is never the limiting reactant.
+    public int solvent_water;
     public bool catalystAllowed = false;
     public float catalystDeltaTempC = 10f;
 

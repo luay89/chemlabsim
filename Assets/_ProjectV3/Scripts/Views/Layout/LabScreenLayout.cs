@@ -131,6 +131,8 @@ namespace ChemLabSimV3.Views.Layout
 
             foreach (var name in ResultPanels)   Adopt(name, scrolls[ResultTab].content);
             foreach (var name in ProgressPanels) Adopt(name, scrolls[ProgressTab].content);
+            var amounts = StoichiometryPanelView.Create(scrolls[ResultTab].content);
+            amounts.transform.SetSiblingIndex(1);   // right below the reaction result
             assistantView = LabAssistantView.Create(scrolls[AssistantTab].content);
             assistantView.SetWidth(columnWidth);
             speedBar = SimulationSpeedBar.Create(safeArea);

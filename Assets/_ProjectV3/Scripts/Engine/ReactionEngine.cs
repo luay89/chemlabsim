@@ -150,7 +150,10 @@ namespace ChemLabSimV3.Engine
                 Output          = result,
                 Reaction        = reaction,
                 Pipeline        = pipeResult,
-                ConditionInput  = condInput
+                ConditionInput  = condInput,
+                Amounts         = request.Amounts != null
+                    ? Chemistry.AmountEvaluator.Evaluate(reaction, request.Amounts)
+                    : null
             };
         }
 
