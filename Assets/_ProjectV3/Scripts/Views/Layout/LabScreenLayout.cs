@@ -2,9 +2,10 @@
 // Keeps the 3D beaker in the middle of the screen:
 //   • left   : Lab Controls (scaled down if taller than the screen)
 //   • centre : free for the beaker
-//   • right  : one column with two tabs — "Result" (result, identity, details,
-//              explanation, safety, quiz) and "Progress" (objective, challenge,
-//              progress, notebook) — each a vertical scroll list
+//   • right  : one column of tabs, each a vertical scroll list — "Learn" (guided
+//              experiments), "Result" (result, identity, details, explanation, safety,
+//              quiz), "Progress" (objective, challenge, progress, notebook), "Assistant"
+//              and "Tests"
 // Everything sits inside a SafeArea rect (notches, rounded corners, nav bars).
 // It only re-parents the existing panels at runtime; views and controllers keep
 // their references, so no scene or controller changes are needed.
@@ -50,7 +51,7 @@ namespace ChemLabSimV3.Views.Layout
 
         private RectTransform safeArea;
         private RectTransform controlsPanel;
-        private const int ResultTab = 0, ProgressTab = 1, AssistantTab = 2, TestsTab = 3;
+        private const int LearnTab = 0, ResultTab = 1, ProgressTab = 2, AssistantTab = 3, TestsTab = 4;
         private ScrollRect[] scrolls;
         private Image[] tabImages;
         private int activeTab;
@@ -118,6 +119,7 @@ namespace ChemLabSimV3.Views.Layout
 
             tabImages = new[]
             {
+                CreateTab(tabs, "Learn",     () => ShowTab(LearnTab)),
                 CreateTab(tabs, "Result",    () => ShowTab(ResultTab)),
                 CreateTab(tabs, "Progress",  () => ShowTab(ProgressTab)),
                 CreateTab(tabs, "Assistant", () => ShowTab(AssistantTab)),
@@ -125,6 +127,7 @@ namespace ChemLabSimV3.Views.Layout
             };
             scrolls = new[]
             {
+                CreateScrollList("LearnScroll", column),
                 CreateScrollList("ResultsScroll", column),
                 CreateScrollList("ProgressScroll", column),
                 CreateScrollList("AssistantScroll", column),
@@ -138,6 +141,8 @@ namespace ChemLabSimV3.Views.Layout
             assistantView = LabAssistantView.Create(scrolls[AssistantTab].content);
             assistantView.SetWidth(columnWidth);
             LabTestsView.Create(scrolls[TestsTab].content);
+            LearnView.Create(scrolls[LearnTab].content);
+            PredictView.Create(controlsPanel);
             CreatePeriodicTableButton();
             speedBar = SimulationSpeedBar.Create(safeArea);
 
@@ -181,11 +186,11 @@ namespace ChemLabSimV3.Views.Layout
                 quizHintPanel.SetActive(false);
         }
 
-        // A new result should be visible right away, from the top (the assistant tab
-        // answers the new experiment by itself, so it stays open).
+        // A new result should be visible right away, from the top (the assistant and learn
+        // tabs answer the new experiment by themselves, so they stay open).
         private void OnReactionEvaluated(ReactionEvaluatedEvent e) => OnNewExperiment();
         private void OnReactionNotFound(ReactionNotFoundEvent e) => OnNewExperiment();
-        private void OnNewExperiment() => ShowTab(activeTab == AssistantTab ? AssistantTab : ResultTab);
+        private void OnNewExperiment() => ShowTab(activeTab == AssistantTab || activeTab == LearnTab ? activeTab : ResultTab);
 
         // ── Layout pieces ───────────────────────────────────────────────
 
@@ -347,8 +352,8 @@ namespace ChemLabSimV3.Views.Layout
             var text = textRect.gameObject.AddComponent<TextMeshProUGUI>();
             text.text = label;
             text.fontSize = 18;
-            text.enableAutoSizing = true;   // four tabs share the phone column
-            text.fontSizeMin = 13;
+            text.enableAutoSizing = true;   // five tabs share the phone column
+            text.fontSizeMin = 11;
             text.fontSizeMax = 18;
             text.fontStyle = FontStyles.Bold;
             text.alignment = TextAlignmentOptions.Center;

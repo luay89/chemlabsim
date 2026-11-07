@@ -4,7 +4,10 @@
 //   • precipitate layer ← precipitate + precipitate_color
 //   • bubbles / foam    ← gas + effervescence level / foam
 //   • steam             ← bench temperature (slider + reaction ΔT) and vapor
-//   • heat glow / frost ← reaction temperature_delta
+//   • heat glow / frost ← reaction temperature_delta; when the temperature change is calculated
+//                         from the student's amounts (LabInstruments.RiseAfterMix) that value is
+//                         used instead and held, as on the thermometer (no heat loss): steam from
+//                         hot water, condensation on a cold beaker, and no glow (water < 100 °C)
 //   • smoke / sparks    ← smoke / sparks flags
 //   • flame             ← dry/molten reactions that burn; colour from the burning element
 // The beaker's contents follow the phases of the reaction (ReactionEvaluatedEvent):
@@ -79,6 +82,13 @@ namespace ChemLabSimV3.Views.Bench3D
         private float reactionTime;
         private float benchTemperatureC = 25f;
         private float reactionDeltaC;
+        private float calculatedDeltaC = float.NaN;   // from the amounts, for the current mix
+        private bool heatHeld;                        // reactionDeltaC is the calculated value
+
+        /// <summary>Temperature of the beaker's contents the effects are drawn for (screenshot checks).</summary>
+        public float BeakerTemperatureC { get; private set; } = 25f;
+        /// <summary>True when that temperature is the one calculated from the student's amounts.</summary>
+        public bool HeatFromAmounts => heatHeld;
         private int   effervescence;
         private bool  vapor, smokeOn, glowOn, foamOn, precipitateOn;
         private float envSteamRate, stirSpin;
@@ -178,6 +188,7 @@ namespace ChemLabSimV3.Views.Bench3D
             EventBus.Subscribe<InputChangedEvent>(OnInputChanged);
             EventBus.Subscribe<TitrationUpdatedEvent>(OnTitration);
             EventBus.Subscribe<HeatingUpdatedEvent>(OnHeating);
+            EventBus.Subscribe<StoichiometryEvaluatedEvent>(OnStoichiometry);
         }
 
         private void OnDisable()
@@ -191,6 +202,7 @@ namespace ChemLabSimV3.Views.Bench3D
             EventBus.Unsubscribe<InputChangedEvent>(OnInputChanged);
             EventBus.Unsubscribe<TitrationUpdatedEvent>(OnTitration);
             EventBus.Unsubscribe<HeatingUpdatedEvent>(OnHeating);
+            EventBus.Unsubscribe<StoichiometryEvaluatedEvent>(OnStoichiometry);
         }
 
         // ── Scene construction ─────────────────────────────────────────
@@ -716,6 +728,7 @@ namespace ChemLabSimV3.Views.Bench3D
             precipitateOn = flameOn = glowOn = vapor = smokeOn = foamOn = false;
             effervescence = 0;
             reactionDeltaC = 0f;
+            heatHeld = false;
             SetPlating(0f);
             beakerVolume = VolumeOfReagentA();
             SetIdle(previewState, previewHex);
@@ -868,6 +881,7 @@ namespace ChemLabSimV3.Views.Bench3D
         private void OnReactionEvaluated(ReactionEvaluatedEvent e)
         {
             lastReaction = e.Input.reaction;
+            calculatedDeltaC = float.NaN;   // StoichiometryEvaluatedEvent follows with this mix's value
             mixVolume = VolumeOfMix();
             experimentSignature = ExperimentSignature();
         }
@@ -940,7 +954,14 @@ namespace ChemLabSimV3.Views.Bench3D
                 if (c != null) liquidTargetColor = new Color(c[0], c[1], c[2], c[3]);
             }
         }
-        private void OnReactionNotFound(ReactionNotFoundEvent e) => lastReaction = null;
+        private void OnReactionNotFound(ReactionNotFoundEvent e)
+        {
+            lastReaction = null;
+            calculatedDeltaC = float.NaN;
+        }
+
+        private void OnStoichiometry(StoichiometryEvaluatedEvent e)
+            => calculatedDeltaC = (float)LabInstruments.RiseAfterMix(e, benchTemperatureC, out _);
 
         private void OnFx(FxTriggeredEvent e)
         {
@@ -1023,6 +1044,14 @@ namespace ChemLabSimV3.Views.Bench3D
             reactionDeltaC = fx.TemperatureDelta;
             if (reactionDeltaC <= -8f) frost = 1f;
 
+            // A change calculated from the student's amounts replaces the record's estimate.
+            heatHeld = fx.PlaySuccess && !float.IsNaN(calculatedDeltaC);
+            if (heatHeld)
+            {
+                reactionDeltaC = calculatedDeltaC;
+                glowOn = false;
+            }
+
             if (fx.PlaySparks)
                 sparks.Emit(90);
         }
@@ -1050,9 +1079,11 @@ namespace ChemLabSimV3.Views.Bench3D
             float dt = Time.deltaTime;
             if (reacting) reactionTime += dt;
 
-            // Reaction heat fades back toward the bench temperature over ~20 s.
-            float heatFade = reacting ? Mathf.Exp(-reactionTime / 20f) : 0f;
+            // Reaction heat fades back toward the bench temperature over ~20 s; a calculated change
+            // is held, as the thermometer holds it (its model has no heat loss).
+            float heatFade = reacting ? (heatHeld ? 1f : Mathf.Exp(-reactionTime / 20f)) : 0f;
             float temperatureC = heatingShown ? heatingTempC : benchTemperatureC + reactionDeltaC * heatFade;
+            BeakerTemperatureC = temperatureC;
 
             // Precipitate: the liquid clouds up first, then the solid settles to the bottom.
             if (precipitateOn)
@@ -1068,7 +1099,8 @@ namespace ChemLabSimV3.Views.Bench3D
             turbidity   = Approach(turbidity, turbidityTarget, 1.5f, dt);
             liquidColor = Color.Lerp(liquidColor, liquidTargetColor, 1f - Mathf.Exp(-dt * 1.4f));
             solidColor  = Color.Lerp(solidColor, solidTargetColor, 1f - Mathf.Exp(-dt * 2f));
-            frost       = Mathf.Max(0f, frost - dt / 25f);
+            // Condensation on a cold beaker: held with a calculated cooling (full at −8 K), else it clears.
+            frost       = heatHeld && reactionDeltaC < 0f ? Mathf.Clamp01(-reactionDeltaC / 8f) : Mathf.Max(0f, frost - dt / 25f);
 
             UpdateLiquid(temperatureC);
             UpdateVolumeTag();
@@ -1197,7 +1229,7 @@ namespace ChemLabSimV3.Views.Bench3D
             glassBackMat.SetColor("_BaseColor", tint);
 
             // Only a clearly hot reaction glows; a few degrees of warming is felt, not seen.
-            float reactionGlow = Mathf.InverseLerp(GlowStartC, GlowFullC, reactionDeltaC) * heatFade;
+            float reactionGlow = heatHeld ? 0f : Mathf.InverseLerp(GlowStartC, GlowFullC, reactionDeltaC) * heatFade;
             if (glowOn) reactionGlow = Mathf.Max(reactionGlow, Mathf.Clamp01(1f - reactionTime / 6f));
             float glow = reactionGlow;   // heating from below is shown by the hot plate
 

@@ -1,6 +1,6 @@
 # Project Status
 
-Last reviewed: `2026-10-18`
+Last reviewed: `2026-10-19`
 
 ## High-Level Summary
 
@@ -188,6 +188,18 @@ Known limits:
 - ΔH° is the standard value (ideal dilute solutions, 25 °C); heats of dilution and mixing at bench strength are not modelled (the reason H2SO4 is refused for temperatures).
 - Reactions written with concentrated reagents (e.g. KMnO4 + conc. HCl) use the dilute standard states, so their ΔH° may differ in sign from what a concentrated mix does.
 - The 3D effects still follow the observed ΔT, not the calculated temperature.
+
+## Guided learning, bench heat, predict first (2026-10-19, branch `android/guided-learning`, stacked on PR #11)
+
+- **Learn tab (first tab):** 9 guided experiments in teaching order (`Resources/Data/guided_experiments.json`): acid + base, a precipitate, metal + acid, the cold pack, displacement, a catalyst, activation energy (Mg), thermal decomposition, electrolysis of water.
+  - Each step: what to do, a hint, a live status read from the real controls ("Waiting: choose NaOH"), then "Look:" and "Why:" once the lab shows it. Mix steps count only a mix made during the step and check the reaction id and result the engine actually gave.
+  - Finished experiments are ticked (PlayerPrefs on the device); prerequisites are advice, not locks.
+  - `GuidedExperimentRunner` was rewritten around `Check(step, LabSnapshot)`; the old scoring, localisation keys and unused labels were removed. The data model now uses serializable fields (JsonUtility), which is why the file had never been loaded before.
+  - An EditMode test follows every experiment step by step against the real engine and `reactions.json`; it found that the cold pack needs grinding to dissolve completely (now a step).
+- **Bench heat:** when the thermometer shows a temperature calculated from the amounts, the 3D beaker uses the same change and holds it (no heat loss, like the thermometer): steam from hot water (e.g. Mg + HCl at ≈ 81 °C), condensation on a cold beaker (full at −8 K), and no glow for liquid water. Other reactions keep the observed ΔT.
+- **Predict (optional button beside Mix):** three questions (heat, new solid, gas) on a card over the controls; "Mix and check" presses Mix, and after 4 s the card compares each answer with the engine's data (`Engine/Assistant/Prediction`: calculated ΔT, else the sign of ΔH°, else the observed ΔT; solid/gas from the product states) and says why.
+- UI builders shared by the Tests and Learn tabs moved to `Views/Layout/UiKit`.
+- Verified: EditMode 364/364 (each guided experiment is followed against the engine); LinuxPreview tours on desktop and 20:9 phone, 91 screenshots each, 0 exceptions, 136/136 UI checks each (a full Learn experiment, Predict 3 of 3, beaker temperature held at 80.8 °C for Mg + HCl and 9.8 °C for the cold pack); Linux and Android builds. Not tested on a device.
 
 ## Data Status
 

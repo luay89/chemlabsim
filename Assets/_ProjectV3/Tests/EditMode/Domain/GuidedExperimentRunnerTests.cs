@@ -1,290 +1,201 @@
-using NUnit.Framework;
-using ChemLabSimV3.Domain.GuidedExperiments;
-using ChemLabSimV3.Data;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using NUnit.Framework;
+using UnityEngine;
+using ChemLabSimV3.Data;
+using ChemLabSimV3.Domain.GuidedExperiments;
+using ChemLabSimV3.Engine;
 
 namespace ChemLabSimV3.Tests.EditMode.Domain
 {
     /// <summary>
-    /// Tests for GuidedExperimentRunner — pure C# experiment validation logic.
+    /// Guided experiments: the runner's session and step checks, and the shipped content
+    /// (guided_experiments.json) followed step by step against the real engine and reactions.json.
     /// </summary>
     public class GuidedExperimentRunnerTests
     {
-        private GuidedExperimentRunner CreateRunner()
+        private static ExperimentStep Step(string action, StepValidation v = null)
+            => new ExperimentStep { action = action, instruction = action, validation = v ?? new StepValidation() };
+
+        private static GuidedExperimentRunner TwoExperiments()
         {
-            var experiments = new List<GuidedExperimentDef>
+            return new GuidedExperimentRunner(new List<GuidedExperimentDef>
             {
                 new GuidedExperimentDef
                 {
-                    Id = "exp_test_001",
-                    TitleKey = "Test Experiment",
-                    Category = "Test",
-                    DifficultyLevel = 1,
-                    EstimatedMinutes = 5,
-                    RequiredReagents = new List<string> { "HCl", "NaOH" },
-                    RewardSkillPoints = 50,
-                    Steps = new List<ExperimentStep>
+                    id = "a", title = "First", category = "Acid-Base", difficultyLevel = 1,
+                    steps = new List<ExperimentStep>
                     {
-                        new ExperimentStep
-                        {
-                            StepNumber = 1,
-                            InstructionKey = "step1",
-                            ActionType = StepActionType.SelectReagents,
-                            Validation = new StepValidation
-                            {
-                                ExpectedReagents = new List<string> { "HCl", "NaOH" }
-                            }
-                        },
-                        new ExperimentStep
-                        {
-                            StepNumber = 2,
-                            InstructionKey = "step2",
-                            ActionType = StepActionType.Mix,
-                            Validation = new StepValidation
-                            {
-                                RequiredMedium = "Neutral",
-                                MinTemperature = 25f
-                            }
-                        },
-                        new ExperimentStep
-                        {
-                            StepNumber = 3,
-                            InstructionKey = "step3",
-                            ActionType = StepActionType.AnswerQuestion,
-                            Validation = null // auto-pass
-                        }
-                    },
-                    Evaluation = new ExperimentEvaluation
-                    {
-                        PerfectScoreThreshold = 0.9f,
-                        PassingScoreThreshold = 0.5f
+                        Step("SelectReagents", new StepValidation { expectedReagents = new List<string> { "HCl", "NaOH" } }),
+                        Step("Mix", new StepValidation { expectedReactionId = "rxn_001", expectedResultStatus = "Success" }),
                     }
                 },
                 new GuidedExperimentDef
                 {
-                    Id = "exp_test_002",
-                    TitleKey = "Advanced Test",
-                    Category = "Test",
-                    DifficultyLevel = 3,
-                    EstimatedMinutes = 10,
-                    PrerequisiteExperimentId = "exp_test_001",
-                    RequiredReagents = new List<string> { "AgNO3", "NaCl" },
-                    RewardSkillPoints = 100,
-                    Steps = new List<ExperimentStep>
-                    {
-                        new ExperimentStep
-                        {
-                            StepNumber = 1,
-                            InstructionKey = "step1",
-                            ActionType = StepActionType.SelectReagents,
-                            Validation = new StepValidation
-                            {
-                                ExpectedReagents = new List<string> { "AgNO3", "NaCl" }
-                            }
-                        }
-                    },
-                    Evaluation = new ExperimentEvaluation()
+                    id = "b", title = "Second", category = "Gas", difficultyLevel = 2, prerequisiteExperimentId = "a",
+                    steps = new List<ExperimentStep> { Step("Observe") }
+                },
+            });
+        }
+
+        private static LabSnapshot Lab(params string[] reagents)
+            => new LabSnapshot { Reagents = reagents, TemperatureC = 25f };
+
+        // ── Runner ─────────────────────────────────────────────────────
+
+        [Test]
+        public void Runner_KeepsFileOrder_AndFindsById()
+        {
+            var r = TwoExperiments();
+            Assert.That(r.Count, Is.EqualTo(2));
+            Assert.That(r.GetAll().Select(e => e.id), Is.EqualTo(new[] { "a", "b" }));
+            Assert.That(r.Get("B").title, Is.EqualTo("Second"));
+            Assert.That(r.Get("missing"), Is.Null);
+            Assert.That(r.GetByCategory("gas").Single().id, Is.EqualTo("b"));
+            Assert.That(r.GetByDifficulty(1).Single().id, Is.EqualTo("a"));
+            Assert.That(new GuidedExperimentRunner(null).Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void Session_AdvancesThroughEveryStep_ThenCompletes()
+        {
+            var r = TwoExperiments();
+            var s = r.StartSession("a");
+            Assert.That(r.GetCurrentStep(s).ActionType, Is.EqualTo(StepActionType.SelectReagents));
+            Assert.That(r.AdvanceStep(s), Is.True);
+            Assert.That(r.GetCurrentStep(s).ActionType, Is.EqualTo(StepActionType.Mix));
+            Assert.That(r.AdvanceStep(s), Is.False);
+            Assert.That(s.IsCompleted, Is.True);
+            Assert.That(r.GetCurrentStep(s), Is.Null);
+            Assert.That(r.StartSession("missing"), Is.Null);
+        }
+
+        [Test]
+        public void Prerequisites_UnlockTheNextExperiment()
+        {
+            var r = TwoExperiments();
+            Assert.That(r.IsEligible("a", new HashSet<string>()), Is.True);
+            Assert.That(r.IsEligible("b", new HashSet<string>()), Is.False);
+            Assert.That(r.IsEligible("b", new HashSet<string> { "a" }), Is.True);
+        }
+
+        [Test]
+        public void SelectReagents_SaysWhatIsMissingOrExtra_InAnyOrder()
+        {
+            var step = TwoExperiments().Get("a").steps[0];
+            Assert.That(GuidedExperimentRunner.Check(step, Lab("NaOH", "HCl")).Done, Is.True);
+            StringAssert.Contains("choose NaOH", GuidedExperimentRunner.Check(step, Lab("HCl")).Waiting);
+            StringAssert.Contains("remove Zn", GuidedExperimentRunner.Check(step, Lab("HCl", "NaOH", "Zn")).Waiting);
+        }
+
+        [Test]
+        public void Mix_NeedsAMixSinceTheStepStarted_WithTheExpectedResult()
+        {
+            var step = TwoExperiments().Get("a").steps[1];
+            var lab = Lab("HCl", "NaOH");
+            Assert.That(GuidedExperimentRunner.Check(step, lab).Waiting, Is.EqualTo("press Mix"));
+            lab.MixedSinceStepStart = true;
+            lab.LastReactionId = "rxn_001";
+            lab.LastResultStatus = "Partial";
+            Assert.That(GuidedExperimentRunner.Check(step, lab).Done, Is.False);
+            lab.LastResultStatus = "Success";
+            Assert.That(GuidedExperimentRunner.Check(step, lab).Done, Is.True);
+        }
+
+        [Test]
+        public void Settings_AreCheckedWithReasons()
+        {
+            var hot = Step("SetTemperature", new StepValidation { minTemperature = 500 });
+            StringAssert.Contains("at least 500 °C", GuidedExperimentRunner.Check(hot, Lab()).Waiting);
+            var cat = Step("ToggleCatalyst", new StepValidation { catalyst = 1 });
+            StringAssert.Contains("catalyst on", GuidedExperimentRunner.Check(cat, Lab()).Waiting);
+            var cur = Step("ToggleCurrent", new StepValidation { current = 1 });
+            var lab = Lab();
+            lab.Current = true;
+            Assert.That(GuidedExperimentRunner.Check(cur, lab).Done, Is.True);
+            Assert.That(GuidedExperimentRunner.Check(Step("Observe"), lab).Done, Is.False);   // Next button
+            Assert.That(Step("NoSuchAction").ActionType, Is.EqualTo(StepActionType.Observe));
+        }
+
+        // ── Shipped content against the real engine ────────────────────
+
+        private static GuidedExperimentCatalog LoadCatalog()
+        {
+            var asset = Resources.Load<TextAsset>("Data/guided_experiments");
+            Assert.That(asset, Is.Not.Null);
+            return JsonUtility.FromJson<GuidedExperimentCatalog>(asset.text);
+        }
+
+        [Test]
+        public void ShippedContent_LoadsWithUnsetValuesLeftUnset()
+        {
+            var cat = LoadCatalog();
+            Assert.That(cat.experiments.Count, Is.GreaterThanOrEqualTo(8));
+            var first = cat.experiments[0].steps[0];
+            Assert.That(first.ActionType, Is.EqualTo(StepActionType.SelectReagents));
+            Assert.That(float.IsNaN(first.validation.minTemperature), Is.True, "a missing number must stay unset");
+            Assert.That(first.validation.catalyst, Is.EqualTo(-1), "a missing switch must stay 'any'");
+            foreach (var e in cat.experiments)
+            {
+                Assert.That(string.IsNullOrEmpty(e.title) || string.IsNullOrEmpty(e.conclusion), Is.False, e.id);
+                foreach (var s in e.steps)
+                {
+                    Assert.That(System.Enum.IsDefined(typeof(StepActionType), s.action ?? ""), Is.True, $"{e.id}: '{s.action}'");
+                    Assert.That(string.IsNullOrEmpty(s.instruction) || string.IsNullOrEmpty(s.explanation), Is.False, e.id);
                 }
-            };
-
-            return new GuidedExperimentRunner(experiments);
+                if (!string.IsNullOrEmpty(e.prerequisiteExperimentId))
+                    Assert.That(cat.experiments.Any(x => x.id == e.prerequisiteExperimentId), Is.True, e.id);
+            }
         }
 
         [Test]
-        public void Constructor_WithValidData_HasExperiments()
+        public void ShippedContent_EveryExperimentCanBeCompleted_OnTheShippedData()
         {
-            var runner = CreateRunner();
-            Assert.That(runner.Count, Is.EqualTo(2));
-        }
+            string path = Path.Combine(UnityEngine.Application.dataPath, "_Project", "DataSrc", "reactions.json");
+            var engine = new ReactionEngine(JsonUtility.FromJson<ReactionDB>(File.ReadAllText(path)));
 
-        [Test]
-        public void Constructor_WithNullList_HasZeroExperiments()
-        {
-            var runner = new GuidedExperimentRunner(null);
-            Assert.That(runner.Count, Is.EqualTo(0));
-        }
+            foreach (var e in LoadCatalog().experiments)
+            {
+                // A student who does exactly what each step asks, starting from the lab's defaults.
+                var reagents = new List<string>();
+                float temperature = 25f, grinding = 0f;
+                bool catalyst = false, current = false;
 
-        [Test]
-        public void Get_WithValidId_ReturnsExperiment()
-        {
-            var runner = CreateRunner();
-            var exp = runner.Get("exp_test_001");
-            Assert.IsNotNull(exp);
-            Assert.That(exp.TitleKey, Is.EqualTo("Test Experiment"));
-        }
+                for (int i = 0; i < e.steps.Count; i++)
+                {
+                    var step = e.steps[i];
+                    var v = step.validation;
+                    if (v.expectedReagents.Count > 0) { reagents.Clear(); reagents.AddRange(v.expectedReagents); }
+                    if (!float.IsNaN(v.minTemperature)) temperature = Mathf.Max(temperature, v.minTemperature);
+                    if (!float.IsNaN(v.maxTemperature)) temperature = Mathf.Min(temperature, v.maxTemperature);
+                    if (!float.IsNaN(v.minGrinding)) grinding = Mathf.Max(grinding, v.minGrinding);
+                    if (v.catalyst >= 0) catalyst = v.catalyst == 1;
+                    if (v.current >= 0) current = v.current == 1;
 
-        [Test]
-        public void Get_WithUnknownId_ReturnsNull()
-        {
-            var runner = CreateRunner();
-            Assert.IsNull(runner.Get("nonexistent"));
-        }
+                    var lab = new LabSnapshot
+                    {
+                        Reagents = reagents.ToArray(), TemperatureC = temperature, Grinding = grinding,
+                        Catalyst = catalyst, Current = current
+                    };
+                    if (step.ActionType == StepActionType.Mix)
+                    {
+                        var request = new MixRequest(new List<string>(reagents), ReactionMedium.Neutral, temperature, 0.5f, grinding, catalyst)
+                        { HasElectricCurrent = current };
+                        var detailed = engine.ProcessDetailed(request);
+                        lab.MixedSinceStepStart = true;
+                        lab.LastReactionId = detailed.Found ? detailed.Reaction.id : null;
+                        lab.LastResultStatus = detailed.Found
+                            ? GuidedExperimentRunner.StatusOf(ReactionEvaluationAdapter.ToLegacyResult(detailed))
+                            : "NotFound";
+                    }
+                    if (step.ActionType == StepActionType.Observe) continue;
 
-        [Test]
-        public void Get_WithEmptyId_ReturnsNull()
-        {
-            var runner = CreateRunner();
-            Assert.IsNull(runner.Get(""));
-        }
-
-        [Test]
-        public void GetAll_ReturnsAllExperiments()
-        {
-            var runner = CreateRunner();
-            var all = runner.GetAll();
-            Assert.That(new List<GuidedExperimentDef>(all).Count, Is.EqualTo(2));
-        }
-
-        [Test]
-        public void GetByCategory_ReturnsMatching()
-        {
-            var runner = CreateRunner();
-            var matches = runner.GetByCategory("Test");
-            Assert.That(matches.Count, Is.EqualTo(2));
-        }
-
-        [Test]
-        public void GetByCategory_NoMatch_ReturnsEmpty()
-        {
-            var runner = CreateRunner();
-            var matches = runner.GetByCategory("Nonexistent");
-            Assert.That(matches.Count, Is.EqualTo(0));
-        }
-
-        [Test]
-        public void GetByDifficulty_ReturnsMatching()
-        {
-            var runner = CreateRunner();
-            var matches = runner.GetByDifficulty(1);
-            Assert.That(matches.Count, Is.EqualTo(1));
-            Assert.That(matches[0].Id, Is.EqualTo("exp_test_001"));
-        }
-
-        [Test]
-        public void StartSession_WithValidId_ReturnsSession()
-        {
-            var runner = CreateRunner();
-            var session = runner.StartSession("exp_test_001");
-            Assert.IsNotNull(session);
-            Assert.That(session.ExperimentId, Is.EqualTo("exp_test_001"));
-            Assert.That(session.CurrentStepIndex, Is.EqualTo(0));
-            Assert.That(session.IsCompleted, Is.False);
-        }
-
-        [Test]
-        public void StartSession_WithUnknownId_ReturnsNull()
-        {
-            var runner = CreateRunner();
-            Assert.IsNull(runner.StartSession("unknown"));
-        }
-
-        [Test]
-        public void GetCurrentStep_ReturnsFirstStep()
-        {
-            var runner = CreateRunner();
-            var session = runner.StartSession("exp_test_001");
-            var step = runner.GetCurrentStep(session);
-            Assert.IsNotNull(step);
-            Assert.That(step.StepNumber, Is.EqualTo(1));
-        }
-
-        [Test]
-        public void GetCurrentStep_AfterCompletion_ReturnsNull()
-        {
-            var runner = CreateRunner();
-            var session = runner.StartSession("exp_test_001");
-
-            // Advance through all steps
-            var step1Result = new StepResult { StepNumber = 1, Passed = true, Score = 1f };
-            runner.AdvanceStep(session, step1Result);
-
-            var step2Result = new StepResult { StepNumber = 2, Passed = true, Score = 1f };
-            runner.AdvanceStep(session, step2Result);
-
-            var step3Result = new StepResult { StepNumber = 3, Passed = true, Score = 1f };
-            runner.AdvanceStep(session, step3Result);
-
-            Assert.That(session.IsCompleted, Is.True);
-            Assert.IsNull(runner.GetCurrentStep(session));
-        }
-
-        [Test]
-        public void ValidateStep_WithCorrectReagents_Passes()
-        {
-            var runner = CreateRunner();
-            var session = runner.StartSession("exp_test_001");
-            var mixRequest = new MixRequest(
-                new List<string> { "HCl", "NaOH" },
-                ReactionMedium.Neutral, 25f, 0.5f, 0.5f, false);
-
-            var result = runner.ValidateStep(session, mixRequest, null);
-            Assert.IsNotNull(result);
-            Assert.That(result.Passed, Is.True);
-        }
-
-        [Test]
-        public void ValidateStep_WithWrongReagents_Fails()
-        {
-            var runner = CreateRunner();
-            var session = runner.StartSession("exp_test_001");
-            var mixRequest = new MixRequest(
-                new List<string> { "Wrong", "Reagent" },
-                ReactionMedium.Neutral, 25f, 0.5f, 0.5f, false);
-
-            var result = runner.ValidateStep(session, mixRequest, null);
-            Assert.IsNotNull(result);
-            Assert.That(result.Passed, Is.False);
-        }
-
-        [Test]
-        public void AdvanceStep_MovesToNextStep()
-        {
-            var runner = CreateRunner();
-            var session = runner.StartSession("exp_test_001");
-            var initialStep = session.CurrentStepIndex;
-
-            var stepResult = new StepResult { StepNumber = 1, Passed = true, Score = 1f };
-            bool hasMore = runner.AdvanceStep(session, stepResult);
-
-            Assert.That(session.CurrentStepIndex, Is.EqualTo(initialStep + 1));
-            Assert.That(hasMore, Is.True);
-        }
-
-        [Test]
-        public void IsEligible_NoPrerequisite_ReturnsTrue()
-        {
-            var runner = CreateRunner();
-            Assert.That(runner.IsEligible("exp_test_001", new HashSet<string>()), Is.True);
-        }
-
-        [Test]
-        public void IsEligible_WithPrerequisiteMet_ReturnsTrue()
-        {
-            var runner = CreateRunner();
-            var completed = new HashSet<string> { "exp_test_001" };
-            Assert.That(runner.IsEligible("exp_test_002", completed), Is.True);
-        }
-
-        [Test]
-        public void IsEligible_WithPrerequisiteNotMet_ReturnsFalse()
-        {
-            var runner = CreateRunner();
-            Assert.That(runner.IsEligible("exp_test_002", new HashSet<string>()), Is.False);
-        }
-
-        [Test]
-        public void PerfectScore_AchievedWhenAllStepsPerfect()
-        {
-            var runner = CreateRunner();
-            var session = runner.StartSession("exp_test_001");
-
-            runner.AdvanceStep(session, new StepResult { StepNumber = 1, Passed = true, Score = 1f });
-            runner.AdvanceStep(session, new StepResult { StepNumber = 2, Passed = true, Score = 1f });
-            runner.AdvanceStep(session, new StepResult { StepNumber = 3, Passed = true, Score = 1f });
-
-            Assert.That(session.IsCompleted, Is.True);
-            Assert.That(session.IsPerfect, Is.True);
-            Assert.That(session.TotalScore, Is.GreaterThanOrEqualTo(0.9f));
+                    var check = GuidedExperimentRunner.Check(step, lab);
+                    Assert.That(check.Done, Is.True,
+                        $"{e.id} step {i + 1} ({step.action}): {check.Waiting} — got {lab.LastReactionId ?? "-"} {lab.LastResultStatus}");
+                }
+            }
         }
     }
 }
