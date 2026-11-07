@@ -53,6 +53,28 @@ namespace ChemLabSimV3.Events
         public int Indicator;                           // index in Indicators.All, −1 = none
     }
 
+    /// <summary>
+    /// Heating lab (physical change): the sample's state from PhaseHeatingModel. Active = false
+    /// ends the experiment; Supported = false carries the reason in Message.
+    /// </summary>
+    public struct HeatingUpdatedEvent : IGameEvent
+    {
+        public bool Active;
+        public bool Supported;
+        public string Message;
+        public string Formula;
+        public double TemperatureC;
+        public Engine.Chemistry.SamplePhase Phase;
+        public double LiquidMl;          // NaN when unknown
+        public double SolidMl;           // 0 when there is no solid
+        public double VaporizedG;
+        public double TimeS;             // simulated time
+        public bool HeaterOn;
+        public double PowerW;
+        public double BoilingPointC;
+        public float EvaporationVisual;  // 0..1, illustrative only (evaporation is not modelled)
+    }
+
     /// <summary>Stage 6 flame test of reagent A.</summary>
     public struct FlameTestEvent : IGameEvent
     {

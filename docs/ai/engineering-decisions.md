@@ -136,6 +136,20 @@ Implications:
 - Strong acid/base pH uses `PhModel.PhFromNetStrongAcid`, which solves for [OH⁻] on the basic side to avoid floating-point cancellation.
 - A temperature is labelled "calculated" only when the energy balance is known from the student's amounts: strong acid + strong base, via `Calorimetry`, with the assumptions stated in the caption.
 
+### 2026-10-16: Element data source and the heating-lab model
+
+Status: accepted (open to review)
+
+- **Element data:**
+  - One generated file (`elements.json`) built from a stored PubChem Periodic Table snapshot (public domain).
+  - Standard atomic weights come from the project's CIAAW table (`AtomicWeights`), so molar masses and the table cannot drift apart.
+  - PubChem does not say whether a value was measured, so values are "listed". Values for elements never made in bulk are "estimated" or "predicted", and values not at 1 atm are "reference_dependent" with a note.
+  - Nothing is filled in.
+- **Elements vs materials:** elements are not materials. The explorer links to `materials.json` by formula; only materials and reactions can be used in experiments.
+- **Heating lab:** a separate pure model (`PhaseHeatingModel`) for physical change. The reaction-side `HeatingService` has no latent heat and assumes 100 °C boiling, so it is not used for phase changes.
+  - Thermal data is stored per material with its source; there is no generic default.
+  - The heat-loss coefficient is an illustrative model value and is labelled as such.
+
 ## Decision Update Rules
 
 - Add a new dated entry when a meaningful architectural or process choice changes.

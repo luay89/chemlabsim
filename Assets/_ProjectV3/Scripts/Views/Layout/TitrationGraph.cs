@@ -1,8 +1,10 @@
-// ChemLabSim v3 — pH-versus-volume plot for the titration panel
-// Draws, in its own rect: a frame with pH 7 and pH 0/14 guides, the model curve (muted), the
-// equivalence volume (dashed), and the points the student has added (bright, joined).
-// Display only: every point comes from TitrationModel.
+// ChemLabSim v3 — small line plot for the Tests tab
+// Titration: pH (0–14) versus volume — a frame with pH 7 and pH 0/14 guides, the model curve
+// (muted), the equivalence volume (dashed), and the points the student has added (bright).
+// Heating lab: temperature versus time (SetLine), with dashed guides at the transition
+// temperatures. Display only: every point comes from the engine's models.
 
+using System;
 using System.Collections.Generic;
 using ChemLabSimV3.Engine.Chemistry;
 using UnityEngine;
@@ -21,11 +23,31 @@ namespace ChemLabSimV3.Views.Layout
         private readonly List<TitrationPoint> model = new List<TitrationPoint>();
         private readonly List<TitrationPoint> taken = new List<TitrationPoint>();
         private double maxMl = 1, eqMl = double.NaN;
+        private double yMin = 0, yMax = 14;
+        private double[] yGuides = { 7 };
+        private readonly List<Vector2> line = new List<Vector2>();
 
         public double MaxMl => maxMl;
 
+        /// <summary>A plain line (e.g. temperature against time) with horizontal guides; replaces any titration plot.</summary>
+        public void SetLine(List<Vector2> points, double xMax, double yMinValue, double yMaxValue, double[] guides)
+        {
+            model.Clear();
+            taken.Clear();
+            eqMl = double.NaN;
+            line.Clear();
+            if (points != null) line.AddRange(points);
+            maxMl = xMax > 0 ? xMax : 1;
+            yMin = yMinValue;
+            yMax = yMaxValue > yMinValue ? yMaxValue : yMinValue + 1;
+            yGuides = guides ?? new double[0];
+            SetVerticesDirty();
+        }
+
         public void SetModel(List<TitrationPoint> curve, double rangeMl, double equivalenceMl)
         {
+            line.Clear();
+            yMin = 0; yMax = 14; yGuides = new double[] { 7 };
             model.Clear();
             if (curve != null) model.AddRange(curve);
             maxMl = rangeMl > 0 ? rangeMl : 1;
@@ -43,6 +65,8 @@ namespace ChemLabSimV3.Views.Layout
 
         public void Clear()
         {
+            line.Clear();
+            yMin = 0; yMax = 14; yGuides = new double[] { 7 };
             model.Clear();
             taken.Clear();
             eqMl = double.NaN;
@@ -55,14 +79,22 @@ namespace ChemLabSimV3.Views.Layout
             var r = rectTransform.rect;
             if (r.width <= 0 || r.height <= 0) return;
 
-            Line(vh, P(r, 0, 0), P(r, maxMl, 0), 1.5f, Frame);
-            Line(vh, P(r, 0, 0), P(r, 0, 14), 1.5f, Frame);
-            Line(vh, P(r, 0, 14), P(r, maxMl, 14), 1f, Guide);
-            Line(vh, P(r, 0, 7), P(r, maxMl, 7), 1f, Guide);
+            Line(vh, P(r, 0, yMin), P(r, maxMl, yMin), 1.5f, Frame);
+            Line(vh, P(r, 0, yMin), P(r, 0, yMax), 1.5f, Frame);
+            Line(vh, P(r, 0, yMax), P(r, maxMl, yMax), 1f, Guide);
+            foreach (var g in yGuides)
+            {
+                if (line.Count == 0) { Line(vh, P(r, 0, g), P(r, maxMl, g), 1f, Guide); continue; }
+                for (double x = 0; x < maxMl; x += maxMl / 20)   // dashed: a transition temperature
+                    Line(vh, P(r, x, g), P(r, Math.Min(maxMl, x + maxMl / 40), g), 1.5f, Equivalence);
+            }
 
             if (!double.IsNaN(eqMl) && eqMl <= maxMl)
                 for (int i = 0; i < 14; i += 2)
                     Line(vh, P(r, eqMl, i), P(r, eqMl, i + 1), 1.5f, Equivalence);
+
+            for (int i = 1; i < line.Count; i++)
+                Line(vh, P(r, line[i - 1].x, line[i - 1].y), P(r, line[i].x, line[i].y), 3f, Taken);
 
             for (int i = 1; i < model.Count; i++)
                 Line(vh, P(r, model[i - 1].AddedMl, model[i - 1].Ph), P(r, model[i].AddedMl, model[i].Ph), 2f, ModelLine);
@@ -76,7 +108,7 @@ namespace ChemLabSimV3.Views.Layout
         private Vector2 P(Rect r, double ml, double ph)
         {
             float x = r.xMin + r.width * Mathf.Clamp01((float)(ml / maxMl));
-            float y = r.yMin + r.height * Mathf.Clamp01((float)(ph / 14.0));
+            float y = r.yMin + r.height * Mathf.Clamp01((float)((ph - yMin) / (yMax - yMin)));
             return new Vector2(x, y);
         }
 

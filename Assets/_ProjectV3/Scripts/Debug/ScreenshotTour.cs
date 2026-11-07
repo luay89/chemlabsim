@@ -132,6 +132,8 @@ namespace ChemLabSimV3.DebugTools
 
             yield return TitrationTour();
             yield return FlameTour();
+            yield return HeatingTour();
+            yield return PeriodicTableTour();
 
             Click(GameObject.Find("AssistantTab")?.GetComponent<Button>());
             yield return new WaitForSeconds(0.6f);
@@ -266,6 +268,97 @@ namespace ChemLabSimV3.DebugTools
             }
         }
 
+        // ── Heating lab (physical change) ─────────────────────────────
+
+        private IEnumerator HeatingTour()
+        {
+            Select("ReagentA", "H2O");
+            Select("ReagentB", null);
+            SetAmount("ReagentAAmountRow", "50");
+            SetSlider<TemperatureSliderView>(25f);
+            yield return new WaitForSeconds(0.8f);
+            Click(GameObject.Find("TestsTab")?.GetComponent<Button>());
+            Click(GameObject.Find("HeatButton")?.GetComponent<Button>());
+            yield return new WaitForSeconds(1.0f);
+            yield return Capture("heating_a_warming");
+            Verify("heating_warming", "heat~liquid;heat~heater on;heat~evaporation;tc~heating model");
+
+            // 50 mL of water reaches 99.97 °C after ~52 simulated seconds at 300 W (≈ 2.6 s here).
+            yield return new WaitForSeconds(5f);
+            yield return Capture("heating_b_boiling");
+            Verify("heating_boiling", "heat~boiling;heat~100.0 °C;heat~latent;tv=100.0 °C;phv=--;phc~25 °C only;volc~liquid left");
+
+            Click(GameObject.Find("HeaterOffButton")?.GetComponent<Button>());
+            yield return new WaitForSeconds(2f);
+            yield return Capture("heating_c_heater_off");
+            Verify("heating_off", "heat~liquid;heat~heater off;heat~cools towards room temperature");
+
+            Click(GameObject.Find("HeatResetButton")?.GetComponent<Button>());
+            Click(GameObject.Find("FrozenButton")?.GetComponent<Button>());
+            Click(GameObject.Find("HeatButton")?.GetComponent<Button>());
+            yield return new WaitForSeconds(1f);
+            yield return Capture("heating_d_ice_melting");
+            Verify("heating_ice", "heat~melting;heat~0.0 °C;heat~mL solid");
+            Click(GameObject.Find("HeatResetButton")?.GetComponent<Button>());
+            Click(GameObject.Find("FrozenButton")?.GetComponent<Button>());
+
+            // Substances without sourced data, and one that reacts when heated.
+            Select("ReagentA", "CH3OH");
+            yield return new WaitForSeconds(0.6f);
+            Click(GameObject.Find("HeatButton")?.GetComponent<Button>());
+            yield return new WaitForSeconds(0.6f);
+            yield return Capture("heating_e_no_data");
+            Verify("heating_no_data", "heat~Not supported;heat~no sourced heat-capacity");
+            Select("ReagentA", "NaHCO3");
+            yield return new WaitForSeconds(0.6f);
+            Click(GameObject.Find("HeatButton")?.GetComponent<Button>());
+            yield return new WaitForSeconds(0.6f);
+            Verify("heating_decomposes", "heat~decomposes when heated;heat~chemical change");
+            Click(GameObject.Find("HeatResetButton")?.GetComponent<Button>());
+        }
+
+        // ── Periodic table ─────────────────────────────────────────────
+
+        private IEnumerator PeriodicTableTour()
+        {
+            Click(GameObject.Find("PeriodicTableButton")?.GetComponent<Button>());
+            yield return new WaitForSeconds(1f);
+            yield return Capture("periodic_a_table");
+            Verify("periodic_open", "ptn=118");
+            var view = FindObjectOfType<PeriodicTableView>(true);
+            if (view == null) yield break;
+
+            view.SetSearch("26");
+            yield return new WaitForSeconds(0.6f);
+            yield return Capture("periodic_b_iron");
+            Verify("periodic_iron", "ptn=1;ptd~Iron;ptd~55.845;ptd~1811 K;ptd~IN THIS LAB;ptd~Reactions in the lab");
+
+            view.SetSearch("118");
+            yield return new WaitForSeconds(0.5f);
+            yield return Capture("periodic_c_oganesson");
+            Verify("periodic_og", "ptd~Oganesson;ptd~predicted;ptd~Standard atomic weight: <b>none</b>");
+
+            view.SetSearch("2");
+            yield return new WaitForSeconds(0.4f);
+            Verify("periodic_he", "ptd~Helium;ptd~not at 1 atm;ptd~does not solidify");
+
+            view.SetSearch("");
+            view.SetCategory("halogen");
+            yield return new WaitForSeconds(0.5f);
+            yield return Capture("periodic_d_halogens");
+            Verify("periodic_halogens", "ptn=6");
+            view.SetCategory(null);
+
+            view.SetSearch("11");
+            yield return new WaitForSeconds(0.5f);
+            yield return Capture("periodic_e_sodium");
+            Verify("periodic_na", "ptd~Sodium;ptd~Flame test: <b>intense yellow-orange</b>;ptd~As the element");
+            Click(GameObject.Find("UseAsReagentA_Na")?.GetComponent<Button>());
+            yield return new WaitForSeconds(0.8f);
+            yield return Capture("periodic_f_back_in_lab");
+            Verify("periodic_use", "ra=Na;ptopen=no");
+        }
+
         // ── Checks on what the UI actually shows ───────────────────────
 
         private void Verify(string step, string spec)
@@ -298,6 +391,11 @@ namespace ChemLabSimV3.DebugTools
                 case "tsetup": return Texts("TitrationPanel", "Setup");
                 case "flame":  return FindObjectOfType<LabTestsView>(true)?.FlameText;
                 case "vol":    return CardLine("VolumeTag", 1);
+                case "heat":   return FindObjectOfType<LabTestsView>(true)?.HeatingText;
+                case "ptn":    return FindObjectOfType<PeriodicTableView>(true)?.VisibleCount.ToString();
+                case "ptd":    return FindObjectOfType<PeriodicTableView>(true)?.DetailText;
+                case "ptopen": var pt = FindObjectOfType<PeriodicTableView>(true); return pt == null ? null : pt.IsOpen ? "yes" : "no";
+                case "ra":     return FindObjectsOfType<ReagentDropdownView>(true).FirstOrDefault(v => v.name.StartsWith("ReagentA"))?.GetSelectedValue();
                 case "volc":   return CardLine("VolumeTag", 2);
                 default:       return null;
             }

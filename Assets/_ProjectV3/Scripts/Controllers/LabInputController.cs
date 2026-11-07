@@ -88,6 +88,9 @@ namespace ChemLabSimV3.Controllers
         public LabInputViewModel CurrentInput => inputState;
         public IReadOnlyList<string> AvailableReagents => availableReagents;
 
+        /// <summary>The loaded materials (read-only view of this controller's materials.json data).</summary>
+        public IEnumerable<ChemicalMaterial> AllMaterials => materialLookup.Values;
+
         // -- Lifecycle -----------------------------------------
 
         protected override void OnInitialize()

@@ -210,6 +210,13 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
         }
 
         [Test]
+        public void DefaultResult_IsNeverAColour()
+        {
+            // A result that was never produced by a test (default struct) must not read as a colour.
+            Assert.That(default(FlameTestResult).HasColour, Is.False);
+        }
+
+        [Test]
         public void TableColours_AreIndependentOfLiquidColours()
         {
             // Every colouring entry has a documented emission and a visible colour.

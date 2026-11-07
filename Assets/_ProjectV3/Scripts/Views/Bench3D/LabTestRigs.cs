@@ -189,7 +189,11 @@ namespace ChemLabSimV3.Views.Bench3D
             if (flameTimer > 0f)
             {
                 flameTimer -= Time.unscaledDeltaTime;
-                if (flameTimer <= 0f) SetFlameColour(BurnerBlue);
+                if (flameTimer <= 0f)
+                {
+                    SetFlameColour(BurnerBlue);
+                    burner.SetActive(false);   // the test is over: the burner is turned off
+                }
             }
         }
     }

@@ -38,6 +38,9 @@ public class ChemicalMaterial
     public float stockConcentrationM;
     public string stockLabel       = string.Empty;
 
+    // -- Heating lab — present only for substances whose data was checked against a source ----
+    public MaterialThermalData thermal = new MaterialThermalData();
+
     /// <summary>Display name resolved by language index (0=EN, 1=AR).</summary>
     public string GetDisplayName(int languageIndex)
     {
@@ -54,4 +57,25 @@ public class ChemicalMaterial
         return !string.IsNullOrEmpty(state) ? state
              : !string.IsNullOrEmpty(default_state) ? default_state : "solid";
     }
+}
+
+/// <summary>
+/// Phase-change data of a pure substance at referencePressureKPa (written by
+/// tools/reactions/material_properties_004.py). available = false means "no data": the heating
+/// lab then explains the limitation instead of assuming values. 0 in a field = not given.
+/// </summary>
+[Serializable]
+public class MaterialThermalData
+{
+    public bool available;
+    public float referencePressureKPa;
+    public float meltingPointC;
+    public float boilingPointC;
+    public float heatCapacityLiquidJPerGK;
+    public float heatCapacitySolidJPerGK;
+    public float enthalpyFusionJPerG;
+    public float enthalpyVaporizationJPerG;
+    public float solidDensityGPerMl;
+    public string source = string.Empty;
+    public string notes = string.Empty;
 }

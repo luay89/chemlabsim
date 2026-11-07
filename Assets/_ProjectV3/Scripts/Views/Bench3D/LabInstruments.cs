@@ -13,6 +13,7 @@
 // Like a real probe the display needs a moment to settle; the value it settles on is the
 // engine's value.
 
+using System;
 using ChemLabSimV3.Controllers;
 using ChemLabSimV3.Engine.Chemistry;
 using ChemLabSimV3.Events;
@@ -103,6 +104,7 @@ namespace ChemLabSimV3.Views.Bench3D
             EventBus.Subscribe<SimulationTickEvent>(OnTick);
             EventBus.Subscribe<SimulationCompletedEvent>(OnCompleted);
             EventBus.Subscribe<TitrationUpdatedEvent>(OnTitration);
+            EventBus.Subscribe<HeatingUpdatedEvent>(OnHeating);
         }
 
         private void OnDisable()
@@ -114,6 +116,17 @@ namespace ChemLabSimV3.Views.Bench3D
             EventBus.Unsubscribe<SimulationTickEvent>(OnTick);
             EventBus.Unsubscribe<SimulationCompletedEvent>(OnCompleted);
             EventBus.Unsubscribe<TitrationUpdatedEvent>(OnTitration);
+            EventBus.Unsubscribe<HeatingUpdatedEvent>(OnHeating);
+        }
+
+        // Heating lab: the thermometer reads the heating model's temperature.
+        private bool heatingActive;
+        private double heatingC = double.NaN;
+
+        private void OnHeating(HeatingUpdatedEvent e)
+        {
+            heatingActive = e.Active && e.Supported;
+            heatingC = heatingActive ? e.TemperatureC : double.NaN;
         }
 
         private void OnTitration(TitrationUpdatedEvent e)
@@ -221,14 +234,29 @@ namespace ChemLabSimV3.Views.Bench3D
         {
             // Calculated (energy balance from the amounts) wins over simulated/estimated.
             double rise = titrating ? titrationRiseK : reactionVisible && haveAfterMix ? calculatedRiseK : double.NaN;
+            if (heatingActive && !double.IsNaN(heatingC))
+            {
+                shownC = Mathf.Lerp(shownC, (float)heatingC, 1f - Mathf.Exp(-Time.unscaledDeltaTime * 3f / ProbeResponseSeconds));
+                tempCard.Value.text = $"{shownC:0.0} °C";
+                tempCard.Caption.text = "calculated: heating model (energy balance)";
+                UpdatePh();
+                return;
+            }
             bool showCalc = !double.IsNaN(rise);
             bool showSim = !showCalc && !titrating && reactionVisible && basis != TemperatureBasis.SetPoint && !float.IsNaN(simulatedC);
             float target = showCalc ? setPointC + (float)rise : showSim ? simulatedC : setPointC;
             shownC = Mathf.Lerp(shownC, target, 1f - Mathf.Exp(-Time.unscaledDeltaTime * 3f / ProbeResponseSeconds));
             tempCard.Value.text = $"{shownC:0.0} °C";
             tempCard.Caption.text = Thermometry.Label(showCalc ? TemperatureBasis.Calculated : showSim ? basis : TemperatureBasis.SetPoint);
+            UpdatePh();
+        }
 
+        private void UpdatePh()
+        {
             var ph = titrating ? titrationPh : reactionVisible && haveAfterMix ? afterMix : beforeMix;
+            // The pH models are for 25 °C (Kw = 1.0 × 10⁻¹⁴); a heated sample is outside them.
+            if (heatingActive && Math.Abs(heatingC - 25.0) > 1.0)
+                ph = PhResult.Unsupported("pH is modelled at 25 °C only (Kw changes with temperature)");
             PhDisplay(ph, out string value, out string caption);
             if (titrating && ph.IsCalculated) caption += " · titration";
             phCard.Value.text = value;
