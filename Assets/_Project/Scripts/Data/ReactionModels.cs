@@ -125,7 +125,12 @@ public class ReactionEntry
     // Added to the canonical ReactionEntry so v2 (legacy) and v3
     // (next-gen) engines share a single data model. v2 ignores them.
     // ------------------------------------------------------------
+    // Standard reaction enthalpy at 25 °C, kJ per mol of reaction as written, by Hess's law from
+    // sourced ΔfH° values (tools/reactions/enthalpy_005.py). enthalpySource names the tables; when
+    // it is empty the value is not sourced (0) and enthalpyMissing says which ΔfH° is missing.
     public float enthalpyKJPerMol;
+    public string enthalpySource;
+    public string enthalpyMissing;
     public float activationEnergyKJ;
     public float equilibriumConstant;
     public bool  isReversible;

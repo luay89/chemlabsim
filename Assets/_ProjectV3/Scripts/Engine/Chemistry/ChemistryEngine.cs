@@ -103,10 +103,7 @@ namespace ChemLabSimV3.Engine.Chemistry
             PipelineResult pipeResult = _pipeline.Evaluate(reaction, condInput);
 
             // 6. Thermodynamics
-            float enthalpyKJ = reaction.enthalpyKJPerMol;
-            // Fallback: use temperature_delta as rough enthalpy proxy
-            if (Mathf.Approximately(enthalpyKJ, 0f) && reaction.visual_effects != null)
-                enthalpyKJ = -reaction.visual_effects.temperature_delta * 4.184f; // cal→kJ approximation
+            float enthalpyKJ = Thermometry.ModelVesselEnthalpyKJ(reaction);
 
             var thermo = Thermodynamics.Calculate(
                 activationTempC: reaction.activationTempC,

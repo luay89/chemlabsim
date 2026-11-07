@@ -1,0 +1,31 @@
+{
+ "source": "NIST-JANAF Thermochemical Tables, 4th ed. (Chase, M. W., J. Phys. Chem. Ref. Data Monograph 9, 1998)",
+ "retrieved": "2026-10-18",
+ "notes": "delta-f H at 298.15 K from the row '298.15' of each table. Liquids below their melting point are JANAF's extrapolated standard states, used only where an equation writes the product as a liquid.",
+ "values": [
+  {
+   "species": "Fe",
+   "state": "l",
+   "dfH_kJ_per_mol": 12.395,
+   "table": "Fe-006",
+   "url": "https://janaf.nist.gov/tables/Fe-006.txt",
+   "table_sha256": "dd1439201d7c80741103b4369cf6062bfda4c828bd36213cf0bd4a58b3f4d0a8"
+  },
+  {
+   "species": "Na",
+   "state": "l",
+   "dfH_kJ_per_mol": 2.406,
+   "table": "Na-003",
+   "url": "https://janaf.nist.gov/tables/Na-003.txt",
+   "table_sha256": "6b5d090c7e79cc604c52da75a8c6fd8a77892352a001ce4583260fd38839b19c"
+  },
+  {
+   "species": "NaCl",
+   "state": "l",
+   "dfH_kJ_per_mol": -385.923,
+   "table": "Cl-054",
+   "url": "https://janaf.nist.gov/tables/Cl-054.txt",
+   "table_sha256": "23e9b8e3b303c46257213d2fdd27365b60aa86e8f66bd63403f7103dd25c1444"
+  }
+ ]
+}

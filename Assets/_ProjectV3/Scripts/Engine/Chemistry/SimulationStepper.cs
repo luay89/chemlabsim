@@ -357,10 +357,8 @@ namespace ChemLabSimV3.Engine.Chemistry
             s.ConditionRate = conditions.OverallRate;
             s.Conditions = conditions.Conditions;
 
-            // Enthalpy
-            s.EnthalpyKJ = reaction.enthalpyKJPerMol;
-            if (Mathf.Approximately(s.EnthalpyKJ, 0f) && reaction.visual_effects != null)
-                s.EnthalpyKJ = -reaction.visual_effects.temperature_delta * 4.184f;
+            // Heat of the model vessel (observed ΔT); the sourced ΔH° is used by Calorimetry.
+            s.EnthalpyKJ = Thermometry.ModelVesselEnthalpyKJ(reaction);
             s.IsExothermic = s.EnthalpyKJ < 0f;
 
             // Activation energy

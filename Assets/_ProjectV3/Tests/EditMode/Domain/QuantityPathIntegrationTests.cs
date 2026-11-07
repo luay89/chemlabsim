@@ -65,7 +65,7 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
             Assert.That(detailed.Found, Is.True, "reaction not found for " + string.Join(" + ", request.ReagentNames));
             var e = ReactionController.StoichiometryEventFor(detailed, ReactionEvaluationAdapter.ToLegacyResult(detailed));
             var o = new Outcome { Detailed = detailed, Event = e, Ph = LabInstruments.PhAfterMix(e) };
-            o.Panel = e.Evaluation != null ? StoichiometryPanelView.Describe(e.Evaluation, e.Proceeded) : null;
+            o.Panel = e.Evaluation != null ? StoichiometryPanelView.Describe(e.Evaluation, e.Proceeded, e.Reaction) : null;
             LabInstruments.PhDisplay(o.Ph, out o.PhValue, out o.PhCaption);
             return o;
         }
@@ -225,7 +225,12 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
             Assert.That(o.Ph.IsCalculated, Is.False);
             Assert.That(o.PhValue, Is.EqualTo("--"));
             StringAssert.StartsWith("not supported: AgNO3 is not a strong acid or base", o.PhCaption);
-            Assert.That(double.IsNaN(LabInstruments.RiseAfterMix(o.Event)), Is.True);   // no ΔH data → not calculated
+
+            // The temperature is calculated from the sourced ΔH° (−65.72 kJ/mol, Hess's law):
+            // 2.5 mmol AgCl in 50 mL → 2.5e-3 × 65 720 / (50 × 4.184) = 0.79 K.
+            Assert.That(o.Event.Reaction.enthalpyKJPerMol, Is.EqualTo(-65.72).Within(0.01));
+            Assert.That(LabInstruments.RiseAfterMix(o.Event, 25.0, out var basis), Is.EqualTo(0.0025 * 65720.0 / (50 * 4.184)).Within(0.1).Percent);
+            Assert.That(basis, Is.EqualTo(TemperatureBasis.CalculatedFromEnthalpy));
         }
 
         [Test]
@@ -279,6 +284,64 @@ namespace ChemLabSimV3.Tests.EditMode.Domain
             Assert.That(limited.Event.Evaluation.Stoichiometry.LimitingFormulas, Is.EqualTo(new[] { "NaCl" }));
             Assert.That(limited.Event.Evaluation.Stoichiometry.Products.First(p => p.Formula == "AgCl").TheoreticalMol,
                         Is.EqualTo(0.001).Within(1e-4).Percent);
+        }
+    
+        // ── I. Reaction heat from the sourced ΔH° ─────────────────────
+
+        [Test]
+        public void I_ZincAndCopperSulfate_WarmsTheSolution()
+        {
+            // Zn(s) + CuSO4(aq) → ZnSO4(aq) + Cu(s), ΔH° = −218.29 kJ/mol (CODATA ions).
+            // 1 g Zn (15 mmol) + 50 mL 0.1 M CuSO4 (5 mmol, limiting) → q = 1.091 kJ → ΔT = 5.22 K.
+            var o = Mix(25f, Amount("Zn", 1.0, "g"), Amount("CuSO4", 50, "mL"));
+            Assert.That(o.Detailed.Reaction.id, Is.EqualTo("rxn_030"));
+            Assert.That(o.Event.Evaluation.Stoichiometry.Extent, Is.EqualTo(0.005).Within(1e-4).Percent);
+            double expected = 0.005 * 218290.0 / (50 * 4.184);
+            Assert.That(LabInstruments.RiseAfterMix(o.Event, 25.0, out var basis), Is.EqualTo(expected).Within(0.1).Percent);
+            Assert.That(basis, Is.EqualTo(TemperatureBasis.CalculatedFromEnthalpy));
+
+            StringAssert.Contains("<b>Reaction heat</b>", o.Panel);
+            StringAssert.Contains("ΔH° = −218.3 kJ per mol of reaction", o.Panel);
+            StringAssert.Contains("exothermic: gives out heat", o.Panel);
+            StringAssert.Contains("1.091 kJ given out", o.Panel);
+            StringAssert.Contains("Temperature change: <b>+5.217 °C</b>", o.Panel);
+            StringAssert.Contains("Sources: CODATA Key Values 1989", o.Panel);
+        }
+
+        [Test]
+        public void I_AmmoniumNitrateDissolving_CoolsTheWater()
+        {
+            // NH4NO3(s) → NH4NO3(aq), ΔH° = +25.45 kJ/mol: 5 g (62.5 mmol) in 50 mL water → −7.6 K.
+            var o = Mix(25f, Amount("NH4NO3", 5.0, "g"), Amount("H2O", 50, "mL"));
+            Assert.That(o.Detailed.Reaction.id, Is.EqualTo("rxn_040"));
+            double n = 5.0 / MolarMass.Of("NH4NO3").GramsPerMole;
+            double rise = LabInstruments.RiseAfterMix(o.Event, 25.0, out _);
+            Assert.That(rise, Is.EqualTo(-n * 25450.0 / (50 * 4.184)).Within(0.1).Percent);
+            Assert.That(rise, Is.LessThan(-7.0));
+            StringAssert.Contains("endothermic: takes in heat", o.Panel);
+            StringAssert.Contains("kJ taken in", o.Panel);
+        }
+
+        [Test]
+        public void I_SulfuricAcid_ShowsDeltaHButNoTemperature()
+        {
+            // The heat of dilution of H2SO4 at bench strength is large; the standard ΔH° is still shown.
+            var o = Mix(25f, Amount("H2SO4", 10, "mL"), Amount("NaOH", 20, "mL"));
+            Assert.That(Calorimetry.HasSourcedEnthalpy(o.Event.Reaction), Is.True);
+            Assert.That(double.IsNaN(LabInstruments.RiseAfterMix(o.Event)), Is.True);
+            StringAssert.Contains("ΔH° = −111.6 kJ per mol of reaction", o.Panel);
+            StringAssert.Contains("Temperature change not calculated: the heat of dilution of sulfuric acid is not modelled", o.Panel);
+        }
+
+        [Test]
+        public void I_ReactionWithoutSourcedData_SaysWhichSpeciesIsMissing()
+        {
+            var r = db.reactions.First(x => x.id == "rxn_055");   // CuCO3: no ΔfH° in the tables used
+            Assert.That(Calorimetry.HasSourcedEnthalpy(r), Is.False);
+            Assert.That(r.enthalpyKJPerMol, Is.EqualTo(0f));
+            StringAssert.Contains("CuCO3(s)", Calorimetry.MissingEnthalpyReason(r));
+            Assert.That(Calorimetry.TryReaction(r, null, out _, out string why), Is.False);
+            StringAssert.Contains("CuCO3(s)", why);
         }
     }
 }

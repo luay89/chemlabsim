@@ -192,11 +192,7 @@ def curate_materials():
 
 
 def write(reactions):
-    blocks = ["  " + json.dumps(r, indent=2, ensure_ascii=True).replace("\n", "\n  ") for r in reactions]
-    out = '{\n"reactions": [\n' + ",\n".join(blocks) + "\n]\n}\n"
-    json.loads(out)
-    with open(tool.SRC, "w", encoding="utf-8") as f:
-        f.write(out)
+    tool.save(reactions)
 
 
 def main():

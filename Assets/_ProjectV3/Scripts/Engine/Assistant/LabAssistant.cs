@@ -5,10 +5,13 @@
 //
 // Answers are TMP rich text (formulas with sub/superscripts).
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using ChemLabSimV3.Data;
+using ChemLabSimV3.Engine.Chemistry;
 
 namespace ChemLabSimV3.Engine.Assistant
 {
@@ -215,11 +218,17 @@ namespace ChemLabSimV3.Engine.Assistant
             var gas = r.products?.FirstOrDefault(p => p.state == "g");
             if (gas != null) yield return $"Bubbles: {ChemText.Formula(gas.formula)} gas is released.";
             if (!string.IsNullOrEmpty(v.color_change) && !v.precipitate) yield return "The colour of the liquid changes.";
-            if (v.temperature_delta >= 2f) yield return $"It gives out heat (exothermic): about +{v.temperature_delta:0} °C.";
+            if (Calorimetry.HasSourcedEnthalpy(r) && Math.Abs(r.enthalpyKJPerMol) >= 1f)
+                yield return r.enthalpyKJPerMol < 0f
+                    ? $"It gives out heat (exothermic): ΔH° = −{Kj(-r.enthalpyKJPerMol)} kJ per mol of reaction (Hess's law)."
+                    : $"It takes in heat (endothermic): ΔH° = +{Kj(r.enthalpyKJPerMol)} kJ per mol of reaction (Hess's law).";
+            else if (v.temperature_delta >= 2f) yield return $"It gives out heat (exothermic): about +{v.temperature_delta:0} °C.";
             else if (v.temperature_delta <= -2f) yield return $"It takes in heat (endothermic): about {v.temperature_delta:0} °C.";
             if (v.glow || v.sparks) yield return "It glows brightly — energy is released as light.";
             if (v.smoke) yield return "Smoke rises from the vessel.";
         }
+
+        private static string Kj(float v) => v.ToString("0.#", CultureInfo.InvariantCulture);
 
         private static string Status(ReactionEvaluationResult res)
         {

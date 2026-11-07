@@ -42,9 +42,13 @@ namespace ChemLabSimV3.DebugTools
                 // Before mixing (right after the previous experiment's 25 + 25 mL): only reagent A, 20 mL.
                 "vol=20 mL;labelA~20 mL",
             "magnesium_acid_amounts|Mg|HCl|Neutral|25|0.6|0.6|0|0|0.5|10|" +
-                "panel~Limiting reactant: <b>HCl</b>;panel~10.08 mg;phv=--;phc~not supported;labelA~0.5 g;labelB~10 mL;vol=10 mL",
+                "panel~Limiting reactant: <b>HCl</b>;panel~10.08 mg;phv=--;phc~not supported;labelA~0.5 g;labelB~10 mL;vol=10 mL;" +
+                // ΔH° = −467.0 kJ/mol; ξ = 5 mmol in 10 mL → 0.005 × 467 000 / (10 × 4.184) = 55.8 K.
+                "panel~ΔH° = −467 kJ per mol of reaction;panel~2.335 kJ given out;tc~calculated from ΔH° and your amounts;tv=80.8 °C",
             "silver_chloride|AgNO3|NaCl|Neutral|25|0.6|0.5|0|0|25|25|" +
-                "panel~Exact proportions;panel~= 0.358 g;phv=--;phc~AgNO3 is not a strong acid or base;labelA~0.1 M bench stock;vol=50 mL",
+                "panel~Exact proportions;panel~= 0.358 g;phv=--;phc~AgNO3 is not a strong acid or base;labelA~0.1 M bench stock;vol=50 mL;" +
+                // ΔH° = −65.72 kJ/mol; 2.5 mmol in 50 mL → +0.79 K.
+                "panel~ΔH° = −65.72 kJ per mol of reaction;panel~Sources: CODATA Key Values 1989;tc~calculated from ΔH° and your amounts;tv=25.8 °C",
             "copper_hydroxide|CuSO4|NaOH|Basic|25|0.6|0.5|0",
             "lead_iodide|KI|Pb(NO3)2|Neutral|25|0.6|0.5|0",
             "zinc_acid|Zn|HCl|Acidic|25|0.6|0.6|0",
@@ -126,6 +130,7 @@ namespace ChemLabSimV3.DebugTools
                     // Like a student, read the instruments once they have settled: the probes ease
                     // towards their value, and a slow frame during the pour can delay the reveal.
                     yield return new WaitForSeconds(2f);
+                    yield return ThermometerSteady();
                     Verify(p[0], p[11]);
                 }
             }
@@ -290,6 +295,7 @@ namespace ChemLabSimV3.DebugTools
             for (float t = 0f; t < 20f && (tests == null || !tests.HeatingText.Contains("boiling")); t += 0.25f)
                 yield return new WaitForSeconds(0.25f);
             yield return new WaitForSeconds(2.5f);
+            yield return ThermometerSteady();
             yield return Capture("heating_b_boiling");
             Verify("heating_boiling", "heat~boiling;heat~100.0 °C;heat~latent;tv=100.0 °C;phv=--;phc~25 °C only;volc~liquid left");
 
@@ -417,6 +423,24 @@ namespace ChemLabSimV3.DebugTools
         }
 
         /// <summary>Line of a pinned card: 0 title, 1 value, 2 caption.</summary>
+        /// <summary>
+        /// Waits (at most 15 s) until the thermometer has shown the same value for 2 s: the probe eases
+        /// towards its value (time constant 0.4 s), and slow frames (phone layout) can leave a large
+        /// jump unfinished. One unchanged second can still leave ~0.05 K to go; two leave < 0.005 K.
+        /// </summary>
+        private static IEnumerator ThermometerSteady()
+        {
+            string last = CardLine("TemperatureCard", 1);
+            int unchanged = 0;
+            for (float t = 0f; t < 15f && unchanged < 2; t += 1f)
+            {
+                yield return new WaitForSeconds(1f);
+                string now = CardLine("TemperatureCard", 1);
+                unchanged = now == last ? unchanged + 1 : 0;
+                last = now;
+            }
+        }
+
         private static string CardLine(string card, int line)
         {
             var root = Named(card);
