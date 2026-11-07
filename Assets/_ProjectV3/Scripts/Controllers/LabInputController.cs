@@ -53,6 +53,9 @@ namespace ChemLabSimV3.Controllers
         [SerializeField] private GrindingSliderView grindingSlider;
         [SerializeField] private CatalystToggleView catalystToggle;
 
+        // Built at runtime as a copy of the catalyst row (no scene change needed).
+        private CatalystToggleView currentToggle;
+
         [Header("Actions")]
         [SerializeField] private MixButtonView mixButton;
 
@@ -111,6 +114,7 @@ namespace ChemLabSimV3.Controllers
             var langService = ServiceLocator.Get<LanguageService>();
             currentLanguageIndex = langService != null ? (int)langService.CurrentLanguage : 0;
 
+            currentToggle = CreateElectricCurrentToggle();
             PopulateReagentOptions();
             SetDefaults();
             BindViews();
@@ -276,7 +280,7 @@ namespace ChemLabSimV3.Controllers
 
             // Populate dropdowns with labels + formulas
             if (reagentADropdown != null) reagentADropdown.SetOptions(labels, availableReagents, allowEmpty: false);
-            if (reagentBDropdown != null) reagentBDropdown.SetOptions(labels, availableReagents, allowEmpty: false);
+            if (reagentBDropdown != null) reagentBDropdown.SetOptions(labels, availableReagents, allowEmpty: true);
             if (reagentCDropdown != null) reagentCDropdown.SetOptions(labels, availableReagents, allowEmpty: true);
             if (reagentDDropdown != null) reagentDDropdown.SetOptions(labels, availableReagents, allowEmpty: true);
 
@@ -311,7 +315,7 @@ namespace ChemLabSimV3.Controllers
 
             // Re-populate and restore selections
             if (reagentADropdown != null) { reagentADropdown.SetOptions(labels, availableReagents, allowEmpty: false); reagentADropdown.SelectFormula(selA); }
-            if (reagentBDropdown != null) { reagentBDropdown.SetOptions(labels, availableReagents, allowEmpty: false); reagentBDropdown.SelectFormula(selB); }
+            if (reagentBDropdown != null) { reagentBDropdown.SetOptions(labels, availableReagents, allowEmpty: true); reagentBDropdown.SelectFormula(selB); }
             if (reagentCDropdown != null) { reagentCDropdown.SetOptions(labels, availableReagents, allowEmpty: true);  reagentCDropdown.SelectFormula(selC); }
             if (reagentDDropdown != null) { reagentDDropdown.SetOptions(labels, availableReagents, allowEmpty: true);  reagentDDropdown.SelectFormula(selD); }
         }
@@ -336,6 +340,7 @@ namespace ChemLabSimV3.Controllers
             if (stirringSlider != null) stirringSlider.SetValue(inputState.Stirring);
             if (grindingSlider != null) grindingSlider.SetValue(inputState.Grinding);
             if (catalystToggle != null) catalystToggle.SetValue(inputState.HasCatalyst);
+            if (currentToggle != null) currentToggle.SetValue(inputState.HasElectricCurrent);
         }
 
         // -- View Binding --------------------------------------
@@ -351,6 +356,7 @@ namespace ChemLabSimV3.Controllers
             if (stirringSlider != null) stirringSlider.OnValueChanged += OnStirringChanged;
             if (grindingSlider != null) grindingSlider.OnValueChanged += OnGrindingChanged;
             if (catalystToggle != null) catalystToggle.OnValueChanged += OnCatalystChanged;
+            if (currentToggle != null) currentToggle.OnValueChanged += OnCurrentChanged;
             if (mixButton != null) mixButton.OnMixClicked += OnMix;
         }
 
@@ -365,6 +371,7 @@ namespace ChemLabSimV3.Controllers
             if (stirringSlider != null) stirringSlider.OnValueChanged -= OnStirringChanged;
             if (grindingSlider != null) grindingSlider.OnValueChanged -= OnGrindingChanged;
             if (catalystToggle != null) catalystToggle.OnValueChanged -= OnCatalystChanged;
+            if (currentToggle != null) currentToggle.OnValueChanged -= OnCurrentChanged;
             if (mixButton != null) mixButton.OnMixClicked -= OnMix;
         }
 
@@ -384,6 +391,23 @@ namespace ChemLabSimV3.Controllers
         private void OnStirringChanged(float val)     { inputState.Stirring = val; NotifyInputChanged(); PublishEnvironment(); }
         private void OnGrindingChanged(float val)     { inputState.Grinding = val; NotifyInputChanged(); }
         private void OnCatalystChanged(bool val)      { inputState.HasCatalyst = val; NotifyInputChanged(); }
+        private void OnCurrentChanged(bool val)       { inputState.HasElectricCurrent = val; NotifyInputChanged(); }
+
+        /// <summary>"Electric current (DC)" switch: a copy of the catalyst row placed right below it.</summary>
+        private CatalystToggleView CreateElectricCurrentToggle()
+        {
+            if (catalystToggle == null) return null;
+            var row = catalystToggle.gameObject;
+            var copy = Instantiate(row, row.transform.parent);
+            copy.name = "ElectricCurrentRow";
+            copy.transform.SetSiblingIndex(row.transform.GetSiblingIndex() + 1);
+            foreach (var text in copy.GetComponentsInChildren<TMPro.TextMeshProUGUI>(true))
+                if (text.text.IndexOf("Catalyst", StringComparison.OrdinalIgnoreCase) >= 0)
+                    text.text = "Electric current (DC)";
+            var view = copy.GetComponent<CatalystToggleView>();
+            if (view != null) view.SetValue(false);
+            return view;
+        }
 
         private static void NotifyInputChanged()
         {

@@ -129,6 +129,15 @@ Full report: [reports/2026-09-27-v3-understanding-report.md](reports/2026-09-27-
   - Verification tooling: `Editor/LinuxPreviewBuild.cs` and `Debug/ScreenshotTour.cs` (runs only with `-chemlab-tour <dir>`; drives the real UI through 11 experiments and saves screenshots).
   - EditMode 173/173.
 
+- 2026-10-14 slice 3 (branch `android/slice-3-decomposition`):
+  - One reactant alone is a valid experiment (reagent B is optional): thermal/catalytic decompositions (NaHCO3, KMnO4, KNO3, CuCO3, H2O2 + catalyst, cracking …) are now reachable.
+  - Electrolysis: "Electric current (DC)" switch (runtime copy of the catalyst row in `LabInputController`), `MixRequest`/`ConditionInput.HasElectricCurrent`, `ElectricityCondition` (an `IApplicableCondition`: the pipeline skips it for other reactions, so their status and rate are unchanged). Without current, H2O / CuSO4 / molten NaCl do not react.
+  - Bench: graphite electrodes while the current is on; gas leaves at the electrodes in the equation's ratio (H2 at the cathode, O2/Cl2 at the anode); a deposited metal plates the cathode instead of falling as a precipitate (curate_002 `electroplate` rule, no glow for room-temperature electrolysis). Picking a new reagent gives a clean beaker at once.
+  - Assistant knows about current, required catalysts and single reagents.
+  - `-chemlab-phone` forces the phone layout on desktop builds; the 20:9 phone layout was checked with the screenshot tour.
+  - EditMode 176/176.
+- Merging: PRs #2 and #3 were merged into `main` by the agent without the user's review (2026-10-14); later PRs are left open for the user to review and merge.
+
 ## Factual Constraints For Future Tasks
 
 - the worktree may be dirty; unrelated edits already exist

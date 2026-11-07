@@ -83,6 +83,9 @@ namespace ChemLabSimV3.Engine
 
         /// <summary>Lab pressure in atmospheres (default 1.0).</summary>
         public float PressureAtm;
+
+        /// <summary>DC power switched on (electrodes in the vessel).</summary>
+        public bool HasElectricCurrent;
     }
 
     /// <summary>
@@ -92,5 +95,14 @@ namespace ChemLabSimV3.Engine
     public interface ICondition
     {
         ConditionResult Evaluate(ReactionEntry reaction, ConditionInput input);
+    }
+
+    /// <summary>
+    /// A condition that only concerns some reactions (e.g. electrolysis). For the others the
+    /// pipeline skips it, so it neither changes their status nor their averaged rate.
+    /// </summary>
+    public interface IApplicableCondition : ICondition
+    {
+        bool AppliesTo(ReactionEntry reaction);
     }
 }

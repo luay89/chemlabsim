@@ -9,7 +9,7 @@ namespace ChemLabSimV3.Data
 {
     public struct LabInputViewModel
     {
-        /// <summary>Selected reagent formulas (2–4 slots, empty string = no selection).</summary>
+        /// <summary>Selected reagent formulas (1–4 slots, empty string = no selection).</summary>
         public string ReagentA;
         public string ReagentB;
         public string ReagentC;
@@ -18,7 +18,7 @@ namespace ChemLabSimV3.Data
         /// <summary>Medium index: 0=Neutral, 1=Acidic, 2=Basic.</summary>
         public int MediumIndex;
 
-        /// <summary>Temperature in °C (0–100).</summary>
+        /// <summary>Temperature in °C (0–1000).</summary>
         public float Temperature;
 
         /// <summary>Stirring intensity (0–1).</summary>
@@ -29,6 +29,9 @@ namespace ChemLabSimV3.Data
 
         /// <summary>Whether catalyst is applied.</summary>
         public bool HasCatalyst;
+
+        /// <summary>Whether DC power runs through the vessel (electrolysis).</summary>
+        public bool HasElectricCurrent;
 
         /// <summary>Build a MixRequest from the current input state.</summary>
         public MixRequest ToMixRequest()
@@ -46,7 +49,8 @@ namespace ChemLabSimV3.Data
                 Temperature = Temperature,
                 Stirring = Stirring,
                 Grinding = Grinding,
-                HasCatalyst = HasCatalyst
+                HasCatalyst = HasCatalyst,
+                HasElectricCurrent = HasElectricCurrent
             };
         }
     }

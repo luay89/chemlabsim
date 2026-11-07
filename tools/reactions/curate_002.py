@@ -125,6 +125,22 @@ def recolour(r):
         v["color_change"] = ""   # colourless solution; the colour is in the precipitate
 
 
+def electroplate(r):
+    """Electrolysis of a solution: the metal plates onto the cathode (it is not a precipitate),
+    and nothing glows. The solution keeps a paler colour of the ion being used up."""
+    v = r.get("visual_effects") or {}
+    liquid_at_room_temp = any(c.get("state") == "l" for c in r["reactants"]) and r.get("activationTempC", 0) < 300
+    if not v.get("electrical") or not (in_solution(r) or liquid_at_room_temp):
+        return   # e.g. molten NaCl at 801 °C really does glow
+    v["glow"] = False
+    metal = next((p["formula"] for p in r["products"] if p.get("state") == "s" and p["formula"] in METALS), None)
+    if metal:
+        v["precipitate"] = False
+        v["precipitate_color"] = SOLID_COLOURS[metal]   # read as the plating colour by the bench
+    ion = next((SOLUTION_COLOURS[c["formula"]] for c in r["reactants"] if c["formula"] in SOLUTION_COLOURS), "")
+    v["color_change"] = ion
+
+
 # Reactions whose liquid colour comes from something the products list does not carry
 # (colloidal sulfur clouds the whole liquid, iodine-starch, ...).
 KEEP_LIQUID_COLOUR = {"rxn_044", "rxn_381", "rxn_284", "rxn_122", "rxn_135"}
@@ -147,6 +163,7 @@ def main():
     reactions = [r for r in reactions if r["id"] not in DUPLICATES]
     for r in reactions:
         recolour(r)
+        electroplate(r)
 
     errors, warnings = tool.check(reactions)
     for w in warnings:

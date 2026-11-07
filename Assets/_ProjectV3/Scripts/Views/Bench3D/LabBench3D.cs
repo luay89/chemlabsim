@@ -19,7 +19,9 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
+using ChemLabSimV3.Controllers;
 using ChemLabSimV3.Data;
+using ChemLabSimV3.Engine;
 using ChemLabSimV3.Events;
 using System.Collections.Generic;
 
@@ -75,6 +77,17 @@ namespace ChemLabSimV3.Views.Bench3D
         private float envSteamRate, envHeat, stirSpin;
         private float frost;
         private bool  flameOn;
+
+        // Electrolysis: two graphite rods while DC power is on; gas comes off at the rods
+        // (water: H2 at the cathode twice as fast as O2 at the anode).
+        private GameObject electrodes;
+        private Material cathodeMat;
+        private Color graphiteColor = new Color(0.12f, 0.12f, 0.13f), platingColor;
+        private bool plating;
+        private ParticleSystem cathodeBubbles, anodeBubbles;
+        private bool currentOn, electrolysis;
+        private float cathodeShare, anodeShare;   // gas split between the electrodes, from the equation
+        private LabInputController labInput;
         private Color flameColor = DefaultFlame;
 
         // FxTriggeredEvent and ReactionEvaluatedEvent arrive in the same frame in either
@@ -115,6 +128,7 @@ namespace ChemLabSimV3.Views.Bench3D
             BuildTable();
             BuildBeaker();
             BuildParticles();
+            BuildElectrodes();
             SetIdle("liquid", string.Empty);
             liquidLevel = liquidTarget;
             liquidColor = liquidTargetColor;
@@ -128,6 +142,7 @@ namespace ChemLabSimV3.Views.Bench3D
             EventBus.Subscribe<MaterialPreviewChangedEvent>(OnMaterialPreview);
             EventBus.Subscribe<EnvironmentChangedEvent>(OnEnvironment);
             EventBus.Subscribe<EnvironmentFxChangedEvent>(OnEnvironmentFx);
+            EventBus.Subscribe<InputChangedEvent>(OnInputChanged);
         }
 
         private void OnDisable()
@@ -138,6 +153,7 @@ namespace ChemLabSimV3.Views.Bench3D
             EventBus.Unsubscribe<MaterialPreviewChangedEvent>(OnMaterialPreview);
             EventBus.Unsubscribe<EnvironmentChangedEvent>(OnEnvironment);
             EventBus.Unsubscribe<EnvironmentFxChangedEvent>(OnEnvironmentFx);
+            EventBus.Unsubscribe<InputChangedEvent>(OnInputChanged);
         }
 
         // ── Scene construction ─────────────────────────────────────────
@@ -354,6 +370,75 @@ namespace ChemLabSimV3.Views.Bench3D
             SetFlameColor(DefaultFlame);
         }
 
+        private void BuildElectrodes()
+        {
+            electrodes = new GameObject("Electrodes");
+            electrodes.transform.SetParent(transform, false);
+            var graphite = Bench3DMeshes.Lit(graphiteColor, 0.35f);
+            cathodeMat = Bench3DMeshes.Lit(graphiteColor, 0.35f);
+            var cathode = AddRod(electrodes.transform, "Cathode", -0.16f, cathodeMat);
+            var anode   = AddRod(electrodes.transform, "Anode",    0.16f, graphite);
+
+            cathodeBubbles = Instantiate(bubbles, cathode.position + Vector3.down * 0.42f, bubbles.transform.rotation, transform);
+            anodeBubbles   = Instantiate(bubbles, anode.position + Vector3.down * 0.42f, bubbles.transform.rotation, transform);
+            foreach (var ps in new[] { cathodeBubbles, anodeBubbles })
+            {
+                var shape = ps.shape;
+                shape.radius = 0.02f;
+                SetRate(ps, 0f);
+                ps.Play();   // copies start stopped (playOnAwake is off)
+            }
+            electrodes.SetActive(false);
+        }
+
+        /// <summary>
+        /// Which electrode gives off which gas: H2 at the cathode, O2 / Cl2 at the anode, in the
+        /// ratio of their coefficients (water: 2 H2 : 1 O2). A metal deposit gives no gas.
+        /// </summary>
+        private void SplitElectrodeGas(ReactionEntry r)
+        {
+            float cathode = 0f, anode = 0f;
+            if (r?.products != null)
+                foreach (var p in r.products)
+                {
+                    if (p.state != "g") continue;
+                    if (p.formula == "H2") cathode += p.stoich;
+                    else if (p.formula == "O2" || p.formula == "Cl2") anode += p.stoich;
+                }
+            float total = cathode + anode;
+            cathodeShare = total > 0f ? cathode / total : 0f;
+            anodeShare = total > 0f ? anode / total : 0f;
+        }
+
+        /// <summary>Metal deposited on the cathode: 0 = clean graphite, 1 = fully plated.</summary>
+        private void SetPlating(float amount)
+        {
+            if (cathodeMat == null) return;
+            var c = Color.Lerp(graphiteColor, platingColor, Mathf.Clamp01(amount));
+            cathodeMat.SetColor("_BaseColor", c);
+            cathodeMat.SetColor("_Color", c);
+            cathodeMat.SetFloat("_Metallic", Mathf.Lerp(0f, 0.8f, amount));
+        }
+
+        private static Transform AddRod(Transform parent, string name, float x, Material mat)
+        {
+            var rod = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            rod.name = name;
+            rod.transform.SetParent(parent, false);
+            rod.transform.localScale = new Vector3(0.035f, 0.45f, 0.035f);       // 0.9 tall
+            rod.transform.localPosition = new Vector3(x, 0.72f, 0f);              // tip at 0.27
+            rod.GetComponent<Renderer>().sharedMaterial = mat;
+            Destroy(rod.GetComponent<Collider>());
+            return rod.transform;
+        }
+
+        private void OnInputChanged(InputChangedEvent e)
+        {
+            if (labInput == null) labInput = FindObjectOfType<LabInputController>();
+            currentOn = labInput != null && labInput.CurrentInput.HasElectricCurrent;
+            electrodes.SetActive(currentOn);
+        }
+
         private void SetFlameColor(Color c)
         {
             flameColor = c;
@@ -412,10 +497,23 @@ namespace ChemLabSimV3.Views.Bench3D
 
         // ── Event handlers ─────────────────────────────────────────────
 
+        // Picking a new reagent sets up a new experiment: the beaker shows the new reagent.
         private void OnMaterialPreview(MaterialPreviewChangedEvent e)
         {
-            if (reacting) return;
+            reacting = false;
+            precipitateOn = flameOn = glowOn = vapor = smokeOn = foamOn = false;
+            effervescence = 0;
+            reactionDeltaC = 0f;
+            SetPlating(0f);
             SetIdle(e.State, e.ColorHex);
+
+            // A clean beaker right away: nothing from the previous experiment fades out slowly.
+            solidLevel = solidTarget;
+            liquidLevel = liquidTarget;
+            foamLevel = foamTarget = 0f;
+            turbidity = turbidityTarget = 0f;
+            solidColor = solidTargetColor;
+            liquidColor = liquidTargetColor;
         }
 
         /// <summary>Beaker before mixing: powder for solids, liquid for liquids/solutions, empty for gases.</summary>
@@ -483,6 +581,10 @@ namespace ChemLabSimV3.Views.Bench3D
             reactionTime = 0f;
 
             Phase phase = PhaseOf(reaction);
+            electrolysis = ElectricityCondition.IsElectrolysis(reaction);
+            plating = electrolysis && fx.PlaySuccess && TryParseHex(fx.PrecipitateColorHex, out platingColor);
+            if (!plating) SetPlating(0f);
+            SplitElectrodeGas(reaction);
             Color target = Color.clear;
             bool hasColour = fx.PlayColorChange && TryParseHex(fx.ColorChangeHex, out target);
 
@@ -625,6 +727,29 @@ namespace ChemLabSimV3.Views.Bench3D
                 var main = bubbles.main;
                 main.startLifetime = liquidHeight / 0.4f;
                 bubbles.transform.position = liquid.position + Vector3.up * (solidLevel * MaxFill + 0.02f);
+            }
+
+            // Electroplating: the metal builds up on the cathode while the current flows.
+            if (plating && currentOn && reacting) SetPlating(reactionTime / 6f);
+
+            // Electrolysis: gas forms only at the electrodes, and only while current flows.
+            if (electrolysis && currentOn && reacting && liquidHeight > 0.05f)
+            {
+                float rate = Mathf.Max(bubbleRate, 60f);
+                float surfaceY = liquid.position.y + (solidLevel + liquidLevel) * MaxFill;
+                foreach (var ps in new[] { cathodeBubbles, anodeBubbles })
+                {
+                    var m = ps.main;
+                    m.startLifetime = Mathf.Max(0.1f, (surfaceY - ps.transform.position.y) / 0.55f);   // pop at the surface
+                }
+                SetRate(cathodeBubbles, rate * cathodeShare);
+                SetRate(anodeBubbles, rate * anodeShare);
+                bubbleRate = 0f;
+            }
+            else
+            {
+                SetRate(cathodeBubbles, 0f);
+                SetRate(anodeBubbles, 0f);
             }
             SetRate(bubbles, bubbleRate);
 

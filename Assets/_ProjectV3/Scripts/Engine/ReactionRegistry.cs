@@ -73,7 +73,7 @@ namespace ChemLabSimV3.Engine
         /// </summary>
         public bool NeedsMoreReagents(IList<string> reagentFormulas)
         {
-            if (reagentFormulas == null || reagentFormulas.Count < 2) return false;
+            if (reagentFormulas == null || reagentFormulas.Count < 1) return false;
 
             for (int i = 0; i < _all.Count; i++)
             {

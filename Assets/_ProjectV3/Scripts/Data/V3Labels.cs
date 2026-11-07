@@ -45,7 +45,7 @@ namespace ChemLabSimV3.Data
             { "reactionTypeLabel", "Reaction Type" },
 
             // -- Guidance --
-            { "selectAndMix",          "Select two reactants and press Mix." },
+            { "selectAndMix",          "Select reactants and press Mix (one reactant alone tests a decomposition)." },
             { "guidedMode",            "Guided Mode" },
             { "readyMix",              "Ready \u2014 press Mix to evaluate the reaction." },
             { "hintExtraReactant",     "\u25b8 Hint: This selection may need an extra reactant in slot 3 or 4." },
@@ -53,7 +53,7 @@ namespace ChemLabSimV3.Data
             { "tipLowStirring",        "\u25b8 Tip: Consider increasing stirring for better reagent contact." },
             { "tipLowGrinding",        "\u25b8 Tip: Consider increasing grinding for better reagent contact." },
             { "tipLowTemp",            "\u25b8 Tip: Low temperature may prevent some reactions from activating." },
-            { "stepChooseReagents",    "Choose at least two different reactants to begin." },
+            { "stepChooseReagents",    "Choose a reactant to begin: two to react them, or one alone to heat or electrolyse it." },
             { "stepDuplicateReagents", "Each chosen reactant must be different from the others." },
             { "on",  "On" },
             { "off", "Off" },
@@ -149,7 +149,7 @@ namespace ChemLabSimV3.Data
             // -- Demo default / empty state --
             { "noProductsYet",  "" },
             { "conditionsNotMet", "Some required conditions were not met. Check medium, temperature, and contact quality." },
-            { "selectAndMixWelcome", "Welcome to the Chemistry Lab! Select two reactants from the dropdowns, adjust the conditions, and press Mix to observe the reaction." },
+            { "selectAndMixWelcome", "Welcome to the Chemistry Lab! Pick reactants, set the conditions and press Mix. One reactant on its own can be heated or electrolysed." },
 
             // -- Effect / observation labels --
             { "gasEvolution",      "Gas bubbles evolved" },

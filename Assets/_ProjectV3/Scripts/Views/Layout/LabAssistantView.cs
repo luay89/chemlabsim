@@ -98,16 +98,19 @@ namespace ChemLabSimV3.Views.Layout
         private LabContext NewContext()
         {
             var reagents = new List<string>();
+            bool current = false;
             var input = FindObjectOfType<LabInputController>();
             if (input != null)
             {
                 var vm = input.CurrentInput;
+                current = vm.HasElectricCurrent;
                 foreach (var f in new[] { vm.ReagentA, vm.ReagentB, vm.ReagentC, vm.ReagentD })
                     if (!string.IsNullOrWhiteSpace(f)) reagents.Add(f.Trim());
             }
             return new LabContext
             {
                 HasExperiment = true,
+                HasElectricCurrent = current,
                 Reagents = reagents,
                 Database = AppManager.Instance != null ? AppManager.Instance.ReactionDatabase?.reactions : null
             };

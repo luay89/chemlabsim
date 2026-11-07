@@ -200,9 +200,10 @@ namespace ChemLabSimV3.Controllers
         {
             message = string.Empty;
 
-            if (request.ReagentNames == null || request.ReagentNames.Count < 2)
+            // One reactant alone is valid: it may decompose (heat, catalyst or current).
+            if (request.ReagentNames == null || request.ReagentNames.Count < 1)
             {
-                message = "Choose at least two different reactants.";
+                message = "Choose at least one reactant.";
                 return false;
             }
 

@@ -7677,7 +7677,7 @@
       "turbidity": false,
       "precipitate_color": "",
       "electrical": true,
-      "glow": true
+      "glow": false
     },
     "safety": {
       "ghs_icons": [],
@@ -8448,12 +8448,12 @@
     "catalystAllowed": false,
     "catalystDeltaTempC": 0,
     "visual_effects": {
-      "color_change": "",
-      "precipitate": true,
+      "color_change": "#3D8FD6",
+      "precipitate": false,
       "gas": true,
       "temperature_delta": 2,
       "sound_id": "",
-      "glow": true,
+      "glow": false,
       "dissolution": false,
       "crystallization": false,
       "effervescence": "mild",

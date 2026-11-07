@@ -21,7 +21,7 @@ namespace ChemLabSimV3.DebugTools
     {
         private const string Arg = "-chemlab-tour";
 
-        // name | reagent A | reagent B | medium | °C | stirring | grinding | catalyst
+        // name | reagent A | reagent B (empty = one reactant) | medium | °C | stirring | grinding | catalyst | DC current
         private static readonly string[] Steps =
         {
             "neutralization|HCl|NaOH|Neutral|25|0.6|0.5|0",
@@ -34,7 +34,12 @@ namespace ChemLabSimV3.DebugTools
             "magnesium_burn|Mg|O2|Neutral|600|0.6|0.6|0",
             "dilution|HCl|H2O|Neutral|25|0.5|0|0",
             "sodium_chlorine|Na|Cl2|Neutral|300|0.6|0.6|0",
-            "magnesium_cold|Mg|O2|Neutral|25|0.6|0.6|0",
+            "baking_soda_heat|NaHCO3||Neutral|300|0.5|0.5|0|0",
+            "peroxide_catalyst|H2O2||Neutral|25|0.5|0|1|0",
+            "water_no_current|H2O||Neutral|25|0.3|0|0|0",
+            "water_electrolysis|H2O||Neutral|25|0.3|0|0|1",
+            "copper_electrolysis|CuSO4||Acidic|25|0.3|0|0|1",
+            "magnesium_cold|Mg|O2|Neutral|25|0.6|0.6|0|0",
         };
 
         private string outDir;
@@ -75,6 +80,7 @@ namespace ChemLabSimV3.DebugTools
                 SetSlider<StirringSliderView>(float.Parse(p[5], System.Globalization.CultureInfo.InvariantCulture));
                 SetSlider<GrindingSliderView>(float.Parse(p[6], System.Globalization.CultureInfo.InvariantCulture));
                 SetCatalyst(p[7] == "1");
+                SetCurrent(p.Length > 8 && p[8] == "1");
                 yield return new WaitForSeconds(1f);
                 yield return Capture(p[0] + "_a_ready");
 
@@ -143,7 +149,15 @@ namespace ChemLabSimV3.DebugTools
 
         private static void SetCatalyst(bool on)
         {
-            var toggle = FindObjectOfType<CatalystToggleView>()?.GetComponentInChildren<Toggle>(true);
+            // The DC switch is a copy of the catalyst row, so pick the catalyst row by name.
+            var view = FindObjectsOfType<CatalystToggleView>(true).FirstOrDefault(v => v.name != "ElectricCurrentRow");
+            var toggle = view != null ? view.GetComponentInChildren<Toggle>(true) : null;
+            if (toggle != null) toggle.isOn = on;
+        }
+
+        private static void SetCurrent(bool on)
+        {
+            var toggle = GameObject.Find("ElectricCurrentRow")?.GetComponentInChildren<Toggle>(true);
             if (toggle != null) toggle.isOn = on;
         }
 

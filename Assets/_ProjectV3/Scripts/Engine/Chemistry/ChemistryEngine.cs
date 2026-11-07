@@ -51,7 +51,7 @@ namespace ChemLabSimV3.Engine.Chemistry
         public ChemistryOutput Process(MixRequest request)
         {
             // 1. Validate
-            if (request.ReagentNames == null || request.ReagentNames.Count < 2)
+            if (request.ReagentNames == null || request.ReagentNames.Count < 1)
                 return ChemistryOutput.NotFound(request.ReagentNames);
 
             if (float.IsNaN(request.Temperature) || float.IsInfinity(request.Temperature) ||
@@ -93,6 +93,7 @@ namespace ChemLabSimV3.Engine.Chemistry
                 Grinding             = grinding,
                 Medium               = request.Medium,
                 HasCatalyst          = request.HasCatalyst,
+                HasElectricCurrent   = request.HasElectricCurrent,
                 EffectiveActivationC = effectiveActivation,
                 ContactFactor        = contactFactor,
                 PressureAtm          = pressure
